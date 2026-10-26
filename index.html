@@ -218,6 +218,8 @@ async function loadProfileDashboard(){
 }
 
 let activeConversationId=null;
+let dealPanelRefreshTimer=null;
+function startDealPanelRefresh(id){if(dealPanelRefreshTimer)clearInterval(dealPanelRefreshTimer);dealPanelRefreshTimer=setInterval(()=>{if(activeConversationId===id&&!$("chatThread").hidden){const details=$("chatDealPanel")?.querySelector("details");if(!details||!details.open)loadChatDealPanel(id)}},4000)}
 async function loadChats(){
  if(!db||!currentUser)return;
  $("chatNotice").textContent="Твои переписки и предложения обмена";
@@ -245,14 +247,15 @@ async function loadChatDealPanel(conversationId){
  const saveBtn=$("saveDealTermsBtn");if(saveBtn)saveBtn.onclick=async()=>{const type=$("dealTypeEdit").value;const amount=type==="surcharge"?Number($("dealAmountEdit").value):0;const payer=type==="surcharge"?$("dealPayerEdit").value:"none";if(type==="surcharge"&&(!Number.isFinite(amount)||amount<=0)){toast("Укажи сумму доплаты больше нуля");return}if(!window.confirm("Изменение условий сбросит подтверждения и потребует согласия обоих участников. Продолжить?"))return;saveBtn.disabled=true;const {data,error}=await db.rpc("update_exchange_terms",{p_proposal_id:p.id,p_deal_type:type,p_surcharge_amount:amount,p_surcharge_payer:payer});if(error){toast("Не удалось изменить условия: "+error.message);saveBtn.disabled=false;return}toast("Новые условия сохранены. Второй участник должен подтвердить их.");await loadChatDealPanel(conversationId)};
 }
 async function openConversation(id,title){
- await loadChatDealPanel(id);
  if(!currentUser||!db)return;await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",id).is("read_at",null);await refreshNotificationCount();activeConversationId=id;$("chatThread").hidden=false;$("chatInbox").hidden=true;$("refreshChats").hidden=true;$("chatTitle").textContent=title||"Переписка";$("chatMessages").innerHTML='<p class="category">Загружаем сообщения…</p>';
  const {data:msgs,error}=await db.from("messages").select("id,sender_id,body,created_at").eq("conversation_id",id).order("created_at",{ascending:true}).limit(200);
  if(error){$("chatMessages").innerHTML='<p class="category">Не удалось загрузить сообщения: '+esc(error.message)+'</p>';return}
  $("chatMessages").innerHTML=(msgs||[]).length?msgs.map(m=>'<div style="justify-self:'+(m.sender_id===currentUser.id?'end':'start')+';max-width:88%;background:'+(m.sender_id===currentUser.id?'var(--green)':'#eef1e9')+';color:'+(m.sender_id===currentUser.id?'white':'var(--ink)')+';padding:11px 13px;border-radius:15px;overflow-wrap:anywhere"><div>'+esc(m.body)+'</div><div style="font-size:10px;opacity:.7;margin-top:5px">'+new Date(m.created_at).toLocaleString("ru-RU",{dateStyle:"short",timeStyle:"short"})+'</div></div>').join(""):'<p class="category">Это начало переписки. Напиши первое сообщение ниже.</p>';
  $("chatMessageInput").value="";
+ startDealPanelRefresh(id);
+ await loadChatDealPanel(id);
 }
-$("chatBack").onclick=()=>{activeConversationId=null;$("chatThread").hidden=true;$("chatInbox").hidden=false;$("refreshChats").hidden=false;loadChats();$("chatInbox").scrollIntoView({behavior:"smooth",block:"start"})};
+$("chatBack").onclick=()=>{if(dealPanelRefreshTimer){clearInterval(dealPanelRefreshTimer);dealPanelRefreshTimer=null}activeConversationId=null;$("chatThread").hidden=true;$("chatInbox").hidden=false;$("refreshChats").hidden=false;loadChats();$("chatInbox").scrollIntoView({behavior:"smooth",block:"start"})};
 $("refreshChats").onclick=loadChats;
 $("chatSendForm").onsubmit=async e=>{e.preventDefault();const body=$("chatMessageInput").value.trim();if(!body||!activeConversationId||!currentUser)return;const btn=e.submitter;btn.disabled=true;const {error}=await db.from("messages").insert({conversation_id:activeConversationId,sender_id:currentUser.id,body});btn.disabled=false;if(error){toast("Не удалось отправить: "+error.message);return}await openConversation(activeConversationId);};
 async function loadMyExchanges(){
