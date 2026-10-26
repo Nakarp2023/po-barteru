@@ -97,7 +97,7 @@ create policy "Users view own favorites" on public.favorites for select using (a
 create policy "Users add own favorites" on public.favorites for insert with check (auth.uid() = user_id);
 create policy "Users remove own favorites" on public.favorites for delete using (auth.uid() = user_id);
 
-create policy "Proposal participants can view" on public.exchange_proposals for select using (auth.uid() = sender_id or auth.uid() = (select user_id from public.listings where id = listing_id));
+create policy "Proposal participants can view" on public.exchange_proposals for select using (auth.uid() = sender_id or auth.uid() = (select l.user_id from public.listings l where l.id = exchange_proposals.listing_id));
 create policy "Users create proposals as themselves" on public.exchange_proposals for insert with check (auth.uid() = sender_id);
 create policy "Proposal sender can update" on public.exchange_proposals for update using (auth.uid() = sender_id) with check (auth.uid() = sender_id);
 
@@ -108,3 +108,14 @@ create policy "Participants send own messages" on public.messages for insert wit
 
 create policy "Users view own reports" on public.reports for select using (auth.uid() = reporter_id);
 create policy "Users create own reports" on public.reports for insert with check (auth.uid() = reporter_id);
+
+-- Minimum API grants for the client; RLS policies above remain the access boundary.
+grant select on public.profiles to anon, authenticated;
+grant insert, update on public.profiles to authenticated;
+grant select on public.listings to anon, authenticated;
+grant insert, update, delete on public.listings to authenticated;
+grant select, insert, delete on public.favorites to authenticated;
+grant select, insert, update on public.exchange_proposals to authenticated;
+grant select, insert on public.conversations to authenticated;
+grant select, insert on public.messages to authenticated;
+grant select, insert on public.reports to authenticated;
