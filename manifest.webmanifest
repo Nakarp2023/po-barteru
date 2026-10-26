@@ -1,0 +1,18 @@
+{
+  "name": "ПО БАРТЕРУ — обмен без границ",
+  "short_name": "ПО БАРТЕРУ",
+  "description": "Обменивай вещи и услуги напрямую",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f6f2",
+  "theme_color": "#153f35",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
