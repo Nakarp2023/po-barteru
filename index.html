@@ -239,7 +239,34 @@ async function openConversation(id,title){
 $("chatBack").onclick=()=>{activeConversationId=null;$("chatThread").hidden=true;$("chatInbox").hidden=false;$("refreshChats").hidden=false;loadChats();$("chatInbox").scrollIntoView({behavior:"smooth",block:"start"})};
 $("refreshChats").onclick=loadChats;
 $("chatSendForm").onsubmit=async e=>{e.preventDefault();const body=$("chatMessageInput").value.trim();if(!body||!activeConversationId||!currentUser)return;const btn=e.submitter;btn.disabled=true;const {error}=await db.from("messages").insert({conversation_id:activeConversationId,sender_id:currentUser.id,body});btn.disabled=false;if(error){toast("Не удалось отправить: "+error.message);return}await openConversation(activeConversationId);};
-async function loadMyExchanges(){if(!db||!currentUser)return;const el=$("myExchanges");el.innerHTML='<p class="category">Загружаем предложения…</p>';const {data,error}=await db.from("exchange_proposals").select("id,message,status,created_at,listing_id").eq("sender_id",currentUser.id).order("created_at",{ascending:false}).limit(30);if(error){el.innerHTML='<p class="category">Не удалось загрузить предложения: '+esc(error.message)+'</p>';return}el.innerHTML=(data||[]).length?(data||[]).map(x=>'<div class="my-listing"><div class="my-emoji">🔄</div><div class="my-info"><h3>'+esc(x.message||"Предложение обмена")+'</h3><p>Статус: '+esc(x.status||"Ожидает ответа")+'</p></div></div>').join(""):'<p class="category">У тебя пока нет отправленных предложений.</p>'}
+async function loadMyExchanges(){
+ if(!db||!currentUser)return;
+ const el=$("myExchanges");el.innerHTML='<p class="category">Загружаем предложения…</p>';
+ const [{data:outgoing,error:outErr},{data:incoming,error:inErr}]=await Promise.all([
+  db.from("exchange_proposals").select("id,message,status,created_at,listing_id").eq("sender_id",currentUser.id).order("created_at",{ascending:false}).limit(30),
+  db.from("exchange_proposals").select("id,message,status,created_at,listing_id,sender_id").neq("sender_id",currentUser.id).order("created_at",{ascending:false}).limit(50)
+ ]);
+ if(outErr||inErr){el.innerHTML='<p class="category">Не удалось загрузить предложения: '+esc((outErr||inErr).message)+'</p>';return}
+ const received=[];
+ for(const x of incoming||[]){
+  if(x.status!=="pending")continue;
+  const {data:listing}=await db.from("listings").select("id,title,user_id").eq("id",x.listing_id).eq("user_id",currentUser.id).maybeSingle();
+  if(listing)received.push({...x,listingTitle:listing.title});
+ }
+ const outgoingHtml=(outgoing||[]).map(x=>'<div class="my-listing"><div class="my-emoji">🔄</div><div class="my-info"><h3>'+esc(x.message||"Предложение обмена")+'</h3><p>Статус: '+esc(({pending:"Ожидает ответа",accepted:"Принято",declined:"Отклонено",cancelled:"Отменено",completed:"Завершено"})[x.status]||x.status)+'</p></div></div>').join("");
+ const incomingHtml=received.map(x=>'<div class="my-listing"><div class="my-emoji">📩</div><div class="my-info"><h3>Обмен: '+esc(x.listingTitle)+'</h3><p>'+esc(x.message||"Пользователь предлагает обмен")+'</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="pill" data-proposal-respond="accepted" data-proposal-id="'+esc(x.id)+'">Принять</button><button class="chip" data-proposal-respond="declined" data-proposal-id="'+esc(x.id)+'">Отклонить</button></div></div></div>').join("");
+ el.innerHTML=(received.length?'<h3>Входящие предложения</h3>'+incomingHtml:'')+(outgoingHtml?'<h3 style="margin-top:18px">Мои предложения</h3>'+outgoingHtml:'')||'<p class="category">Пока нет предложений обмена.</p>';
+ el.querySelectorAll("[data-proposal-respond]").forEach(btn=>btn.onclick=async()=>{
+  const decision=btn.dataset.proposalRespond;
+  if(decision==="declined"&&!confirm("Отклонить это предложение обмена?"))return;
+  btn.disabled=true;
+  const {data,error}=await db.rpc("respond_to_exchange_proposal",{p_proposal_id:btn.dataset.proposalId,p_decision:decision});
+  if(error){toast("Не удалось обработать предложение: "+error.message);btn.disabled=false;return}
+  toast(decision==="accepted"?"Предложение принято. Чат создан.":"Предложение отклонено.");
+  await loadMyExchanges();await refreshNotificationCount();
+  if(decision==="accepted"&&data?.conversation_id){activeConversationId=data.conversation_id;await openConversation(data.conversation_id);$("chatThread").hidden=false;$("chatInbox").hidden=true;$("refreshChats").hidden=true;}
+ });
+}
 
 async function syncProfile(){
  if(!db){$("profileStatus").textContent="Не удалось загрузить клиент базы данных.";return}
