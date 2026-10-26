@@ -84,29 +84,48 @@ alter table public.messages enable row level security;
 alter table public.reports enable row level security;
 
 -- Публичный просмотр только активных объявлений; владелец управляет своими.
+drop policy if exists "Profiles are viewable" on public.profiles;
 create policy "Profiles are viewable" on public.profiles for select using (true);
+drop policy if exists "Users insert own profile" on public.profiles;
 create policy "Users insert own profile" on public.profiles for insert with check (auth.uid() = id);
+drop policy if exists "Users update own profile" on public.profiles;
 create policy "Users update own profile" on public.profiles for update using (auth.uid() = id) with check (auth.uid() = id);
 
+drop policy if exists "Active listings are public" on public.listings;
 create policy "Active listings are public" on public.listings for select using (status = 'active' or auth.uid() = user_id);
+drop policy if exists "Users create own listings" on public.listings;
 create policy "Users create own listings" on public.listings for insert with check (auth.uid() = user_id);
+drop policy if exists "Owners update own listings" on public.listings;
 create policy "Owners update own listings" on public.listings for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists "Owners delete own listings" on public.listings;
 create policy "Owners delete own listings" on public.listings for delete using (auth.uid() = user_id);
 
+drop policy if exists "Users view own favorites" on public.favorites;
 create policy "Users view own favorites" on public.favorites for select using (auth.uid() = user_id);
+drop policy if exists "Users add own favorites" on public.favorites;
 create policy "Users add own favorites" on public.favorites for insert with check (auth.uid() = user_id);
+drop policy if exists "Users remove own favorites" on public.favorites;
 create policy "Users remove own favorites" on public.favorites for delete using (auth.uid() = user_id);
 
+drop policy if exists "Proposal participants can view" on public.exchange_proposals;
 create policy "Proposal participants can view" on public.exchange_proposals for select using (auth.uid() = sender_id or auth.uid() = (select l.user_id from public.listings l where l.id = exchange_proposals.listing_id));
+drop policy if exists "Users create proposals as themselves" on public.exchange_proposals;
 create policy "Users create proposals as themselves" on public.exchange_proposals for insert with check (auth.uid() = sender_id);
+drop policy if exists "Proposal sender can update" on public.exchange_proposals;
 create policy "Proposal sender can update" on public.exchange_proposals for update using (auth.uid() = sender_id) with check (auth.uid() = sender_id);
 
+drop policy if exists "Participants view conversations" on public.conversations;
 create policy "Participants view conversations" on public.conversations for select using (auth.uid() = participant_one or auth.uid() = participant_two);
+drop policy if exists "Participants create conversations" on public.conversations;
 create policy "Participants create conversations" on public.conversations for insert with check (auth.uid() = participant_one or auth.uid() = participant_two);
+drop policy if exists "Participants view messages" on public.messages;
 create policy "Participants view messages" on public.messages for select using (exists (select 1 from public.conversations c where c.id = conversation_id and auth.uid() in (c.participant_one,c.participant_two)));
+drop policy if exists "Participants send own messages" on public.messages;
 create policy "Participants send own messages" on public.messages for insert with check (auth.uid() = sender_id and exists (select 1 from public.conversations c where c.id = conversation_id and auth.uid() in (c.participant_one,c.participant_two)));
 
+drop policy if exists "Users view own reports" on public.reports;
 create policy "Users view own reports" on public.reports for select using (auth.uid() = reporter_id);
+drop policy if exists "Users create own reports" on public.reports;
 create policy "Users create own reports" on public.reports for insert with check (auth.uid() = reporter_id);
 
 -- Minimum API grants for the client; RLS policies above remain the access boundary.
