@@ -1,0 +1,5 @@
+# Supabase project configuration
+SUPABASE_URL=https://qxsnjksepzmpsifpxyea.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_rYAZPOkGIrxOHX_IEupByw_PZmPhVty
+
+The publishable key is intended for client-side use. Never add a secret or service_role key to browser code.
