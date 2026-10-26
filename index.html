@@ -202,7 +202,11 @@ async function loadRemoteListings(){
  if(error){$("backendNote").textContent="База пока не готова: сначала выполни supabase/schema.sql в SQL Editor. Локальный режим продолжает работать.";return}
  const remote=(data||[]).map(x=>({id:x.id,user_id:x.user_id,title:x.title,category:x.category,want:x.want,city:x.city,price:x.estimated_value||0,emoji:"🔄",desc:x.description||"",remote:true}));
  const local=loadJSON(STORE_ITEMS,[...seed]).filter(x=>!x.remote);
- items=[...remote,...local.filter(x=>!remote.some(r=>r.id===x.id))];render();
+ const sameListing=(a,b)=>String(a.title||"").trim().toLowerCase()===String(b.title||"").trim().toLowerCase()&&String(a.category||"")===String(b.category||"")&&String(a.city||"").trim().toLowerCase()===String(b.city||"").trim().toLowerCase()&&String(a.want||"").trim().toLowerCase()===String(b.want||"").trim().toLowerCase()&&Number(a.price||0)===Number(b.price||0);
+ const uniqueLocal=local.filter(x=>!remote.some(r=>sameListing(r,x)));
+ items=[...remote,...uniqueLocal.filter(x=>!remote.some(r=>String(r.id)===String(x.id)))];
+ if(uniqueLocal.length!==local.length){try{localStorage.setItem(STORE_ITEMS,JSON.stringify(uniqueLocal))}catch(e){}}
+ render();
  $("backendNote").textContent="";
 }
 async function saveListing(item){
