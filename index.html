@@ -95,7 +95,17 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 [hidden]{display:none!important}
 
 #homeHero[hidden],#homeSearch[hidden],#addTop[hidden]{display:none!important}
-</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><main class="app"><header class="top"><div class="brand"><span class="mark" aria-label="Логотип ПО БАРТЕРУ"><img src="/logo.webp?v=1" alt="" /></span><span>ПО БАРТЕРУ</span></div><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="stats"><div><b>Товары</b>и услуги</div><div><b>Вся Россия</b>рядом и онлайн</div><div><b>Без комиссии</b>за обмен в MVP</div></div></section><div class="search" id="homeSearch"><input id="q" placeholder="🔎  Что хочешь найти?"><button class="pill" id="searchBtn">Найти</button></div><div class="sectionhead" id="listHeader"><h2 id="listTitle">Подходящие предложения</h2><span id="count" class="category"></span></div><div class="filters" id="filters"></div><section class="grid" id="list"></section><p class="empty" id="empty" hidden>Ничего не найдено. Попробуй другую категорию или поисковый запрос.</p><section id="other" hidden><div class="sectionhead"><h2 id="otherTitle">Раздел</h2></div><p id="profileStatus">Подключение к сервису…</p>
+
+/* Compact profile spacing on phones without changing the brand design. */
+#profileDashboard{gap:16px}
+#profileDashboard .profile-card,#profileDashboard .profile-edit,#profileDashboard .profile-stats{margin-bottom:14px}
+#profileDashboard .profile-edit{padding:20px}
+#profileDashboard .profile-edit h3{margin-top:0;margin-bottom:20px}
+#profileDashboard .profile-edit .field{margin-bottom:14px}
+#profileDashboard .profile-edit .profile-actions{margin-top:8px!important;gap:10px!important}
+#profileDashboard .profile-stats{margin-top:14px}
+#profileStatus[hidden]{display:none!important}
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><main class="app"><header class="top"><div class="brand"><span class="mark" aria-label="Логотип ПО БАРТЕРУ"><img src="/logo.webp?v=1" alt="" /></span><span>ПО БАРТЕРУ</span></div><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="stats"><div><b>Товары</b>и услуги</div><div><b>Вся Россия</b>рядом и онлайн</div><div><b>Без комиссии</b>за обмен в MVP</div></div></section><div class="search" id="homeSearch"><input id="q" placeholder="🔎  Что хочешь найти?"><button class="pill" id="searchBtn">Найти</button></div><div class="sectionhead" id="listHeader"><h2 id="listTitle">Подходящие предложения</h2><span id="count" class="category"></span></div><div class="filters" id="filters"></div><section class="grid" id="list"></section><p class="empty" id="empty" hidden>Ничего не найдено. Попробуй другую категорию или поисковый запрос.</p><section id="other" hidden><div class="sectionhead"><h2 id="otherTitle">Раздел</h2></div><p id="profileStatus" hidden>Подключение к сервису…</p>
 <div id="authBox">
 <div style="display:flex;gap:8px;margin:12px 0"><button type="button" class="pill" id="authEmailMode">По email</button><button type="button" class="pill" id="authPhoneMode" style="background:#e7eae5">По телефону</button></div>
 <div id="emailAuthPane"><label class="field">Email для входа<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><button class="pill" id="authSend">Получить ссылку для входа</button><p class="category">Одноразовая ссылка придёт на почту.</p></div>
@@ -148,7 +158,7 @@ async function loadRemoteListings(){
  const remote=(data||[]).map(x=>({id:x.id,user_id:x.user_id,title:x.title,category:x.category,want:x.want,city:x.city,price:x.estimated_value||0,emoji:"🔄",desc:x.description||"",remote:true}));
  const local=loadJSON(STORE_ITEMS,[...seed]).filter(x=>!x.remote);
  items=[...remote,...local.filter(x=>!remote.some(r=>r.id===x.id))];render();
- $("backendNote").textContent="Загружено объявлений с сервера: "+remote.length+".";
+ $("backendNote").textContent="";
 }
 async function saveListing(item){
  if(!db||!currentUser)return;
