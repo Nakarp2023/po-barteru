@@ -76,6 +76,16 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 .profile-menu{display:grid;gap:8px;margin:20px 0}.profile-menu button{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:15px;padding:14px;color:var(--ink)}.profile-menu button>span:nth-child(2){flex:1}.profile-menu small{display:block;color:var(--muted);margin-top:4px}.profile-edit{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}.profile-edit h3{margin-top:0}
 @media(max-width:380px){.profile-card{padding:12px;gap:8px}.profile-avatar{width:48px;height:48px}.profile-main h2{font-size:17px}.profile-stats b{font-size:21px}}
 
+/* Product cards: align exchange buttons along the same bottom edge. */
+.grid{align-items:stretch}
+.card{display:flex;flex-direction:column;height:100%;min-width:0}
+.card .photo{flex:0 0 130px}
+.cardbody{display:flex;flex:1;flex-direction:column;align-items:stretch;min-width:0}
+.cardbody h3{min-height:2.5em;margin:7px 0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.cardbody .want{min-height:3em}
+.cardbody .city{min-height:2.5em;margin-top:10px;display:flex;align-items:flex-start}
+.cardbody .offer{margin-top:auto;min-height:58px;display:flex;align-items:center;justify-content:center;line-height:1.2}
+@media(min-width:650px){.card .photo{flex-basis:170px}}
 /* Keep hidden sections truly hidden when switching tabs, including the home listing inside Profile. */
 #list[hidden],#empty[hidden]{display:none!important}
 
