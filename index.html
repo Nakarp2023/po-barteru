@@ -78,6 +78,14 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 
 /* Keep hidden sections truly hidden when switching tabs, including the home listing inside Profile. */
 #list[hidden],#empty[hidden]{display:none!important}
+
+.profile-top-settings{display:flex;flex-direction:column;align-items:stretch;gap:12px;box-sizing:border-box;min-width:0}
+.profile-top-settings .field{display:flex;flex-direction:column;gap:8px;width:100%;min-width:0;margin:0}
+.profile-top-settings .field input{box-sizing:border-box;width:100%;max-width:100%;min-width:0;display:block}
+.profile-top-settings #profileLoginMethod{overflow-wrap:anywhere}
+.profile-top-settings .profile-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;margin-top:4px}
+.profile-top-settings .profile-actions .pill{width:100%;min-width:0;max-width:100%;margin:0!important;white-space:normal;line-height:1.25;padding:14px 16px;box-sizing:border-box}
+@media(max-width:420px){.profile-top-settings .profile-actions{grid-template-columns:minmax(0,1fr)}.profile-top-settings .profile-actions .pill{min-height:48px}}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><main class="app"><header class="top"><div class="brand"><span class="mark" aria-label="Логотип ПО БАРТЕРУ"><img src="/logo.webp?v=1" alt="" /></span><span>ПО БАРТЕРУ</span></div><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="stats"><div><b>Товары</b>и услуги</div><div><b>Вся Россия</b>рядом и онлайн</div><div><b>Без комиссии</b>за обмен в MVP</div></div></section><div class="search"><input id="q" placeholder="🔎  Что хочешь найти?"><button class="pill" id="searchBtn">Найти</button></div><div class="sectionhead" id="listHeader"><h2 id="listTitle">Подходящие предложения</h2><span id="count" class="category"></span></div><div class="filters" id="filters"></div><section class="grid" id="list"></section><p class="empty" id="empty" hidden>Ничего не найдено. Попробуй другую категорию или поисковый запрос.</p><section id="other" hidden><div class="sectionhead"><h2 id="otherTitle">Раздел</h2></div><p id="profileStatus">Подключение к сервису…</p>
 <div id="authBox">
 <div style="display:flex;gap:8px;margin:12px 0"><button type="button" class="pill" id="authEmailMode">По email</button><button type="button" class="pill" id="authPhoneMode" style="background:#e7eae5">По телефону</button></div>
@@ -87,7 +95,7 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 <button class="pill" id="authOut" hidden>Выйти</button>
 <section id="profileDashboard" hidden>
 <div class="profile-card"><div class="profile-avatar" id="profileAvatar">Б</div><div class="profile-main"><h2 id="profileName">Мой профиль</h2><p id="profileEmail" class="category"></p></div><span class="category">Аккаунт</span></div>
-<div class="profile-edit profile-top-settings"><h3>Личные данные и настройки</h3><label class="field">Имя<input id="profileNameInput" maxlength="50" placeholder="Как к тебе обращаться"></label><label class="field">Город<input id="profileCityInput" maxlength="60" placeholder="Твой город"></label><p class="category">Способ входа: <span id="profileLoginMethod">Email</span></p><button class="pill" id="saveProfileBtn">Сохранить данные</button><button class="pill" id="profileSettingsMenu" style="margin-left:8px">Выйти из аккаунта</button></div>
+<div class="profile-edit profile-top-settings"><h3>Личные данные и настройки</h3><label class="field">Имя<input id="profileNameInput" maxlength="50" placeholder="Как к тебе обращаться"></label><label class="field">Город<input id="profileCityInput" maxlength="60" placeholder="Твой город"></label><p class="category">Способ входа: <span id="profileLoginMethod">Email</span></p><div class="profile-actions"><button class="pill" id="saveProfileBtn">Сохранить данные</button><button class="pill" id="profileSettingsMenu">Выйти из аккаунта</button></div></div>
 <div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div>
 <div class="profile-section"><div class="sectionhead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div></div>
 
