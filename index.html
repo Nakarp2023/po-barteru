@@ -30,6 +30,37 @@ body{font-size:16px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
  .stats b{font-size:14px}
  .sectionhead h2{font-size:18px}
 }
+
+/* Stable responsive layout: mobile-first */
+html{width:100%;max-width:100%;overflow-x:hidden}
+body{width:100%;max-width:100%;overflow-x:hidden}
+.app{width:100%;max-width:1000px;min-width:0;margin:0 auto;padding:0 16px 96px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.brand{min-width:0;flex:1 1 auto}
+.brand>span:last-child{white-space:nowrap}
+.mark img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.hero{width:100%;min-width:0;overflow:hidden}
+.hero h1{max-width:100%;font-size:clamp(25px,7vw,42px);line-height:1.08;letter-spacing:-.7px;overflow-wrap:break-word}
+.hero p{max-width:100%;overflow-wrap:break-word}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.stats>div{min-width:0}
+.stats b,.stats span{overflow-wrap:anywhere}
+.search{display:flex;min-width:0;gap:10px}
+.search input{min-width:0;width:100%}
+.grid{min-width:0}
+@media(max-width:480px){
+ .app{padding-left:14px;padding-right:14px}
+ .top{gap:8px;padding:14px 0}
+ .brand{font-size:16px;gap:8px}
+ .mark{flex:0 0 44px;width:44px;height:44px;padding:0;overflow:hidden}
+ .top .pill{flex:0 0 auto;font-size:13px;padding:10px 12px}
+ .hero{padding:22px;border-radius:24px}
+ .hero h1{font-size:clamp(25px,7vw,32px)}
+ .hero p{font-size:15px;line-height:1.55}
+ .stats{gap:8px}
+ .stats b{font-size:14px}
+ .stats span{font-size:12px}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><main class="app"><header class="top"><div class="brand"><span class="mark" aria-label="Логотип ПО БАРТЕРУ"><img src="/icon.svg?v=4" alt="" /></span><span>ПО БАРТЕРУ</span></div><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="stats"><div><b>Товары</b>и услуги</div><div><b>Вся Россия</b>рядом и онлайн</div><div><b>Без комиссии</b>за обмен в MVP</div></div></section><div class="search"><input id="q" placeholder="🔎  Что хочешь найти?"><button class="pill" id="searchBtn">Найти</button></div><div class="sectionhead"><h2 id="listTitle">Подходящие предложения</h2><span id="count" class="category"></span></div><div class="filters" id="filters"></div><section class="grid" id="list"></section><p class="empty" id="empty" hidden>Ничего не найдено. Попробуй другую категорию или поисковый запрос.</p><section id="other" hidden><div class="sectionhead"><h2 id="otherTitle">Раздел</h2></div><p id="profileStatus">Подключение к сервису…</p>
 <div id="authBox">
 <div style="display:flex;gap:8px;margin:12px 0"><button type="button" class="pill" id="authEmailMode">По email</button><button type="button" class="pill" id="authPhoneMode" style="background:#e7eae5">По телефону</button></div>
