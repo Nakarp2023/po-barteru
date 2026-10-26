@@ -105,6 +105,15 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 #profileDashboard .profile-edit .profile-actions{margin-top:8px!important;gap:10px!important}
 #profileDashboard .profile-stats{margin-top:14px}
 #profileStatus[hidden]{display:none!important}
+
+/* Profile layout refinement: compact vertical rhythm and no duplicate logout control. */
+#other #authOut[hidden]{display:none!important}
+#profileDashboard .profile-edit{padding:18px 20px!important}
+#profileDashboard .profile-edit h3{margin:0 0 18px!important}
+#profileDashboard .profile-edit .field{margin:0 0 12px!important;gap:6px!important}
+#profileDashboard .profile-edit .field input{margin-top:0!important}
+#profileDashboard .profile-edit .category{margin:10px 0 14px!important}
+#profileDashboard .profile-edit .profile-actions{margin:0!important;gap:10px!important}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><main class="app"><header class="top"><div class="brand"><span class="mark" aria-label="Логотип ПО БАРТЕРУ"><img src="/logo.webp?v=1" alt="" /></span><span>ПО БАРТЕРУ</span></div><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="stats"><div><b>Товары</b>и услуги</div><div><b>Вся Россия</b>рядом и онлайн</div><div><b>Без комиссии</b>за обмен в MVP</div></div></section><div class="search" id="homeSearch"><input id="q" placeholder="🔎  Что хочешь найти?"><button class="pill" id="searchBtn">Найти</button></div><div class="sectionhead" id="listHeader"><h2 id="listTitle">Подходящие предложения</h2><span id="count" class="category"></span></div><div class="filters" id="filters"></div><section class="grid" id="list"></section><p class="empty" id="empty" hidden>Ничего не найдено. Попробуй другую категорию или поисковый запрос.</p><section id="other" hidden><div class="sectionhead"><h2 id="otherTitle">Раздел</h2></div><p id="profileStatus" hidden>Подключение к сервису…</p>
 <div id="authBox">
 <div style="display:flex;gap:8px;margin:12px 0"><button type="button" class="pill" id="authEmailMode">По email</button><button type="button" class="pill" id="authPhoneMode" style="background:#e7eae5">По телефону</button></div>
