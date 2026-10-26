@@ -29,7 +29,7 @@ async function saveListing(item){
  if(error){toast("Не удалось опубликовать на сервере. Проверь настройку базы.");$("backendNote").textContent=error.message;return}
  toast("Объявление опубликовано для всех");await loadRemoteListings();
 }
-$("authSend").onclick=async()=>{const email=$("authEmail").value.trim();if(!email){toast("Введи email");return}const {error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin}});toast(error?"Ошибка отправки ссылки: "+error.message:"Ссылка для входа отправлена на почту.");};
+$("authSend").onclick=async()=>{const email=$("authEmail").value.trim();if(!email){toast("Введи email");return}const {error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:"https://po-barteru.onrender.com"}});toast(error?"Ошибка отправки ссылки: "+error.message:"Ссылка для входа отправлена на почту.");};
 $("authOut").onclick=async()=>{await db.auth.signOut();await syncProfile();toast("Вы вышли из аккаунта")};
 if(db){db.auth.onAuthStateChange(()=>{setTimeout(async()=>{await syncProfile();await loadRemoteListings()},0)});syncProfile().then(loadRemoteListings)}else{$("profileStatus").textContent="Клиент базы данных не загрузился. Проверь интернет-соединение."}
 </script>
