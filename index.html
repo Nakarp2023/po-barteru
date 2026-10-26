@@ -199,7 +199,7 @@ async function syncProfile(){
 }
 async function loadRemoteListings(){
  if(!db)return;
- const {data,error}=await db.from("listings").select("id,user_id,title,description,category,city,want,estimated_value,created_at").eq("status","active").order("created_at",{ascending:false}).limit(100);
+ const {data,error}=await db.from("listings").select("id,user_id,title,description,category,city,want,estimated_value,image_urls,created_at").eq("status","active").order("created_at",{ascending:false}).limit(100);
  if(error){$("backendNote").textContent="База пока не готова: сначала выполни supabase/schema.sql в SQL Editor. Локальный режим продолжает работать.";return}
  const remote=(data||[]).map(x=>({id:x.id,user_id:x.user_id,title:x.title,category:x.category,want:x.want,city:x.city,price:x.estimated_value||0,emoji:"🔄",desc:x.description||"",image_urls:x.image_urls||[],remote:true}));
  const local=loadJSON(STORE_ITEMS,[...seed]).filter(x=>!x.remote);
