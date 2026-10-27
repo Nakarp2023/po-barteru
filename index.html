@@ -591,8 +591,25 @@ async function openConversation(id,title){
  const {data:msgs,error}=await db.from("messages").select("id,sender_id,body,created_at,delivered_at,read_at").eq("conversation_id",id).order("created_at",{ascending:true}).limit(200);
  if(error){$("chatMessages").innerHTML='<p class="category">Не удалось загрузить сообщения: '+esc(error.message)+'</p>';return}
  $("chatMessages").innerHTML=(msgs||[]).length?msgs.map(m=>{const mine=m.sender_id===currentUser.id;return '<div class="chat-message-row '+(mine?'mine':'theirs')+'" data-message-row="'+esc(m.id)+'" data-own="'+(mine?'1':'0')+'"><div class="chat-message-bubble"><div>'+esc(m.body)+'</div><div class="chat-message-time"><span>'+new Date(m.created_at).toLocaleString("ru-RU",{dateStyle:"short",timeStyle:"short"})+'</span>'+(mine?'<span class="message-status '+(m.read_at?"read":"delivered")+'" aria-label="'+(m.read_at?"Прочитано":(m.delivered_at?"Доставлено":"Отправлено"))+'" title="'+(m.read_at?"Прочитано":(m.delivered_at?"Доставлено":"Отправлено"))+'">'+(m.read_at?"✓✓":(m.delivered_at?"✓":""))+'</span>':"")+'</div></div>'+(mine?'<button type="button" class="chat-message-delete" data-message-delete="'+esc(m.id)+'" aria-label="Удалить сообщение">Удалить</button>':'')+'</div>'}).join(""):'<p class="category">Это начало переписки. Напиши первое сообщение ниже.</p>';
- // Keep sender receipt icons in sync when the other participant opens this chat.
- chatReceiptChannel=db.channel("message-receipts-"+id)
+ // Live updates: append new messages, mark incoming messages read, and sync receipts.
+ chatReceiptChannel=db.channel("live-chat-"+id)
+  .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:"conversation_id=eq."+id},async payload=>{
+   const m=payload.new;if(!m||activeConversationId!==id||$("chatThread").hidden)return;
+   if($("chatMessages").querySelector('[data-message-row="'+m.id+'"]'))return;
+   const mine=m.sender_id===currentUser.id;
+   const row=document.createElement("div");row.className="chat-message-row "+(mine?"mine":"theirs");row.dataset.messageRow=m.id;row.dataset.own=mine?"1":"0";
+   const bubble=document.createElement("div");bubble.className="chat-message-bubble";
+   const body=document.createElement("div");body.textContent=m.body||"";bubble.appendChild(body);
+   const time=document.createElement("div");time.className="chat-message-time";
+   const stamp=document.createElement("span");stamp.textContent=new Date(m.created_at).toLocaleString("ru-RU",{dateStyle:"short",timeStyle:"short"});time.appendChild(stamp);
+   if(mine){const status=document.createElement("span");status.className="message-status "+(m.read_at?"read":"delivered");status.textContent=m.read_at?"✓✓":(m.delivered_at?"✓":"");status.setAttribute("aria-label",m.read_at?"Прочитано":"Доставлено");status.title=m.read_at?"Прочитано":"Доставлено";time.appendChild(status)}
+   bubble.appendChild(time);row.appendChild(bubble);
+   if(mine){const del=document.createElement("button");del.type="button";del.className="chat-message-delete";del.dataset.messageDelete=m.id;del.setAttribute("aria-label","Удалить сообщение");del.textContent="Удалить";del.onclick=async()=>{if(!currentUser||activeConversationId!==id)return;del.disabled=true;const {error}=await db.from("messages").delete().eq("id",m.id).eq("sender_id",currentUser.id).eq("conversation_id",id);if(error){del.disabled=false;toast("Не удалось удалить сообщение.");return}row.remove()};row.appendChild(del)}
+   const empty=$("chatMessages").querySelector(".category");if(empty&&/начало переписки|сообщений пока нет/i.test(empty.textContent))empty.remove();
+   $("chatMessages").appendChild(row);$("chatMessages").scrollTop=$("chatMessages").scrollHeight;
+   if(!mine){await db.rpc("mark_conversation_messages_read",{p_conversation_id:id});await refreshNotificationCount()}
+   else {loadChats()}
+  })
   .on("postgres_changes",{event:"UPDATE",schema:"public",table:"messages",filter:"conversation_id=eq."+id},payload=>{
    const message=payload.new;if(!message||message.sender_id!==currentUser?.id)return;
    const row=$("chatMessages").querySelector('[data-message-row="'+message.id+'"]');if(!row)return;
@@ -601,6 +618,9 @@ async function openConversation(id,title){
    status.textContent=read?"✓✓":(message.delivered_at?"✓":"");
    status.setAttribute("aria-label",read?"Прочитано":(message.delivered_at?"Доставлено":"Отправлено"));
    status.title=read?"Прочитано":(message.delivered_at?"Доставлено":"Отправлено");
+  })
+  .on("postgres_changes",{event:"DELETE",schema:"public",table:"messages",filter:"conversation_id=eq."+id},payload=>{
+   const message=payload.old;if(message?.id){const row=$("chatMessages").querySelector('[data-message-row="'+message.id+'"]');if(row)row.remove()}
   }).subscribe();
  // Swipe left on your own message to reveal the delete action; deletion requires a tap.
  $("chatMessages").querySelectorAll("[data-message-row][data-own='1']").forEach(row=>{
@@ -624,7 +644,7 @@ async function openConversation(id,title){
 }
 $("chatBack").onclick=()=>{if(dealPanelRefreshTimer){clearInterval(dealPanelRefreshTimer);dealPanelRefreshTimer=null}if(chatReceiptChannel){db.removeChannel(chatReceiptChannel);chatReceiptChannel=null}activeConversationId=null;$("chatThread").hidden=true;$("chatInbox").hidden=false;$("refreshChats").hidden=false;loadChats();$("chatInbox").scrollIntoView({behavior:"smooth",block:"start"})};
 $("refreshChats").onclick=loadChats;
-$("chatSendForm").onsubmit=async e=>{e.preventDefault();const body=$("chatMessageInput").value.trim();if(!body||!activeConversationId||!currentUser)return;const btn=e.submitter;btn.disabled=true;const {error}=await db.from("messages").insert({conversation_id:activeConversationId,sender_id:currentUser.id,body});btn.disabled=false;if(error){toast("Не удалось отправить: "+error.message);return}await openConversation(activeConversationId);};
+$("chatSendForm").onsubmit=async e=>{e.preventDefault();const body=$("chatMessageInput").value.trim();if(!body||!activeConversationId||!currentUser)return;const btn=e.submitter;btn.disabled=true;const conversationId=activeConversationId;const {error}=await db.from("messages").insert({conversation_id:conversationId,sender_id:currentUser.id,body});btn.disabled=false;if(error){toast("Не удалось отправить: "+error.message);return}if(activeConversationId===conversationId){$("chatMessageInput").value="";}};
 async function loadMyExchanges(){
  if(!db||!currentUser)return;
  const el=$("myExchanges");el.innerHTML='<p class="category">Загружаем предложения…</p>';
