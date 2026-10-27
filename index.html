@@ -540,7 +540,7 @@ async function loadProfileDashboard(){
 
 let activeConversationId=null;
 let dealPanelRefreshTimer=null;
-function startDealPanelRefresh(id){if(dealPanelRefreshTimer)clearInterval(dealPanelRefreshTimer);dealPanelRefreshTimer=setInterval(()=>{if(activeConversationId!==id||$("chatThread").hidden)return;const details=$("chatDealPanel")?.querySelector("details");if(details&&details.open)return;loadChatDealPanel(id)},4000)}
+function startDealPanelRefresh(id){if(dealPanelRefreshTimer)clearInterval(dealPanelRefreshTimer);let refreshing=false;dealPanelRefreshTimer=setInterval(async()=>{if(document.hidden||refreshing||activeConversationId!==id||$("chatThread").hidden)return;const details=$("chatDealPanel")?.querySelector("details");if(details&&details.open)return;refreshing=true;try{await loadChatDealPanel(id)}finally{refreshing=false}},12000)}
 
 function enableSwipeToReveal(root,selector){
  if(!root)return;
@@ -570,7 +570,7 @@ async function loadChats(){
  $("chatInbox").querySelectorAll("[data-chat-hide]").forEach(b=>b.onclick=async()=>{const id=b.dataset.chatHide;if(!confirm("Убрать эту переписку из твоего списка? У второго участника она останется."))return;b.disabled=true;const {error}=await db.from("user_hidden_conversations").upsert({user_id:currentUser.id,conversation_id:id},{onConflict:"user_id,conversation_id"});if(error){b.disabled=false;toast("Не удалось убрать переписку.");return}if(activeConversationId===id){activeConversationId=null;$("chatThread").hidden=true;$("chatInbox").hidden=false;$("refreshChats").hidden=false}toast("Переписка убрана из твоего списка");await loadChats()});
 }
 async function loadChatDealPanel(conversationId){
- const panel=$("chatDealPanel");if(!panel||!db||!currentUser)return;panel.hidden=true;
+ const panel=$("chatDealPanel");if(!panel||!db||!currentUser)return;
  const {data:conv,error:convError}=await db.from("conversations").select("proposal_id,participant_one,participant_two").eq("id",conversationId).maybeSingle();
  if(convError||!conv||!conv.proposal_id)return;
  const {data:p,error}=await db.from("exchange_proposals").select("id,status,message,deal_type,surcharge_amount,surcharge_payer,terms_version,sender_confirmed_terms,owner_confirmed_terms,sender_completed_at,owner_completed_at,listing_id,sender_id").eq("id",conv.proposal_id).maybeSingle();
