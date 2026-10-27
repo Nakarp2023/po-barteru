@@ -540,10 +540,11 @@ async function loadExchangeReputation(){
  if(!finished.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">🔄</div><h3>История пока пуста</h3><p>Когда ты и второй участник подтвердите завершение обмена, он появится здесь. После этого можно будет оставить отзыв.</p></div>';return}
  const listingIds=[...new Set(finished.map(c=>completed.get(String(c.proposal_id))?.listing_id).filter(Boolean))];
  const userIds=[...new Set(finished.flatMap(c=>[c.participant_one,c.participant_two]).filter(id=>String(id)!==String(currentUser.id)))];
+ const allReviewProposalIds=finished.map(c=>c.proposal_id);
  const [listingResult,profileResult,allReviewsResult]=await Promise.all([
   listingIds.length?db.from("listings").select("id,title").in("id",listingIds):Promise.resolve({data:[],error:null}),
-  userIds.length?db.from("profiles").select("id,display_name").in("id",userIds):Promise.resolve({data:[],error:null}),
-  db.from("exchange_reviews").select("proposal_id,reviewer_id,reviewed_user_id,rating,comment,created_at").in("proposal_id",finished.map(c=>c.proposal_id))
+  [...new Set([...userIds,...reviews.map(x=>x.reviewer_id)])].length?db.from("profiles").select("id,display_name").in("id",[...new Set([...userIds,...reviews.map(x=>x.reviewer_id)])]):Promise.resolve({data:[],error:null}),
+  db.from("exchange_reviews").select("proposal_id,reviewer_id,reviewed_user_id,rating,comment,created_at").in("proposal_id",allReviewProposalIds)
  ]);
  const listingMap=new Map((listingResult.data||[]).map(x=>[String(x.id),x]));
  const profileMap=new Map((profileResult.data||[]).map(x=>[String(x.id),x]));
@@ -554,8 +555,9 @@ async function loadExchangeReputation(){
   const title=listingMap.get(String(p.listing_id))?.title||"Обмен";
   const ownReview=reviewMap.get(String(c.proposal_id)+"|"+String(currentUser.id));
   const otherReview=reviewMap.get(String(c.proposal_id)+"|"+String(other));
+  const reviewerName=otherReview?(profileMap.get(String(otherReview.reviewer_id))?.display_name||"Участник"):name;
   const date=new Date(p.owner_completed_at>p.sender_completed_at?p.owner_completed_at:p.sender_completed_at).toLocaleDateString("ru-RU",{day:"2-digit",month:"short",year:"numeric"});
-  return '<article class="my-listing"><div class="my-emoji">🤝</div><div class="my-info"><h3>'+esc(title)+'</h3><p>Участник: '+esc(name)+'</p><p>Завершён: '+esc(date)+'</p>'+(ownReview?'<p>Твой отзыв: '+("★".repeat(Number(ownReview.rating))+"☆".repeat(5-Number(ownReview.rating)))+'</p>': '<button type="button" class="pill" data-review-proposal="'+esc(c.proposal_id)+'" data-review-user="'+esc(other)+'" data-review-name="'+esc(name)+'">Оставить отзыв</button>')+(otherReview?'<p class="category">Отзыв о тебе: '+("★".repeat(Number(otherReview.rating))+"☆".repeat(5-Number(otherReview.rating)))+(otherReview.comment?" · "+esc(otherReview.comment):"")+'</p>':"")+'</div></article>'
+  return '<article class="my-listing"><div class="my-emoji">🤝</div><div class="my-info"><h3>'+esc(title)+'</h3><p>Участник: '+esc(name)+'</p><p>Завершён: '+esc(date)+'</p>'+(ownReview?'<p>Твой отзыв: '+("★".repeat(Number(ownReview.rating))+"☆".repeat(5-Number(ownReview.rating)))+'</p>': '<button type="button" class="pill" data-review-proposal="'+esc(c.proposal_id)+'" data-review-user="'+esc(other)+'" data-review-name="'+esc(name)+'">Оставить отзыв</button>')+(otherReview?'<p class="category">Отзыв от '+esc(reviewerName)+': '+("★".repeat(Number(otherReview.rating))+"☆".repeat(5-Number(otherReview.rating)))+(otherReview.comment?" · "+esc(otherReview.comment):"")+'</p>':"")+'</div></article>'
  }).join("");
  list.querySelectorAll("[data-review-proposal]").forEach(btn=>btn.onclick=async()=>{
   const ratingRaw=window.prompt("Оцени обмен с "+btn.dataset.reviewName+" от 1 до 5 звёзд:", "5");
