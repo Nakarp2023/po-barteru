@@ -1,10 +1,70 @@
-const CACHE_NAME = "po-barteru-shell-v1";
+const CACHE_NAME = "po-barteru-shell-v2";
+const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg", "/logo.webp?v=1"];
+
 self.addEventListener("install", event => {
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await Promise.all(APP_SHELL.map(async path => {
+      try {
+        const response = await fetch(path, { cache: "reload" });
+        if (response.ok) await cache.put(path, response);
+      } catch (_) {
+        // A failed optional shell asset must not block installation.
+      }
+    }));
+    await self.skipWaiting();
+  })());
 });
+
 self.addEventListener("activate", event => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(names.filter(name => name.startsWith("po-barteru-shell-") && name !== CACHE_NAME).map(name => caches.delete(name)));
+    await self.clients.claim();
+  })());
 });
+
+// Cache only the app shell. Supabase/API requests, payment flows, and user data
+// are intentionally never cached by this service worker.
+self.addEventListener("fetch", event => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === "navigate") {
+    event.respondWith((async () => {
+      try {
+        const response = await fetch(request);
+        if (response && response.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put("/", response.clone());
+        }
+        return response;
+      } catch (_) {
+        const cache = await caches.open(CACHE_NAME);
+        return (await cache.match("/")) || (await cache.match("/index.html")) || Response.error();
+      }
+    })());
+    return;
+  }
+
+  if (["/manifest.webmanifest", "/icon.svg", "/logo.webp"].includes(url.pathname)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      const cached = await cache.match(request) || await cache.match(url.pathname);
+      if (cached) return cached;
+      try {
+        const response = await fetch(request);
+        if (response && response.ok) await cache.put(request, response.clone());
+        return response;
+      } catch (_) {
+        return Response.error();
+      }
+    })());
+  }
+});
+
 self.addEventListener("push", event => {
   let payload = {};
   try { payload = event.data ? event.data.json() : {}; }
@@ -20,6 +80,7 @@ self.addEventListener("push", event => {
   };
   event.waitUntil(self.registration.showNotification(title, options));
 });
+
 self.addEventListener("notificationclick", event => {
   event.notification.close();
   const target = new URL(event.notification.data && event.notification.data.url || "/", self.location.origin).href;
