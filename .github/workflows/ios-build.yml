@@ -5,6 +5,10 @@ on:
   push:
     paths:
       - "index.html"
+      - "manifest.webmanifest"
+      - "icon.svg"
+      - "logo.webp"
+      - "sw.js"
       - ".github/workflows/ios-build.yml"
 
 permissions:
@@ -27,6 +31,7 @@ jobs:
         run: |
           mkdir -p mobile-build/www
           cp index.html mobile-build/www/index.html
+          cp manifest.webmanifest icon.svg logo.webp sw.js mobile-build/www/
           cd mobile-build
           npm init -y
           npm install --no-audit --no-fund @capacitor/core@^8 @capacitor/cli@^8 @capacitor/ios@^8
