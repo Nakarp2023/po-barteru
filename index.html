@@ -442,9 +442,10 @@ async function loadProfileDashboard(){
  if(profileBusy||!currentUser||!db)return;
  profileBusy=true;
  try{
- await Promise.all([loadMonetizationPlans(),loadMonetizationOrders()]);
- await loadActiveSubscription();
- await Promise.all([loadPromotionCredits(),loadBusinessTeam(),loadSavedSearches()]);
+ // Monetization widgets load independently so a slow payment reconciliation cannot block the whole profile.
+ void loadMonetizationPlans().catch(e=>console.warn("Не удалось загрузить тарифы",e));
+ void loadMonetizationOrders().catch(e=>console.warn("Не удалось загрузить историю заказов",e));
+ void loadActiveSubscription().then(()=>Promise.all([loadPromotionCredits(),loadBusinessTeam(),loadSavedSearches()])).catch(e=>console.warn("Не удалось загрузить платные возможности профиля",e));
  const p=profileLocal(),name=p.name||((currentUser.email||"Участник").split("@")[0]);
  $("profileName").textContent=name;$("profileEmail").textContent=currentUser.email||currentUser.phone||"Аккаунт подтверждён";$("profileLoginMethod").textContent=currentUser.email?"Email":(currentUser.phone?"Телефон":"Аккаунт");$("profileNameInput").value=p.name||"";$("profileCityInput").value=p.city||"";
  $("profileAvatar").textContent=(name.trim()[0]||"Б").toUpperCase();$("myFavCount").textContent=favorites.size;
