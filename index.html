@@ -641,18 +641,34 @@ async function openConversation(id,title){
    if(!$("chatMessages").querySelector("[data-message-row]"))$("chatMessages").innerHTML='<p class="category">Сообщений пока нет. Напиши первое сообщение ниже.</p>';
  });
  $("chatMessageInput").value="";
- // Fallback sync: if Realtime is unavailable on a mobile connection, reconcile the open chat every 3 seconds.
+ // Fallback sync: poll full message rows and append missing messages without reloading the chat.
  if(!chatSyncTimer){chatSyncTimer=setInterval(async()=>{
-  if(chatSyncBusy||!db||!currentUser||!activeConversationId||$("chatThread").hidden)return;
+  if(chatSyncBusy||!db||!currentUser||!activeConversationId||$("chatThread").hidden||document.hidden)return;
   chatSyncBusy=true;const cid=activeConversationId;
   try{
-   const {data:latest,error:syncError}=await db.from("messages").select("id").eq("conversation_id",cid).order("created_at",{ascending:false}).limit(200);
-   if(!syncError&&cid===activeConversationId&&Array.isArray(latest)){
-    const rendered=new Set(Array.from($("chatMessages").querySelectorAll("[data-message-row]")).map(el=>el.dataset.messageRow));
-    if(latest.some(m=>!rendered.has(String(m.id))))await openConversation(cid,$("chatTitle").textContent);
+   const {data:latest,error:syncError}=await db.from("messages").select("id,sender_id,body,created_at,delivered_at,read_at").eq("conversation_id",cid).order("created_at",{ascending:true}).limit(200);
+   if(syncError)throw syncError;
+   if(cid!==activeConversationId||!Array.isArray(latest))return;
+   const rendered=new Set(Array.from($("chatMessages").querySelectorAll("[data-message-row]")).map(el=>el.dataset.messageRow));
+   let addedIncoming=false;
+   for(const m of latest){
+    if(rendered.has(String(m.id)))continue;
+    const mine=m.sender_id===currentUser.id;
+    const row=document.createElement("div");row.className="chat-message-row "+(mine?"mine":"theirs");row.dataset.messageRow=m.id;row.dataset.own=mine?"1":"0";
+    const bubble=document.createElement("div");bubble.className="chat-message-bubble";
+    const body=document.createElement("div");body.textContent=m.body||"";bubble.appendChild(body);
+    const time=document.createElement("div");time.className="chat-message-time";
+    const stamp=document.createElement("span");stamp.textContent=new Date(m.created_at).toLocaleString("ru-RU",{dateStyle:"short",timeStyle:"short"});time.appendChild(stamp);
+    if(mine){const status=document.createElement("span");status.className="message-status "+(m.read_at?"read":"delivered");status.textContent=m.read_at?"✓✓":(m.delivered_at?"✓":"");status.setAttribute("aria-label",m.read_at?"Прочитано":(m.delivered_at?"Доставлено":"Отправлено"));status.title=m.read_at?"Прочитано":(m.delivered_at?"Доставлено":"Отправлено");time.appendChild(status)}
+    bubble.appendChild(time);row.appendChild(bubble);
+    if(mine){const del=document.createElement("button");del.type="button";del.className="chat-message-delete";del.dataset.messageDelete=m.id;del.setAttribute("aria-label","Удалить сообщение");del.textContent="Удалить";del.onclick=async()=>{if(!currentUser||activeConversationId!==cid)return;del.disabled=true;const {error}=await db.from("messages").delete().eq("id",m.id).eq("sender_id",currentUser.id).eq("conversation_id",cid);if(error){del.disabled=false;toast("Не удалось удалить сообщение.");return}row.remove()};row.appendChild(del)}
+    const empty=$("chatMessages").querySelector(".category");if(empty&&/начало переписки|сообщений пока нет/i.test(empty.textContent))empty.remove();
+    $("chatMessages").appendChild(row);rendered.add(String(m.id));if(!mine)addedIncoming=true;
    }
-  }catch(e){}finally{chatSyncBusy=false}
- },3000)}
+   if(latest.length){$("chatMessages").scrollTop=$("chatMessages").scrollHeight}
+   if(addedIncoming){await db.rpc("mark_conversation_messages_read",{p_conversation_id:cid});await refreshNotificationCount();loadChats()}
+  }catch(e){console.warn("Chat fallback sync failed:",e?.message||e)}finally{chatSyncBusy=false}
+ },2500)}
  startDealPanelRefresh(id);
  await loadChatDealPanel(id);
 }
