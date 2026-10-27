@@ -253,7 +253,7 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 <div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div><div class="profile-section"><div class="sectionhead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div></div><div class="profile-section" id="exchangeSection"><div class="sectionhead"><h2>Предложения обмена</h2><button class="chip" id="refreshExchanges">Обновить</button></div><div id="myExchanges" class="my-listings"><p class="category">Загружаем предложения…</p></div></div><section class="profile-section" id="monetizationSection">
 <div class="sectionhead"><h2>Тарифы и продвижение</h2><span class="category">Монетизация</span></div>
 <p class="category monetization-disclosure" style="line-height:1.45;margin:0 0 12px">Базовый обмен бесплатный. ЮKassa работает в тестовом режиме — реальные платежи пока не принимаются.</p>
-<div id="subscriptionStatus" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div>
+<div id="subscriptionStatus" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div><div id="promotionCreditsPanel" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div>
 <div id="monetizationPlans" class="monetization-grid"><div class="monetization-plan"><h3>Загружаем тарифы…</h3></div></div>
 
 </section>
@@ -343,6 +343,33 @@ function choosePromotionListing(listings){
   document.addEventListener("keydown",onKey);modal.classList.add("open");modal.setAttribute("aria-hidden","false");
  });
 }
+async function loadPromotionCredits(){
+ const el=$("promotionCreditsPanel");if(!el)return;
+ if(!currentUser||!db){el.hidden=true;return}
+ const now=new Date().toISOString();
+ const {data,error}=await db.from("promotion_credit_wallets").select("id,boost_credits,highlight_credits,vip_credits,ends_at").eq("user_id",currentUser.id).lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(1).maybeSingle();
+ if(error||!data){el.hidden=true;return}
+ const until=new Date(data.ends_at).toLocaleDateString("ru-RU");
+ const rows=[["boost_24h","Поднять на 24 часа",data.boost_credits,"↑"],["highlight_7d","Выделить на 7 дней",data.highlight_credits,"✦"],["vip_7d","VIP на 7 дней",data.vip_credits,"👑"]];
+ el.hidden=false;
+ el.innerHTML='<article class="card" style="padding:13px;border-color:#b9d7a5"><div style="font-weight:900">Бонусы PRO+ · до '+esc(until)+'</div><p class="category" style="margin:5px 0 10px">Включены в тариф — за них не нужно платить отдельно.</p><div style="display:grid;gap:7px">'+rows.map(r=>'<div style="display:flex;align-items:center;gap:8px;justify-content:space-between"><span style="font-size:13px">'+r[3]+' '+r[1]+' · осталось '+r[2]+'</span>'+(r[2]>0?'<button type="button" class="chip" data-credit-plan="'+r[0]+'" style="padding:7px 10px">Использовать</button>':'')+'</div>').join("")+'</div></article>';
+ el.querySelectorAll("[data-credit-plan]").forEach(btn=>btn.onclick=async()=>{
+  if(btn.disabled)return;
+  const code=btn.dataset.creditPlan;
+  const {data:listings,error:listError}=await db.from("listings").select("id,title,city,status").eq("user_id",currentUser.id).eq("status","active").order("created_at",{ascending:false}).limit(50);
+  if(listError){toast("Не удалось загрузить объявления.");return}
+  if(!listings?.length){toast("Нужно активное объявление, чтобы применить бонус.");return}
+  const listingId=await choosePromotionListing(listings);if(!listingId)return;
+  btn.disabled=true;const old=btn.textContent;btn.textContent="Применяем…";
+  try{
+   const {data:result,error:redeemError}=await db.rpc("redeem_pro_plus_promotion_credit",{p_listing_id:listingId,p_plan_code:code});
+   if(redeemError||result?.error)throw redeemError||new Error(result.error);
+   toast("Бонус применён. Услуга активна до "+new Date(result.ends_at).toLocaleDateString("ru-RU")+".");
+   await loadRemoteListings();await loadPromotionCredits();profileBusy=false;await loadProfileDashboard();
+  }catch(e){toast("Не удалось применить бонус: "+(e?.message||"ошибка"))}
+  finally{btn.disabled=false;btn.textContent=old}
+ });
+}
 async function loadMonetizationPlans(){
  const el=$("monetizationPlans");if(!el||!db)return;
  const fallback=[
@@ -368,7 +395,7 @@ $("profileAddListing").onclick=openForm;$("refreshExchanges").onclick=loadMyExch
 $("profileSettingsMenu").onclick=async()=>{await db.auth.signOut();await syncProfile();toast("Вы вышли из аккаунта")};
 let editingListingId=null,editingImageUrls=[],editingListingStatus="active";
 async function loadProfileDashboard(){
- loadMonetizationPlans();loadMonetizationOrders();loadActiveSubscription();
+ loadMonetizationPlans();loadMonetizationOrders();loadActiveSubscription();loadPromotionCredits();
  if(profileBusy||!currentUser||!db)return;profileBusy=true;
  try{
  const p=profileLocal(),name=p.name||((currentUser.email||"Участник").split("@")[0]);
