@@ -182,11 +182,14 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 .chat-row.swipe-revealed{grid-template-columns:minmax(0,1fr) auto}
 .chat-row [data-chat-hide]{display:none}
 .chat-row.swipe-revealed [data-chat-hide]{display:block}
-.swipe-row{position:relative;overflow:hidden;touch-action:pan-y}
-.swipe-row [data-proposal-hide]{display:none}
-.swipe-row.swipe-revealed [data-proposal-hide]{display:inline-flex}
+.swipe-row{position:relative;overflow:hidden;touch-action:pan-y;transition:background-color .15s}
+.swipe-row [data-proposal-hide]{display:none!important}
+.swipe-row.swipe-revealed [data-proposal-hide]{display:inline-flex!important}
 .swipe-row.swipe-revealed .my-info{min-width:0}
 .swipe-row [data-proposal-hide]{margin-top:8px}
+.chat-row [data-chat-hide]{display:none!important}
+.chat-row.swipe-revealed [data-chat-hide]{display:inline-flex!important}
+.chat-row.swipe-revealed{grid-template-columns:minmax(0,1fr) auto}
 .chat-row [data-chat-open]{width:100%;min-width:0;overflow:hidden}
 .chat-row [data-chat-open] .my-info{min-width:0;flex:1}
 .chat-row [data-chat-open] .my-info h3,.chat-row [data-chat-open] .my-info p{overflow-wrap:anywhere;word-break:normal}
@@ -385,10 +388,10 @@ async function loadMyExchanges(){
  }
  const splitProposalMessage=(value)=>{const parts=String(value||"Пользователь предлагает обмен").split(/\n\s*\nТип сделки:\s*/);return {offer:(parts[0]||"Пользователь предлагает обмен").trim(),terms:parts.length>1?("Тип сделки: "+parts.slice(1).join("\n\nТип сделки:")).trim():""}};
  const proposalText=(value)=>{const p=splitProposalMessage(value);return '<p>'+esc(p.offer)+'</p>'+(p.terms?'<div style="margin-top:8px;padding:10px 12px;border-radius:12px;background:#f0f3ec;color:#29483d;font-size:13px;line-height:1.45"><strong>Условия сделки</strong><br>'+esc(p.terms)+'</div>':"")};
- const outgoingHtml=visibleOutgoing.map(x=>'<div class="my-listing"><div class="my-emoji">🔄</div><div class="my-info"><h3>Предложение обмена</h3>'+proposalText(x.message)+'<p>Статус: '+esc(({pending:"Ожидает ответа",accepted:"Принято",declined:"Отклонено",cancelled:"Отменено",completed:"Завершено"})[x.status]||x.status)+'</p><button class="chip" data-proposal-hide="'+esc(x.id)+'">Удалить из списка</button></div></div>').join("");
+ const outgoingHtml=visibleOutgoing.map(x=>'<div class="my-listing swipe-row"><div class="my-emoji">🔄</div><div class="my-info"><h3>Предложение обмена</h3>'+proposalText(x.message)+'<p>Статус: '+esc(({pending:"Ожидает ответа",accepted:"Принято",declined:"Отклонено",cancelled:"Отменено",completed:"Завершено"})[x.status]||x.status)+'</p><button class="chip" data-proposal-hide="'+esc(x.id)+'">Удалить из списка</button></div></div>').join("");
  const incomingHtml=received.map(x=>'<div class="my-listing swipe-row"><div class="my-emoji">📩</div><div class="my-info"><h3>Обмен: '+esc(x.listingTitle)+'</h3>'+proposalText(x.message)+'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="pill" data-proposal-respond="accepted" data-proposal-id="'+esc(x.id)+'">Принять</button><button class="chip" data-proposal-respond="declined" data-proposal-id="'+esc(x.id)+'">Отклонить</button><button class="chip" data-proposal-hide="'+esc(x.id)+'">Удалить из списка</button></div></div></div>').join("");
  el.innerHTML=(received.length?'<h3>Входящие предложения</h3>'+incomingHtml:'')+(outgoingHtml?'<h3 style="margin-top:18px">Мои предложения</h3>'+outgoingHtml:'')||'<p class="category">Пока нет предложений обмена.</p>';
- el.querySelectorAll("[data-proposal-hide]").forEach(btn=>btn.onclick=async()=>{const id=btn.dataset.proposalHide;if(!confirm("Убрать предложение из твоего списка? У другого участника оно останется."))return;btn.disabled=true;const {error}=await db.from("user_hidden_exchange_proposals").upsert({user_id:currentUser.id,proposal_id:id},{onConflict:"user_id,proposal_id"});if(error){btn.disabled=false;toast("Не удалось убрать предложение.");return}toast("Предложение убрано из твоего списка");await loadMyExchanges()});
+ enableSwipeToReveal(el,".swipe-row");el.querySelectorAll("[data-proposal-hide]").forEach(btn=>btn.onclick=async()=>{const id=btn.dataset.proposalHide;if(!confirm("Убрать предложение из твоего списка? У другого участника оно останется."))return;btn.disabled=true;const {error}=await db.from("user_hidden_exchange_proposals").upsert({user_id:currentUser.id,proposal_id:id},{onConflict:"user_id,proposal_id"});if(error){btn.disabled=false;toast("Не удалось убрать предложение.");return}toast("Предложение убрано из твоего списка");await loadMyExchanges()});
  el.querySelectorAll("[data-proposal-respond]").forEach(btn=>btn.onclick=async()=>{
   const decision=btn.dataset.proposalRespond;
   if(decision==="declined"&&!confirm("Отклонить это предложение обмена?"))return;
