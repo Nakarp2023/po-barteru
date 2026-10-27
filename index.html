@@ -667,7 +667,7 @@ async function openConversation(id,title){
     const empty=$("chatMessages").querySelector(".category");if(empty&&/начало переписки|сообщений пока нет/i.test(empty.textContent))empty.remove();
     $("chatMessages").appendChild(row);rendered.add(String(m.id));if(!mine)addedIncoming=true;
    }
-   if(latest.length){$("chatMessages").scrollTop=$("chatMessages").scrollHeight}
+   if(latest.length){requestAnimationFrame(()=>setTimeout(()=>{$("chatSendForm").scrollIntoView({block:"end",behavior:"auto"});},100))}
    if(addedIncoming){await db.rpc("mark_conversation_messages_read",{p_conversation_id:cid});await refreshNotificationCount();loadChats()}
   }catch(e){console.warn("Chat fallback sync failed:",e?.message||e)}finally{chatSyncBusy=false}
  },2500)}
