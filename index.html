@@ -79,13 +79,13 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 /* Product cards: align exchange buttons along the same bottom edge. */
 .grid{align-items:stretch}
 .card{display:flex;flex-direction:column;height:100%;min-width:0}.card.is-highlighted{border:2px solid #b8d989;box-shadow:0 0 0 3px #d7efaa66}.card.is-vip{border:3px solid #d9b55b;box-shadow:0 0 0 3px #d9b55b55,0 8px 24px #9b76251f}.vip-ribbon{position:absolute;top:9px;left:9px;z-index:3;padding:6px 11px;border-radius:999px;background:linear-gradient(135deg,#fff0b7,#e6bd53);color:#5b4310;border:1px solid #d9b55b;font-size:11px;line-height:1.1;font-weight:900;box-shadow:0 3px 10px #0003}
-.card .photo{flex:0 0 130px}
+.card .photo{height:160px;min-height:160px;max-height:160px;flex:0 0 160px;overflow:hidden;position:relative}.card .photo .card-photo-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
 .cardbody{display:flex;flex:1;flex-direction:column;align-items:stretch;min-width:0}
 .cardbody h3{min-height:2.5em;margin:7px 0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .cardbody .want{min-height:3em}
 .cardbody .city{min-height:3.5em;margin-top:12px;padding-bottom:6px;display:flex;align-items:flex-start;line-height:1.35}
 .cardbody .offer{margin-top:auto;min-height:58px;display:flex;align-items:center;justify-content:center;line-height:1.2}
-@media(min-width:650px){.card .photo{flex-basis:170px}}
+/* Keep listing preview images the same height on every screen size. */
 /* Keep hidden sections truly hidden when switching tabs, including the home listing inside Profile. */
 #list[hidden],#empty[hidden]{display:none!important}
 
