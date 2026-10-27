@@ -1,0 +1,66 @@
+name: Capacitor iOS build (unsigned)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "index.html"
+      - ".github/workflows/ios-build.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Create isolated Capacitor project
+        run: |
+          mkdir -p mobile-build/www
+          cp index.html mobile-build/www/index.html
+          cd mobile-build
+          npm init -y
+          npm install --no-audit --no-fund @capacitor/core@^8 @capacitor/cli@^8 @capacitor/ios@^8
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.pobarteru.app",
+            "appName": "ПО БАРТЕРУ",
+            "webDir": "www",
+            "ios": {
+              "contentInset": "automatic",
+              "backgroundColor": "#f5f6f2"
+            }
+          }
+          EOF
+          npx cap add ios
+          npx cap sync ios
+
+      - name: Build iOS device app (unsigned)
+        run: |
+          cd mobile-build
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Upload unsigned build for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: po-barteru-ios-unsigned
+          path: mobile-build/build/DerivedData/Build/Products/Debug-iphoneos/App.app
+          if-no-files-found: error
+          retention-days: 7
