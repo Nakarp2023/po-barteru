@@ -34,7 +34,7 @@ jobs:
           cp manifest.webmanifest icon.svg logo.webp sw.js mobile-build/www/
           cd mobile-build
           npm init -y
-          npm install --no-audit --no-fund @capacitor/core@^8 @capacitor/cli@^8 @capacitor/ios@^8
+          npm install --no-audit --no-fund @capacitor/core@^8 @capacitor/cli@^8 @capacitor/ios@^8 @capacitor/app@^8
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "com.pobarteru.app",
@@ -48,6 +48,11 @@ jobs:
           EOF
           npx cap add ios
           npx cap sync ios
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes array' ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0 dict' ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLName string com.pobarteru.app' ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array' ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string com.pobarteru.app' ios/App/App/Info.plist
 
       - name: Build iOS device app (unsigned)
         run: |
