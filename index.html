@@ -584,7 +584,7 @@ async function loadExchangeReputation(){
   const proposalId=btn.dataset.reviewProposal,reviewedUserId=btn.dataset.reviewUser,reviewerName=profileLocal().name||currentUser.email||"Участник";
   const {error}=await db.from("exchange_reviews").insert({proposal_id:proposalId,reviewer_id:currentUser.id,reviewed_user_id:reviewedUserId,rating,comment:comment.trim()});
   if(error){btn.disabled=false;toast(error.code==="23505"?"Ты уже оставил отзыв об этом обмене.":"Не удалось сохранить отзыв: "+error.message);return}
-  const {error:noticeError}=await db.from("notifications").insert({user_id:reviewedUserId,actor_id:currentUser.id,type:"exchange_review",title:"Новый отзыв о тебе",body:reviewerName+" оставил(а) оценку "+rating+"/5"+(comment.trim()?": "+comment.trim().slice(0,180):"."),proposal_id:proposalId});
+  const {error:noticeError}=await db.from("notifications").insert({user_id:reviewedUserId,actor_id:currentUser.id,type:"exchange_review",title:"Новый отзыв о тебе",body:"Отзыв о завершённом обмене будет опубликован после встречного отзыва или через 24 часа.",proposal_id:proposalId});
   if(noticeError)console.warn("Review saved but notification failed",noticeError.message);
   toast(noticeError?"Отзыв опубликован, но уведомление не отправилось.":"Спасибо! Отзыв опубликован, участник уведомлён.");
   await loadExchangeReputation();
