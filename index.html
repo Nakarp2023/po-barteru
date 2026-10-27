@@ -836,7 +836,7 @@ async function loadMyExchanges(){
   if(decision==="declined"&&!confirm("Отклонить это предложение обмена?"))return;
   btn.disabled=true;
   const {data,error}=await db.rpc("respond_to_exchange_proposal",{p_proposal_id:btn.dataset.proposalId,p_decision:decision});
-  if(error){toast("Не удалось обработать предложение: "+error.message);btn.disabled=false;return}
+  if(error){const conflict=error.code==="23505"||/exchange_proposals_one_accepted_per_(target|offered_listing)_idx|duplicate key/i.test(error.message||"");toast(conflict?"Это объявление уже участвует в другом принятом обмене. Обнови список предложений и выбери другое.":"Не удалось обработать предложение: "+(error.message||"ошибка"));btn.disabled=false;await loadMyExchanges();return}
   toast(decision==="accepted"?"Предложение принято. Чат создан.":"Предложение отклонено.");
   await loadMyExchanges();await refreshNotificationCount();
   if(decision==="accepted"&&data?.conversation_id){activeConversationId=data.conversation_id;await openConversation(data.conversation_id);$("chatThread").hidden=false;$("chatInbox").hidden=true;$("refreshChats").hidden=true;}
