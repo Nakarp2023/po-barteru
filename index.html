@@ -667,7 +667,7 @@ async function openConversation(id,title){
     const empty=$("chatMessages").querySelector(".category");if(empty&&/начало переписки|сообщений пока нет/i.test(empty.textContent))empty.remove();
     $("chatMessages").appendChild(row);rendered.add(String(m.id));if(!mine)addedIncoming=true;
    }
-   if(latest.length){const nearBottom=window.innerHeight-$("chatSendForm").getBoundingClientRect().bottom<180;if(nearBottom)requestAnimationFrame(()=> $("chatSendForm").scrollIntoView({block:"end",behavior:"auto"}));}
+   // Do not scroll during periodic polling: it runs every 2.5 seconds and causes viewport jumps.
    // Poll read receipts in case the Realtime UPDATE event was missed.
    const ownRows=latest.filter(m=>m.sender_id===currentUser.id&&m.read_at);
    ownRows.forEach(m=>{const row=$("chatMessages").querySelector('[data-message-row="'+m.id+'"]');const status=row?.querySelector(".message-status");if(status){status.className="message-status read";status.textContent="✓✓";status.setAttribute("aria-label","Прочитано");status.title="Прочитано"}});
