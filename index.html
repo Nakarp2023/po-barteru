@@ -217,7 +217,8 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 <div class="profile-edit profile-top-settings"><h3>Личные данные и настройки</h3><div class="push-settings"><div><b>Push-уведомления</b><p class="category" id="pushStatus">Уведомления на экране устройства</p></div><button type="button" class="pill" id="pushToggle">Включить</button></div><label class="field">Имя<input id="profileNameInput" maxlength="50" placeholder="Как к тебе обращаться"></label><label class="field">Город<input id="profileCityInput" maxlength="60" placeholder="Твой город"></label><p class="category">Способ входа: <span id="profileLoginMethod">Email</span></p><div class="profile-actions"><button class="pill" id="saveProfileBtn">Сохранить данные</button><button class="pill" id="profileSettingsMenu">Выйти из аккаунта</button></div></div>
 <div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div><section class="profile-section" id="monetizationSection">
 <div class="sectionhead"><h2>Тарифы и продвижение</h2><span class="category">Монетизация</span></div>
-<p class="category" style="line-height:1.5;margin:0 0 12px">Базовый обмен остаётся бесплатным. Платные услуги подключаются добровольно. Подключение тестовой оплаты ЮKassa готовится. До настройки тестовых реквизитов списаний нет.</p>
+<p class="category" style="line-height:1.5;margin:0 0 12px">Базовый обмен остаётся бесплатным. Тестовая оплата ЮKassa подключена: тестовые платежи не списывают реальные деньги. Для приёма реальных платежей потребуется отдельно подключить боевые реквизиты.</p>
+<div id="subscriptionStatus" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div>
 <div id="monetizationPlans" class="monetization-grid"><div class="monetization-plan"><h3>Загружаем тарифы…</h3></div></div>
 <div class="profile-section" style="padding:0;margin-top:16px"><div class="sectionhead"><h3 style="margin:0">История заказов</h3><button type="button" class="chip" id="refreshMonetizationOrders">Обновить</button></div><div id="monetizationOrders"><p class="category">Загружаем историю…</p></div></div>
 </section>
@@ -257,6 +258,19 @@ async function loadMonetizationOrders(){
  el.querySelectorAll("[data-check-payment]").forEach(btn=>btn.onclick=async()=>{if(!currentUser||!db)return;btn.disabled=true;btn.textContent="Проверяем…";try{const {data,error}=await db.functions.invoke("reconcile-yookassa-payment",{body:{order_id:btn.dataset.checkPayment}});if(error)throw error;if(data?.ok){toast(data.already_paid?"Заказ уже оплачен.":"Оплата подтверждена, заказ обновлён.");await loadMonetizationOrders();await loadProfileDashboard();}else if(data?.error==="payment_not_confirmed"){toast("ЮKassa пока не подтверждает оплату. Статус: "+(data.provider_status||"неизвестен"));}else{toast("Не удалось подтвердить оплату: "+(data?.error||"ошибка"));}}catch(e){let detail=null;try{const response=e?.context;if(response&&typeof response.clone==="function"){const parsed=await response.clone().json();if(parsed&&typeof parsed==="object")detail=parsed;}}catch{}const code=detail?.error||"";if(code==="payment_not_confirmed"){toast("ЮKassa пока не подтвердила оплату. Статус: "+(detail.provider_status||"неизвестен"));}else if(code==="payment_provider_not_configured"){toast("Платёжный сервис не настроен в Supabase: проверьте YOOKASSA_MODE=test, YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.");}else if(code==="payment_not_linked_to_order"){toast("У этого заказа нет привязанного платежа ЮKassa. Создайте новый заказ и оплатите его.");}else if(code==="order_not_payable"){toast("Заказ нельзя проверить: его статус — "+(detail.status||"неоплачиваемый")+".");}else if(code==="provider_payment_lookup_failed"||code==="provider_api_unreachable"){toast("Не удалось связаться с ЮKassa. Проверьте ключи и доступность API.");}else{toast("Ошибка проверки оплаты ("+(e?.context?.status||"сеть") + "). Попробуйте позже.");}}finally{btn.disabled=false;btn.textContent="Проверить оплату";}});
 }
 setInterval(()=>{if(currentUser&&db)loadMonetizationOrders()},30000);
+async function loadActiveSubscription(){
+ const el=$("subscriptionStatus");if(!el)return;
+ if(!currentUser||!db){el.hidden=true;return}
+ const now=new Date().toISOString();
+ const {data,error}=await db.from("user_subscriptions").select("plan_code,starts_at,ends_at,status").eq("user_id",currentUser.id).eq("status","active").lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(1).maybeSingle();
+ el.hidden=false;
+ if(error){el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Обнови профиль позже.</div></article>';return}
+ if(!data){el.innerHTML='<article class="card" style="padding:14px"><b>Ваш тариф: Free</b><div class="category" style="margin-top:6px">До 3 активных объявлений. Платный тариф можно подключить ниже.</div></article>';return}
+ const names={pro:"PRO",pro_plus:"PRO+",business:"Business"};
+ const until=new Date(data.ends_at).toLocaleDateString("ru-RU");
+ const days=Math.max(0,Math.ceil((new Date(data.ends_at).getTime()-Date.now())/86400000));
+ el.innerHTML='<article class="card" style="padding:14px;border-color:#d7efaa"><b>Ваш тариф: '+esc(names[data.plan_code]||data.plan_code)+'</b><div class="category" style="margin-top:6px">Активен до '+esc(until)+' · осталось '+days+' дн.</div></article>';
+}
 async function loadMonetizationPlans(){
  const el=$("monetizationPlans");if(!el||!db)return;
  const fallback=[
@@ -282,7 +296,7 @@ $("profileAddListing").onclick=openForm;$("refreshExchanges").onclick=loadMyExch
 $("profileSettingsMenu").onclick=async()=>{await db.auth.signOut();await syncProfile();toast("Вы вышли из аккаунта")};
 let editingListingId=null,editingImageUrls=[],editingListingStatus="active";
 async function loadProfileDashboard(){
- loadMonetizationPlans();loadMonetizationOrders();
+ loadMonetizationPlans();loadMonetizationOrders();loadActiveSubscription();
  if(profileBusy||!currentUser||!db)return;profileBusy=true;
  try{
  const p=profileLocal(),name=p.name||((currentUser.email||"Участник").split("@")[0]);
