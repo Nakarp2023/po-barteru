@@ -380,7 +380,9 @@ async function loadPromotionCredits(){
  const el=$("promotionCreditsPanel");if(!el)return;
  if(!currentUser||!db){el.hidden=true;return}
  const now=new Date().toISOString();
- const {data,error}=await db.from("promotion_credit_wallets").select("id,boost_credits,highlight_credits,vip_credits,ends_at").eq("user_id",currentUser.id).lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(1).maybeSingle();
+ const {data:proPlusSubscription}=await db.from("user_subscriptions").select("id").eq("user_id",currentUser.id).eq("plan_code","pro_plus").eq("status","active").lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(1).maybeSingle();
+ if(!proPlusSubscription){el.hidden=true;return}
+ const {data,error}=await db.from("promotion_credit_wallets").select("id,boost_credits,highlight_credits,vip_credits,ends_at").eq("user_id",currentUser.id).eq("subscription_id",proPlusSubscription.id).lte("starts_at",now).gt("ends_at",now).maybeSingle();
  if(error||!data){el.hidden=true;return}
  const until=new Date(data.ends_at).toLocaleDateString("ru-RU");
  const rows=[["boost_24h","Поднять на 24 часа",data.boost_credits,"↑"],["highlight_7d","Выделить на 7 дней",data.highlight_credits,"✦"],["vip_7d","VIP на 7 дней",data.vip_credits,"👑"]];
