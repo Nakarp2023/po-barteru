@@ -250,7 +250,7 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 <section id="profileDashboard" hidden>
 <div class="profile-card"><div class="profile-avatar" id="profileAvatar">Б</div><div class="profile-main"><h2 id="profileName">Мой профиль</h2><p id="profileEmail" class="category"></p></div><span class="category">Аккаунт</span></div>
 <div class="profile-edit profile-top-settings"><h3>Личные данные и настройки</h3><div class="push-settings"><div><b>Push-уведомления</b><p class="category" id="pushStatus">Уведомления на экране устройства</p></div><button type="button" class="pill" id="pushToggle">Включить</button></div><label class="field">Имя<input id="profileNameInput" maxlength="50" placeholder="Как к тебе обращаться"></label><label class="field">Город<input id="profileCityInput" maxlength="60" placeholder="Твой город"></label><p class="category">Способ входа: <span id="profileLoginMethod">Email</span></p><div class="profile-actions"><button class="pill" id="saveProfileBtn">Сохранить данные</button><button class="pill" id="profileSettingsMenu">Выйти из аккаунта</button></div></div>
-<div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div><div class="profile-section"><div class="sectionhead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div></div><div class="profile-section" id="exchangeSection"><div class="sectionhead"><h2>Предложения обмена</h2><button class="chip" id="refreshExchanges">Обновить</button></div><div id="myExchanges" class="my-listings"><p class="category">Загружаем предложения…</p></div></div><section class="profile-section" id="monetizationSection">
+<div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div><div class="profile-section"><div class="sectionhead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div></div><div class="profile-section" id="exchangeSection"><div class="sectionhead"><h2>Предложения обмена</h2><button class="chip" id="refreshExchanges">Обновить</button></div><div id="myExchanges" class="my-listings"><p class="category">Загружаем предложения…</p></div></div><div class="profile-section" id="savedSearchesPanel" hidden><div class="sectionhead"><h2>Сохранённые поиски</h2></div><div id="savedSearchesList" class="my-listings"></div></div><section class="profile-section" id="monetizationSection">
 <div class="sectionhead"><h2>Тарифы и продвижение</h2><span class="category">Монетизация</span></div>
 <p class="category monetization-disclosure" style="line-height:1.45;margin:0 0 12px">Базовый обмен бесплатный. ЮKassa работает в тестовом режиме — реальные платежи пока не принимаются.</p>
 <div id="subscriptionStatus" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div><div id="promotionCreditsPanel" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div><div id="businessTeamPanel" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div>
@@ -344,6 +344,15 @@ function choosePromotionListing(listings){
   document.addEventListener("keydown",onKey);modal.classList.add("open");modal.setAttribute("aria-hidden","false");
  });
 }
+async function loadSavedSearches(){
+ const panel=$("savedSearchesPanel"),list=$("savedSearchesList");if(!panel||!list)return;
+ if(!currentUser||!db){panel.hidden=true;return}
+ const {data,error}=await db.from("saved_searches").select("id,name,query_text,category,city,min_price,max_price,is_active,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(30);
+ if(error||!data?.length){panel.hidden=true;return}
+ panel.hidden=false;
+ list.innerHTML=data.map(item=>'<article class="card" style="padding:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div style="min-width:0"><b style="overflow-wrap:anywhere">'+esc(item.name||"Сохранённый поиск")+'</b><div class="category" style="margin-top:5px">'+esc([item.category,item.city].filter(Boolean).join(" · ")||"Без ограничений по категории и городу")+'</div>'+(item.min_price!==null||item.max_price!==null?'<div class="category" style="margin-top:4px">Цена: '+(item.min_price===null?"от 0":Number(item.min_price).toLocaleString("ru-RU"))+' — '+(item.max_price===null?"без лимита":Number(item.max_price).toLocaleString("ru-RU"))+' ₽</div>':"")+'</div><button type="button" class="chip" data-delete-search="'+esc(item.id)+'" style="padding:7px 9px">Удалить</button></div><div class="category" style="margin-top:8px">Уведомления о совпадениях: '+(item.is_active&&["pro","pro_plus","business"].includes(activePlanCode)?"включены":"неактивны без тарифа PRO+")+'</div></article>').join("");
+ list.querySelectorAll("[data-delete-search]").forEach(btn=>btn.onclick=async()=>{const {error}=await db.from("saved_searches").delete().eq("id",btn.dataset.deleteSearch).eq("user_id",currentUser.id);if(error){toast("Не удалось удалить поиск.");return}await loadSavedSearches();toast("Сохранённый поиск удалён.")});
+}
 async function loadBusinessTeam(){
  const el=$("businessTeamPanel");if(!el)return;
  if(!currentUser||!db){el.hidden=true;return}
@@ -430,7 +439,7 @@ $("profileAddListing").onclick=openForm;$("refreshExchanges").onclick=loadMyExch
 $("profileSettingsMenu").onclick=async()=>{await db.auth.signOut();await syncProfile();toast("Вы вышли из аккаунта")};
 let editingListingId=null,editingImageUrls=[],editingListingStatus="active";
 async function loadProfileDashboard(){
- loadMonetizationPlans();loadMonetizationOrders();loadActiveSubscription();loadPromotionCredits();loadBusinessTeam();
+ loadMonetizationPlans();loadMonetizationOrders();loadActiveSubscription();loadPromotionCredits();loadBusinessTeam();loadSavedSearches();
  if(profileBusy||!currentUser||!db)return;profileBusy=true;
  try{
  const p=profileLocal(),name=p.name||((currentUser.email||"Участник").split("@")[0]);
