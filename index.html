@@ -541,6 +541,8 @@ async function loadProfileDashboard(){
 
 let activeConversationId=null;
 let chatReceiptChannel=null;
+let chatSyncTimer=null;
+let chatSyncBusy=false;
 let dealPanelRefreshTimer=null;
 function startDealPanelRefresh(id){if(dealPanelRefreshTimer)clearInterval(dealPanelRefreshTimer);let refreshing=false;dealPanelRefreshTimer=setInterval(async()=>{if(document.hidden||refreshing||activeConversationId!==id||$("chatThread").hidden)return;const details=$("chatDealPanel")?.querySelector("details");if(details&&details.open)return;refreshing=true;try{await loadChatDealPanel(id)}finally{refreshing=false}},12000)}
 
@@ -639,10 +641,22 @@ async function openConversation(id,title){
    if(!$("chatMessages").querySelector("[data-message-row]"))$("chatMessages").innerHTML='<p class="category">Сообщений пока нет. Напиши первое сообщение ниже.</p>';
  });
  $("chatMessageInput").value="";
+ // Fallback sync: if Realtime is unavailable on a mobile connection, reconcile the open chat every 3 seconds.
+ if(!chatSyncTimer){chatSyncTimer=setInterval(async()=>{
+  if(chatSyncBusy||!db||!currentUser||!activeConversationId||$("chatThread").hidden)return;
+  chatSyncBusy=true;const cid=activeConversationId;
+  try{
+   const {data:latest,error:syncError}=await db.from("messages").select("id").eq("conversation_id",cid).order("created_at",{ascending:false}).limit(200);
+   if(!syncError&&cid===activeConversationId&&Array.isArray(latest)){
+    const rendered=new Set(Array.from($("chatMessages").querySelectorAll("[data-message-row]")).map(el=>el.dataset.messageRow));
+    if(latest.some(m=>!rendered.has(String(m.id))))await openConversation(cid,$("chatTitle").textContent);
+   }
+  }catch(e){}finally{chatSyncBusy=false}
+ },3000)}
  startDealPanelRefresh(id);
  await loadChatDealPanel(id);
 }
-$("chatBack").onclick=()=>{if(dealPanelRefreshTimer){clearInterval(dealPanelRefreshTimer);dealPanelRefreshTimer=null}if(chatReceiptChannel){db.removeChannel(chatReceiptChannel);chatReceiptChannel=null}activeConversationId=null;$("chatThread").hidden=true;$("chatInbox").hidden=false;$("refreshChats").hidden=false;loadChats();$("chatInbox").scrollIntoView({behavior:"smooth",block:"start"})};
+$("chatBack").onclick=()=>{if(chatSyncTimer){clearInterval(chatSyncTimer);chatSyncTimer=null}chatSyncBusy=false;if(dealPanelRefreshTimer){clearInterval(dealPanelRefreshTimer);dealPanelRefreshTimer=null}if(chatReceiptChannel){db.removeChannel(chatReceiptChannel);chatReceiptChannel=null}activeConversationId=null;$("chatThread").hidden=true;$("chatInbox").hidden=false;$("refreshChats").hidden=false;loadChats();$("chatInbox").scrollIntoView({behavior:"smooth",block:"start"})};
 $("refreshChats").onclick=loadChats;
 $("chatSendForm").onsubmit=async e=>{e.preventDefault();const body=$("chatMessageInput").value.trim();if(!body||!activeConversationId||!currentUser)return;const btn=e.submitter;btn.disabled=true;const conversationId=activeConversationId;const {error}=await db.from("messages").insert({conversation_id:conversationId,sender_id:currentUser.id,body});btn.disabled=false;if(error){toast("Не удалось отправить: "+error.message);return}if(activeConversationId===conversationId){$("chatMessageInput").value="";}};
 async function loadMyExchanges(){
