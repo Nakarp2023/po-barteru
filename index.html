@@ -240,6 +240,75 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 .listing-analytics{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.listing-analytics span{font-size:11px;color:#315b4d;background:#edf6ef;border:1px solid #d0e6d6;border-radius:8px;padding:4px 6px;font-weight:700}
 .advanced-search{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px}.advanced-search-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;font-weight:800}.advanced-search-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.advanced-search-fields input{width:100%;min-width:0;border:1px solid var(--line);border-radius:11px;padding:10px 11px;background:#fff}.advanced-search-fields .city-filter{grid-column:1/-1}.advanced-search-actions{display:flex;gap:8px;margin-top:9px}.advanced-search-actions button{flex:1;border:0;border-radius:10px;padding:10px 8px;font-size:12px;font-weight:800}.advanced-search-save{background:var(--green);color:#fff}.advanced-search-reset{background:#edf2e8;color:var(--green)}.advanced-search-note{font-size:11px;color:var(--muted);line-height:1.4;margin:8px 0 0}
 .promotion-ribbon{max-width:calc(100% - 18px);white-space:normal;line-height:1.15}
+
+/* 2026 UI refinement: restrained minimalist system, accessibility, safer mobile interactions */
+:root{
+  --green:#173f35;
+  --lime:#d9edb5;
+  --bg:#f6f7f3;
+  --ink:#18241f;
+  --muted:#65736b;
+  --line:#e2e7df;
+  --surface:#fffefa;
+  --surface-soft:#eef2eb;
+  --focus:#8abf75;
+}
+body{background:var(--bg);color:var(--ink);line-height:1.45}
+button,input,select,textarea{accent-color:var(--green)}
+button{transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid var(--focus);outline-offset:3px
+}
+.app{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+.top{padding-top:max(14px,env(safe-area-inset-top));padding-bottom:16px}
+.hero{
+  border-radius:26px;
+  background:linear-gradient(135deg,#173f35 0%,#205344 100%);
+  box-shadow:0 12px 30px #173f3514;
+}
+.hero .pill{box-shadow:0 2px 0 #ffffff18 inset}
+.pill,.chip,.offer,.actions button,.sheet .actions button{min-height:44px}
+.pill:hover,.offer:hover,.actions .primary:hover,.sheet .actions .primary:hover{background:#245b49}
+.search input,.field input,.field select,.field textarea,.sheet .field input,.sheet .field select,.sheet .field textarea{
+  color:var(--ink);border-color:var(--line);background:var(--surface);transition:border-color .16s ease,box-shadow .16s ease
+}
+.search input:focus,.field input:focus,.field select:focus,.field textarea:focus,.sheet .field input:focus,.sheet .field select:focus,.sheet .field textarea:focus{
+  border-color:var(--focus);box-shadow:0 0 0 3px #8abf752b;outline:none
+}
+.card{border-color:var(--line);border-radius:18px;box-shadow:0 2px 8px #18241f05;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.cardbody{padding:14px}
+.card h3{letter-spacing:-.2px}
+.photo{background:linear-gradient(135deg,#e9efe5,#f6efe2)}
+.offer{font-weight:750}
+.chip{transition:background-color .16s ease,color .16s ease,border-color .16s ease}
+.bottom{
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  background:#fffefaed;
+  border-top-color:#dfe5dd;
+}
+.nav{min-width:48px;min-height:44px;align-content:center}
+.modal{padding:12px;padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.sheet{background:var(--surface);border:1px solid #e5e9e2;box-shadow:0 20px 60px #0d1d1830}
+.sheet .actions{background:var(--surface)}
+.toast{box-shadow:0 8px 26px #0d1d1826;bottom:calc(88px + env(safe-area-inset-bottom))}
+.empty{line-height:1.55}
+@media(hover:hover) and (pointer:fine){
+  .card:hover{transform:translateY(-2px);box-shadow:0 10px 24px #18241f0c;border-color:#d3ddd0}
+  .chip:hover{border-color:#aab9a7}
+}
+@media(max-width:480px){
+  .app{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+  .hero{border-radius:23px}
+  .cardbody{padding:11px}
+  .photo{min-height:112px}
+  .bottom{justify-content:space-around;gap:4px}
+  .nav{flex:1 1 0;font-size:10px}
+  .sheet{border-radius:22px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><main class="app"><header class="top"><div class="brand"><span class="mark" aria-label="Логотип ПО БАРТЕРУ"><img src="/logo.webp?v=1" alt="" /></span><span>ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления">🔔<span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="stats"><div><b>Товары</b>и услуги</div><div><b>Вся Россия</b>рядом и онлайн</div><div><b>Без комиссии</b>за обмен в MVP</div></div></section><div class="search" id="homeSearch"><input id="q" placeholder="🔎  Что хочешь найти?"><button class="pill" id="searchBtn">Найти</button></div><section class="advanced-search" id="advancedSearchPanel" hidden><div class="advanced-search-head"><span>Расширенный поиск</span><span class="category">PRO</span></div><div class="advanced-search-fields"><input class="city-filter" id="advancedCity" maxlength="60" placeholder="Город"><input id="advancedMinPrice" type="number" min="0" placeholder="Цена от, ₽"><input id="advancedMaxPrice" type="number" min="0" placeholder="Цена до, ₽"></div><div class="advanced-search-actions"><button type="button" class="advanced-search-reset" id="resetAdvancedSearch">Сбросить</button><button type="button" class="advanced-search-save" id="saveMatchingSearch">Сохранить поиск</button></div><p class="advanced-search-note">Сохранённый поиск присылает уведомления о новых совпадениях, пока активен тариф PRO или выше.</p></section><div class="sectionhead" id="listHeader"><h2 id="listTitle">Подходящие предложения</h2><span id="count" class="category"></span></div><div class="filters" id="filters"></div><section class="grid" id="list"></section><p class="empty" id="empty" hidden>Ничего не найдено. Попробуй другую категорию или поисковый запрос.</p><section id="other" hidden><div class="sectionhead"><h2 id="otherTitle">Раздел</h2></div><div id="otherEmpty" class="empty-state" hidden><div class="empty-icon" id="otherEmptyIcon">✉</div><h3 id="otherEmptyTitle">Пока здесь пусто</h3><p id="otherEmptyText">Когда появятся обновления, они будут здесь.</p><button class="pill" id="otherEmptyAction">Перейти к объявлениям</button></div><section id="notificationsWorkspace" hidden><div class="sectionhead notification-head"><h2>Уведомления</h2><div class="notification-actions"><button class="chip" id="markAllNotificationsRead">Пометить все как прочитанные</button><button class="chip" id="refreshNotifications">Обновить</button></div></div><div id="notificationsList" class="my-listings"><p class="category">Загружаем уведомления…</p></div></section><section id="chatWorkspace" hidden><div id="chatNotice" class="category" style="margin:12px 0"></div><div id="chatInbox" class="my-listings"></div><div id="chatThread" hidden class="profile-edit"><div class="sectionhead"><h2 id="chatTitle">Переписка</h2><button class="chip" id="chatBack">← Все чаты</button></div><div id="chatDealPanel" class="my-listing" style="display:block;margin-top:12px" hidden></div><div id="chatMessages" style="display:grid;gap:10px;margin:14px 0"></div><form id="chatSendForm"><label class="field">Сообщение<textarea id="chatMessageInput" rows="2" maxlength="4000" required placeholder="Напиши сообщение…"></textarea></label><button class="pill" type="submit">Отправить</button></form></div><button class="chip" id="refreshChats" style="margin-top:14px">Обновить сообщения</button></section><p id="profileStatus" hidden>Подключение к сервису…</p>
 <div id="authBox">
 <div style="display:flex;gap:8px;margin:12px 0"><button type="button" class="pill" id="authEmailMode">По email</button><button type="button" class="pill" id="authPhoneMode" style="background:#e7eae5">По телефону</button></div>
