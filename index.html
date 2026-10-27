@@ -186,6 +186,7 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 <div class="sectionhead"><h2>Тарифы и продвижение</h2><span class="category">Монетизация</span></div>
 <p class="category" style="line-height:1.5;margin:0 0 12px">Базовый обмен остаётся бесплатным. Платные услуги подключаются добровольно. Оплата в приложении пока не активирована.</p>
 <div id="monetizationPlans" class="monetization-grid"><div class="monetization-plan"><h3>Загружаем тарифы…</h3></div></div>
+<div class="profile-section" style="padding:0;margin-top:16px"><div class="sectionhead"><h3 style="margin:0">История заказов</h3><button type="button" class="chip" id="refreshMonetizationOrders">Обновить</button></div><div id="monetizationOrders"><p class="category">Загружаем историю…</p></div></div>
 </section>
 <div class="profile-section"><div class="sectionhead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div></div><div class="profile-section" id="exchangeSection"><div class="sectionhead"><h2>Предложения обмена</h2><button class="chip" id="refreshExchanges">Обновить</button></div><div id="myExchanges" class="my-listings"><p class="category">Загружаем предложения…</p></div></div>
 
@@ -208,6 +209,16 @@ function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 
 
 
+async function loadMonetizationOrders(){
+ const el=$("monetizationOrders");if(!el)return;
+ if(!currentUser||!db){el.innerHTML='<p class="category">Войди в аккаунт, чтобы видеть свои заказы.</p>';return}
+ el.innerHTML='<p class="category">Загружаем историю…</p>';
+ const {data,error}=await db.from("monetization_orders").select("id,plan_code,amount_kopeks,currency,status,created_at,description").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(20);
+ if(error){el.innerHTML='<p class="category">История заказов временно недоступна.</p>';return}
+ if(!data?.length){el.innerHTML='<p class="category">Заказов пока нет.</p>';return}
+ const labels={pending:"Ожидает оплаты",requires_action:"Требуется действие",paid:"Оплачен",failed:"Ошибка оплаты",cancelled:"Отменён",refunded:"Возвращён",partially_refunded:"Частично возвращён"};
+ el.innerHTML='<div class="my-listings">'+data.map(o=>'<article class="card" style="padding:12px;margin-bottom:8px"><b>'+esc(o.description||o.plan_code||"Услуга")+'</b><div style="margin-top:5px;font-weight:800">'+(Number(o.amount_kopeks)/100).toLocaleString("ru-RU")+' ₽</div><div class="category" style="margin-top:5px">'+esc(labels[o.status]||"Статус уточняется")+' · '+new Date(o.created_at).toLocaleDateString("ru-RU")+'</div></article>').join("")+'</div>';
+}
 async function loadMonetizationPlans(){
  const el=$("monetizationPlans");if(!el||!db)return;
  const fallback=[
@@ -229,11 +240,11 @@ function profileLocal(){return loadJSON("po_barteru_profile_"+(currentUser?.id||
 function showProfileEdit(){const p=profileLocal();$("profileNameInput").value=p.name||"";$("profileCityInput").value=p.city||""}
 
 $("saveProfileBtn").onclick=()=>{const p={name:$("profileNameInput").value.trim(),city:$("profileCityInput").value.trim()};localStorage.setItem("po_barteru_profile_"+currentUser.id,JSON.stringify(p));render();toast("Данные профиля сохранены на этом устройстве")};
-$("profileAddListing").onclick=openForm;$("refreshExchanges").onclick=loadMyExchanges;
+$("profileAddListing").onclick=openForm;$("refreshExchanges").onclick=loadMyExchanges;$("refreshMonetizationOrders")?.addEventListener("click",loadMonetizationOrders);
 $("profileSettingsMenu").onclick=async()=>{await db.auth.signOut();await syncProfile();toast("Вы вышли из аккаунта")};
 let editingListingId=null,editingImageUrls=[];
 async function loadProfileDashboard(){
- loadMonetizationPlans();
+ loadMonetizationPlans();loadMonetizationOrders();
  if(profileBusy||!currentUser||!db)return;profileBusy=true;
  try{
  const p=profileLocal(),name=p.name||((currentUser.email||"Участник").split("@")[0]);
