@@ -253,7 +253,7 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 <div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div><div class="profile-section"><div class="sectionhead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div></div><div class="profile-section" id="exchangeSection"><div class="sectionhead"><h2>Предложения обмена</h2><button class="chip" id="refreshExchanges">Обновить</button></div><div id="myExchanges" class="my-listings"><p class="category">Загружаем предложения…</p></div></div><section class="profile-section" id="monetizationSection">
 <div class="sectionhead"><h2>Тарифы и продвижение</h2><span class="category">Монетизация</span></div>
 <p class="category monetization-disclosure" style="line-height:1.45;margin:0 0 12px">Базовый обмен бесплатный. ЮKassa работает в тестовом режиме — реальные платежи пока не принимаются.</p>
-<div id="subscriptionStatus" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div><div id="promotionCreditsPanel" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div>
+<div id="subscriptionStatus" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div><div id="promotionCreditsPanel" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div><div id="businessTeamPanel" class="profile-section" style="padding:0;margin:0 0 12px" hidden></div>
 <div id="monetizationPlans" class="monetization-grid"><div class="monetization-plan"><h3>Загружаем тарифы…</h3></div></div>
 
 </section>
@@ -343,6 +343,38 @@ function choosePromotionListing(listings){
   document.addEventListener("keydown",onKey);modal.classList.add("open");modal.setAttribute("aria-hidden","false");
  });
 }
+async function loadBusinessTeam(){
+ const el=$("businessTeamPanel");if(!el)return;
+ if(!currentUser||!db){el.hidden=true;return}
+ const now=new Date().toISOString();
+ const {data:businessPlan}=await db.from("user_subscriptions").select("ends_at").eq("user_id",currentUser.id).eq("plan_code","business").eq("status","active").lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(1).maybeSingle();
+ const [{data:ownedMembers,error:ownedError},{data:memberships,error:memberError}]=await Promise.all([
+  db.from("business_team_members").select("id,member_user_id,member_email,created_at").eq("owner_user_id",currentUser.id).order("created_at",{ascending:true}),
+  db.from("business_team_members").select("id,owner_user_id,member_email,created_at").eq("member_user_id",currentUser.id).order("created_at",{ascending:true})
+ ]);
+ if(ownedError||memberError){el.hidden=true;return}
+ if(!businessPlan&&!(memberships||[]).length){el.hidden=true;return}
+ el.hidden=false;
+ let html='';
+ if(businessPlan){
+  html+='<article class="card" style="padding:14px;margin-bottom:10px"><div style="font-weight:900">Команда Business</div><p class="category" style="margin:5px 0 12px">До 5 участников могут просматривать общие объявления и статистику.</p><label style="display:block;font-size:12px;font-weight:700;margin-bottom:6px" for="businessTeamEmail">Email зарегистрированного участника</label><div style="display:flex;gap:7px"><input id="businessTeamEmail" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1;min-width:0;border:1px solid var(--line);border-radius:11px;padding:10px"><button type="button" id="businessTeamInvite" class="pill" style="padding:10px 12px">Добавить</button></div><div style="display:grid;gap:7px;margin-top:12px">'+((ownedMembers||[]).length?(ownedMembers||[]).map(m=>'<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f4f6f1;border-radius:11px;padding:9px 10px"><span style="font-size:12px;overflow-wrap:anywhere">'+esc(m.member_email)+'</span><button type="button" class="chip" data-team-remove="'+esc(m.id)+'" style="padding:6px 9px">Убрать</button></div>').join(""):'<p class="category">Пока никого нет в команде.</p>')+'</div></article>';
+ }
+ if((memberships||[]).length){
+  const ownerIds=[...new Set(memberships.map(m=>m.owner_user_id))];
+  const [{data:owners},{data:sharedListings},{data:viewStats}]=await Promise.all([
+   db.from("profiles").select("id,display_name,city").in("id",ownerIds),
+   db.from("listings").select("id,user_id,title").in("user_id",ownerIds).eq("status","active"),
+   db.rpc("get_my_listing_view_stats")
+  ]);
+  const ownerMap=new Map((owners||[]).map(o=>[String(o.id),o]));
+  const statsMap=new Map((viewStats||[]).map(v=>[String(v.listing_id),Number(v.views_30d)||0]));
+  html+='<article class="card" style="padding:14px"><div style="font-weight:900;margin-bottom:10px">Общие рабочие пространства</div>'+memberships.map(m=>{const owner=ownerMap.get(String(m.owner_user_id));const listings=(sharedListings||[]).filter(l=>String(l.user_id)===String(m.owner_user_id));const views=listings.reduce((sum,l)=>sum+(statsMap.get(String(l.id))||0),0);return '<div style="padding:10px 0;border-top:1px solid var(--line)"><b>'+esc(owner?.display_name||m.member_email||"Business-аккаунт")+'</b><div class="category" style="margin-top:5px">'+listings.length+' активных объявлений · '+views+' просмотров за 30 дней</div></div>'}).join("")+'</article>';
+ }
+ el.innerHTML=html;
+ const invite=$("businessTeamInvite");
+ if(invite)invite.onclick=async()=>{const input=$("businessTeamEmail"),email=input.value.trim().toLowerCase();if(!email){toast("Введи email участника.");return}invite.disabled=true;try{const {data,error}=await db.rpc("invite_business_team_member",{p_email:email});if(error)throw error;if(data?.already_member)toast("Этот участник уже добавлен.");else toast("Участник добавлен. Он увидит командный доступ после обновления профиля.");await loadBusinessTeam()}catch(e){toast("Не удалось добавить участника: "+(e?.message||"ошибка"))}finally{invite.disabled=false}};
+ el.querySelectorAll("[data-team-remove]").forEach(btn=>btn.onclick=async()=>{const {error}=await db.from("business_team_members").delete().eq("id",btn.dataset.teamRemove).eq("owner_user_id",currentUser.id);if(error){toast("Не удалось убрать участника.");return}toast("Доступ участника закрыт.");await loadBusinessTeam()});
+}
 async function loadPromotionCredits(){
  const el=$("promotionCreditsPanel");if(!el)return;
  if(!currentUser||!db){el.hidden=true;return}
@@ -395,7 +427,7 @@ $("profileAddListing").onclick=openForm;$("refreshExchanges").onclick=loadMyExch
 $("profileSettingsMenu").onclick=async()=>{await db.auth.signOut();await syncProfile();toast("Вы вышли из аккаунта")};
 let editingListingId=null,editingImageUrls=[],editingListingStatus="active";
 async function loadProfileDashboard(){
- loadMonetizationPlans();loadMonetizationOrders();loadActiveSubscription();loadPromotionCredits();
+ loadMonetizationPlans();loadMonetizationOrders();loadActiveSubscription();loadPromotionCredits();loadBusinessTeam();
  if(profileBusy||!currentUser||!db)return;profileBusy=true;
  try{
  const p=profileLocal(),name=p.name||((currentUser.email||"Участник").split("@")[0]);
