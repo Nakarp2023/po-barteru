@@ -317,7 +317,7 @@ async function loadActiveSubscription(){
  const now=new Date().toISOString();
  const {data,error}=await db.from("user_subscriptions").select("plan_code,starts_at,ends_at,status").eq("user_id",currentUser.id).eq("status","active").lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(1).maybeSingle();
  el.hidden=false;
- if(error){activePlanCode="free";if(el)el.hidden=true;return;/* tariff lookup failed */ el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Обнови профиль позже.</div></article>';return}
+ if(error){activePlanCode="free";el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Обнови профиль позже.</div></article>';return}
  if(!data){activePlanCode="free";if(el)el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Ваш тариф: Free</b><div class="category" style="margin-top:6px">До 3 активных объявлений. Платный тариф можно подключить ниже.</div></article>';return}
  activePlanCode=data.plan_code||"free";
  const names={pro:"PRO",pro_plus:"PRO+",business:"Business"};
