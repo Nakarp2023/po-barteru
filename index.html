@@ -1903,6 +1903,9 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 #cityPickerConfirm{max-width:none;min-width:0;white-space:normal;overflow-wrap:anywhere;text-overflow:clip}
 #cityPickerModal .sheet .actions{display:flex;gap:10px;align-items:stretch}
 #cityPickerModal #cityPickerCancel,#cityPickerModal #cityPickerConfirm{flex:1 1 0;width:0;max-width:none;min-width:0;padding:12px 10px;font-size:14px;line-height:1.25}
+
+/* Keep internal catalog diagnostics out of the listing form UI. */
+#cityCatalogStatus{display:none!important}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
