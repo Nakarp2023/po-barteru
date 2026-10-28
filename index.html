@@ -383,6 +383,16 @@ button{min-height:42px}
 .top .brand>span:last-child{color:var(--ink);text-shadow:none}
 .top .brand img{image-rendering:auto}
 
+
+/* Final iPhone viewport clearance: the fixed five-tab bar must not hide the last controls. */
+.app{padding-bottom:calc(220px + env(safe-area-inset-bottom))!important}
+@media(max-width:480px){.app{padding-bottom:calc(230px + env(safe-area-inset-bottom))!important}}
+html,body{scroll-padding-bottom:calc(230px + env(safe-area-inset-bottom))}
+#profileDashboard,#myListings,#myListings> :last-child{scroll-margin-bottom:calc(230px + env(safe-area-inset-bottom))}
+.top{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;transform:none!important}
+.top .brand{filter:none!important;-webkit-filter:none!important;text-shadow:none!important}
+.top .brand>span:last-child{font-weight:900;letter-spacing:-.25px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
