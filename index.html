@@ -2098,16 +2098,7 @@ if (Capacitor.isNativePlatform()) {
 #profileDashboard.listings-only .my-listing-filters{gap:7px!important}
 @media(max-width:370px){#profileDashboard.listings-only #myListings .my-listing{grid-template-columns:58px minmax(0,1fr)!important;padding:9px!important;gap:8px!important}#profileDashboard.listings-only #myListings .my-listing-thumb{width:58px!important}#profileDashboard.listings-only #myListings .my-actions>button{font-size:11px!important}}
 
-/* Simplify the floating iPhone tab bar: remove the oversized lens overlay and keep one clear active state. */
-.bottom:before,.bottom:after{display:none!important;content:none!important}
-.bottom{overflow:visible!important;padding:6px!important;background:rgba(248,250,247,.92)!important;border:1px solid rgba(255,255,255,.95)!important;box-shadow:0 10px 30px rgba(18,42,33,.12),inset 0 1px 0 rgba(255,255,255,.98)!important;backdrop-filter:blur(24px) saturate(160%)!important;-webkit-backdrop-filter:blur(24px) saturate(160%)!important}
-.bottom .nav{position:relative!important;z-index:1!important;min-width:0!important;min-height:58px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;padding:7px 2px!important;border-radius:18px!important;font-size:10px!important;line-height:1.1!important;letter-spacing:0!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;text-align:center!important;transform:none!important;color:#526159!important;background:transparent!important}
-.bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{display:grid!important;place-items:center!important;width:24px!important;height:24px!important;flex:0 0 24px!important;margin:0!important}
-.bottom .nav .nav-symbol svg{display:block!important;width:23px!important;height:23px!important;max-width:23px!important;max-height:23px!important}
-.bottom .nav.active{background:#e5f3d9!important;color:#175541!important;font-weight:800!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95)!important}
-.bottom .nav[data-page="my-listings"]{font-size:9px!important;letter-spacing:-.1px!important}
-@media(max-width:390px){.bottom{left:9px!important;right:9px!important;bottom:calc(7px + env(safe-area-inset-bottom))!important}.bottom .nav{font-size:9px!important;min-height:56px!important;padding:6px 1px!important}.bottom .nav[data-page="my-listings"]{font-size:8.5px!important}}
-
+/* Removed obsolete tab-bar override that disabled the Liquid Glass lens and shine. */
 
 /* Desktop and mobile: ensure filtered cards stay hidden despite grid layout overrides. */
 #profileDashboard.listings-only #myListings>.my-listing[hidden]{display:none!important}
@@ -2120,18 +2111,7 @@ if (Capacitor.isNativePlatform()) {
 .bottom:not(.nav-dragging) .nav.nav-following{background:transparent!important}
 
 
-/* Refined Apple-inspired navigation motion: continuous glass tracking while dragging, gentle settling on release. */
-.bottom:before{transition:transform .16s cubic-bezier(.22,.61,.36,1),width .18s ease,border-radius .18s ease!important;will-change:transform}
-.bottom .nav{transition:color .18s ease,background-color .18s ease,box-shadow .18s ease!important}
-.bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{transition:transform .22s cubic-bezier(.2,.7,.2,1),filter .22s ease!important;will-change:transform}
-.bottom.nav-dragging:before{transition:transform .045s linear!important;box-shadow:0 5px 18px rgba(22,47,37,.12),inset 0 1px 0 rgba(255,255,255,.98)!important}
-.bottom.nav-dragging .nav{transition:color .12s ease,background-color .12s ease,box-shadow .12s ease!important}
-.bottom.nav-dragging .nav.nav-following{background:rgba(229,243,217,.82)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9)!important}
-.bottom.nav-dragging .nav.nav-following .nav-symbol,.bottom.nav-dragging .nav.nav-following .nav-icon-wrap{transform:translate3d(0,-1px,0) scale(1.06)!important}
-.bottom:not(.nav-dragging) .nav.nav-following .nav-symbol,.bottom:not(.nav-dragging) .nav.nav-following .nav-icon-wrap{transform:none!important}
-.bottom.nav-dragging .nav.active{background:transparent!important;box-shadow:none!important}
-.bottom.nav-dragging:after{opacity:.72!important}
-@media(prefers-reduced-motion:reduce){.bottom:before,.bottom .nav,.bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{transition:none!important}}
+/* Use the Liquid Glass motion rules defined with the navigation component above. */
 </style>
 </head><body><main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления">🔔<span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
