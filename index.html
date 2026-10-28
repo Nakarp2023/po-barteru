@@ -645,7 +645,7 @@ button:active,.pill:active,.chip:active,.offer:active{
 /* Profile hub: concise iOS-style account home; keep original feature DOM and data handlers intact. */
 .profile-hub{display:grid;gap:8px;margin:18px 0 24px}
 .profile-hub-row{display:flex;align-items:center;gap:12px;width:100%;min-width:0;padding:14px;border:1px solid rgba(255,255,255,.78);border-radius:20px;background:rgba(255,255,255,.66);text-align:left;color:var(--ink);box-shadow:0 6px 22px rgba(20,35,29,.045),inset 0 1px 0 rgba(255,255,255,.9);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%)}
-.profile-hub-icon{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:15px;background:rgba(215,239,170,.48);color:var(--green);font-size:23px}
+.profile-hub-icon{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:15px;background:rgba(215,239,170,.48);color:var(--green);font-size:23px}.profile-hub-icon svg{width:24px;height:24px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .profile-hub-copy{display:grid;gap:4px;flex:1;min-width:0}
 .profile-hub-copy b{font-size:15px;font-weight:700;letter-spacing:-.02em}
 .profile-hub-copy small{font-size:12px;line-height:1.35;color:var(--muted)}
@@ -2242,7 +2242,7 @@ if (Capacitor.isNativePlatform()) {
 <div class="profile-card"><div class="profile-avatar" id="profileAvatar">Б</div><div class="profile-main"><h2 id="profileName">Мой профиль</h2><p id="profileEmail" class="category"></p></div><span class="category">Аккаунт</span></div>
 <div class="profile-hub" id="profileHub">
   <button type="button" class="profile-hub-row" data-profile-open="account"><span class="profile-hub-icon">👤</span><span class="profile-hub-copy"><b>Личные данные</b><small>Имя, город, уведомления и пароль</small></span><span class="profile-hub-arrow">›</span></button>
-  <button type="button" class="profile-hub-row" data-profile-open="my-listings"><span class="profile-hub-icon">▣</span><span class="profile-hub-copy"><b>Мои объявления</b><small>Публикации, статусы и архив</small></span><span class="profile-hub-arrow">›</span></button>
+  <button type="button" class="profile-hub-row" data-profile-open="my-listings"><span class="profile-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="14" rx="2"/><path d="M8 7h4M8 10h4M8 13h4"/><path d="M8 20h12V8"/></svg></span><span class="profile-hub-copy"><b>Мои объявления</b><small>Публикации, статусы и архив</small></span><span class="profile-hub-arrow">›</span></button>
   <button type="button" class="profile-hub-row" data-profile-open="exchanges"><span class="profile-hub-icon">⇄</span><span class="profile-hub-copy"><b>Предложения обмена</b><small>Входящие и отправленные предложения</small></span><span class="profile-hub-arrow">›</span></button>
   <button type="button" class="profile-hub-row" data-profile-open="reputation"><span class="profile-hub-icon">★</span><span class="profile-hub-copy"><b>Репутация и отзывы</b><small id="profileHubReputation">Рейтинг и отзывы участников</small></span><span class="profile-hub-arrow">›</span></button>
   <button type="button" class="profile-hub-row" data-profile-open="history"><span class="profile-hub-icon">↻</span><span class="profile-hub-copy"><b>История обменов</b><small>Завершённые сделки и отзывы</small></span><span class="profile-hub-arrow">›</span></button>
