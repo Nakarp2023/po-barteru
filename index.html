@@ -450,6 +450,97 @@ button,input,select,textarea{letter-spacing:-.01em}
 .card h3{letter-spacing:-.02em;font-weight:650}
 .brand{font-weight:750;letter-spacing:-.035em}
 .pill,.offer,.primary{font-weight:600}
+
+/* Unified Apple-inspired visual system: calm surfaces, precise type, soft depth, consistent controls. */
+:root{
+ --bg:#f5f5f7;--ink:#1d1d1f;--muted:#6e6e73;--line:rgba(29,29,31,.11);
+ --surface:rgba(255,255,255,.88);--surface-solid:#fff;--green:#176b52;--green-deep:#124b3d;--lime:#d9f0b0;
+ --radius-card:22px;--radius-control:14px;--shadow-soft:0 4px 18px rgba(0,0,0,.045);
+ --shadow-card:0 8px 28px rgba(0,0,0,.055);
+}
+html{background:var(--bg);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-size:15px;line-height:1.45;letter-spacing:-.012em;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p{overflow-wrap:anywhere}
+h1,h2,h3,h4{color:var(--ink);letter-spacing:-.035em;font-weight:650}
+button,input,select,textarea{font:inherit;letter-spacing:-.012em;-webkit-tap-highlight-color:transparent}
+button{transition:transform .16s ease,background-color .16s ease,border-color .16s ease,box-shadow .16s ease}
+button:active{transform:scale(.985)}
+:focus-visible{outline:3px solid rgba(0,122,255,.42);outline-offset:2px}
+.app{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+.top{padding:14px 0 18px}
+.brand{font-size:17px;font-weight:750;letter-spacing:-.04em;color:var(--ink)}
+.hero{border-radius:28px;background:linear-gradient(145deg,#174f41 0%,#123e34 100%);box-shadow:0 10px 30px rgba(18,62,52,.13);padding:clamp(22px,5vw,30px)}
+.hero h1{font-size:clamp(28px,7vw,43px);line-height:1.04;letter-spacing:-.055em;font-weight:700}
+.hero p{font-size:15px;line-height:1.55}
+.eyebrow{letter-spacing:1.1px;font-size:11px;font-weight:650}
+.sectionhead{margin:28px 0 14px}
+.sectionhead h2{font-size:22px;letter-spacing:-.04em;font-weight:700}
+.search{gap:9px}
+.search input,.field input,.field select,.field textarea,.sheet .field input,.sheet .field select,.sheet .field textarea,.advanced-search input,.advanced-search select{
+ min-height:48px;border:1px solid rgba(29,29,31,.12);border-radius:var(--radius-control);background:rgba(255,255,255,.94);color:var(--ink);
+ padding:13px 15px;box-shadow:inset 0 1px 0 rgba(255,255,255,.85);outline:none;transition:border-color .16s ease,box-shadow .16s ease
+}
+.search input:focus,.field input:focus,.field select:focus,.field textarea:focus,.sheet .field input:focus,.sheet .field select:focus,.sheet .field textarea:focus,.advanced-search input:focus,.advanced-search select:focus{border-color:rgba(0,122,255,.65);box-shadow:0 0 0 3px rgba(0,122,255,.12)}
+.filters{gap:8px;padding:5px 0 12px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.chip{border:1px solid rgba(29,29,31,.1);border-radius:999px;background:rgba(255,255,255,.82);color:#515158;padding:9px 14px;font-size:13px;font-weight:550}
+.chip.active{background:var(--ink);border-color:var(--ink);color:white}
+.grid{gap:14px}
+.card,.profile-card,.notification-card,.chat-row,.chat-preview,.monetization-plan,.promotion-choice{
+ background:var(--surface-solid);border:1px solid rgba(29,29,31,.075);border-radius:var(--radius-card);box-shadow:var(--shadow-soft);overflow:hidden
+}
+.card{transition:transform .18s ease,box-shadow .18s ease}
+.card:active{transform:scale(.992)}
+.photo{height:clamp(132px,34vw,190px);background:linear-gradient(145deg,#edf0eb,#f6eee2)}
+.card-photo-img{width:100%;height:100%;object-fit:cover;display:block}
+.cardbody{padding:14px}
+.category{font-size:11px;font-weight:650;letter-spacing:.45px;color:var(--muted)}
+.card h3{font-size:16px;line-height:1.3;letter-spacing:-.025em;font-weight:650;margin:7px 0 9px}
+.want{font-size:13px;line-height:1.4;color:#515158;min-height:36px}
+.city{font-size:12px;color:var(--muted);margin-top:10px}
+.pill,.offer,.primary,.advanced-search-save,.promotion-picker-confirm{
+ border:0;border-radius:999px;background:var(--green);color:#fff;padding:12px 17px;font-weight:600;box-shadow:none
+}
+.pill{background:var(--lime);color:var(--green-deep)}
+.offer{width:100%;min-height:43px;margin-top:12px;padding:11px 13px;border-radius:13px;font-size:13px}
+.offer:active,.primary:active{background:var(--green-deep)}
+.heart{display:grid;place-items:center;width:36px;height:36px;float:right;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.84);backdrop-filter:blur(18px);border-radius:50%;font-size:20px;box-shadow:0 2px 10px #0000000d}
+.empty,.empty-state{color:var(--muted);padding:24px 8px;text-align:center}
+.bottom{background:rgba(248,248,250,.78);border:1px solid rgba(255,255,255,.7);border-bottom:0;box-shadow:0 -6px 26px rgba(0,0,0,.045);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%)}
+.nav{font-size:11px;font-weight:500;letter-spacing:-.015em}
+.nav.active{font-weight:650}
+.modal{background:rgba(0,0,0,.38);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);padding:12px}
+.sheet{background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.8);border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.18);padding:24px 20px max(20px,env(safe-area-inset-bottom))}
+.sheet h2{font-size:24px;line-height:1.12;letter-spacing:-.045em;font-weight:700}
+.sheet .field{font-size:13px;font-weight:600;color:#424247}
+.sheet .field input,.sheet .field select,.sheet .field textarea{font-size:15px;font-weight:400}
+.sheet .actions{background:rgba(255,255,255,.97)}
+.sheet .actions button{border-radius:14px;min-height:48px;font-weight:600}
+.sheet .actions button:not(.primary),.promotion-picker-cancel{background:#f0f0f2;color:var(--ink);border:0}
+.toast{border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.15);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.profile-card,.notification-card,.chat-row,.chat-preview,.monetization-plan,.promotion-choice{padding:15px}
+.profile-card h2,.profile-card h3,.notification-head,.chat-row h3,.monetization-plan h3{letter-spacing:-.03em;font-weight:650}
+.profile-avatar{border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.profile-menu button,.profile-actions button,.my-actions button,.service-indicator{border-radius:14px}
+.chat-message-bubble{border-radius:20px;line-height:1.42;letter-spacing:-.01em}
+.chat-message-row.mine .chat-message-bubble{border-bottom-right-radius:7px}
+.chat-message-row.theirs .chat-message-bubble{border-bottom-left-radius:7px}
+.chat-message-time{font-size:10px;color:var(--muted)}
+.listing-detail-sheet{border-radius:28px}
+.listing-detail-title{font-size:27px;line-height:1.1;letter-spacing:-.045em;font-weight:700}
+.listing-detail-offer{border-radius:15px;font-weight:600}
+.promotion-picker-sheet{border-radius:28px}
+.promotion-choice{padding:14px;border-radius:18px}
+.promotion-choice.selected{border-color:var(--green);box-shadow:0 0 0 2px rgba(23,107,82,.13)}
+.ios-badge{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+@media (min-width:700px){
+ .grid{gap:18px}
+ .cardbody{padding:17px}
+ .photo{height:190px}
+}
+@media (prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
