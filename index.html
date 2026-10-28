@@ -2054,6 +2054,24 @@ button:active,.pill:active,.chip:active,.offer:active{
   }
 }
 
+
+/* Premium motion: one moving glass lens, no competing green tab that snaps ahead/behind it. */
+.bottom.nav-dragging .nav.active,
+.bottom.nav-dragging .nav.nav-following{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  color:rgba(44,65,56,.82)!important;
+  text-shadow:none!important;
+}
+.bottom.nav-dragging .nav.nav-following .nav-symbol,
+.bottom.nav-dragging .nav.nav-following .nav-icon-wrap{
+  filter:none!important;
+}
+.bottom.nav-dragging:before,
+.bottom.nav-dragging:after{transition:none!important}
+.bottom:before,.bottom:after{will-change:transform}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
