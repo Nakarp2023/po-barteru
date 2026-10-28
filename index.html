@@ -1189,6 +1189,182 @@ button:active,.pill:active,.chip:active,.offer:active{
   .card, .chip, .pill, .bottom .nav { transition: none !important; }
 }
 
+
+
+/* Desktop refinement — deliberate hierarchy, comfortable scale and balanced whitespace. */
+@media (min-width: 1024px) {
+  :root {
+    --desktop-content: 1400px;
+  }
+  body {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .app {
+    width: min(calc(100% - 88px), 1400px);
+    max-width: 1400px;
+    padding: 0 0 150px;
+  }
+  .top {
+    padding: 26px 4px 32px;
+    margin-bottom: 4px;
+  }
+  .brand { font-size: 21px; }
+  .brand .mark { width: 50px; height: 50px; }
+  .top .pill { min-height: 46px; }
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(260px, .75fr);
+    align-items: center;
+    column-gap: clamp(32px, 5vw, 88px);
+    row-gap: 20px;
+    padding: clamp(40px, 4.2vw, 64px);
+    min-height: 350px;
+    border-radius: 34px;
+  }
+  .hero .eyebrow,
+  .hero h1,
+  .hero p,
+  .hero > .pill { grid-column: 1; }
+  .hero h1 {
+    max-width: 760px;
+    font-size: clamp(42px, 4.1vw, 62px);
+    line-height: 1.01;
+    margin: 0;
+  }
+  .hero p {
+    max-width: 610px;
+    font-size: 18px;
+    line-height: 1.65;
+    margin: 0;
+  }
+  .hero > .pill {
+    justify-self: start;
+    min-height: 52px;
+    padding: 15px 24px;
+    font-size: 15px;
+    margin-top: 0;
+  }
+  .hero .stats {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: end;
+    margin: 0;
+    gap: 22px;
+    padding-left: 26px;
+    border-left: 1px solid rgba(255,255,255,.2);
+  }
+  .hero .stats > div { min-width: 0; }
+  .hero .stats b { font-size: 16px; line-height: 1.35; }
+  .hero .stats span { font-size: 13px; line-height: 1.5; }
+  #homeSearch {
+    max-width: 920px;
+    margin: 26px auto 0;
+    gap: 12px;
+  }
+  #homeSearch input {
+    min-height: 54px;
+    padding: 0 20px;
+    font-size: 16px;
+  }
+  #homeSearch .pill { min-width: 120px; min-height: 54px; }
+  .advanced-search {
+    max-width: 920px;
+    margin: 16px auto 0;
+    padding: 22px;
+    border-radius: 24px;
+  }
+  .advanced-search-head { font-size: 17px; margin-bottom: 14px; }
+  .advanced-search-fields { gap: 12px; }
+  .advanced-search-fields input { min-height: 50px; padding: 12px 16px; }
+  .advanced-search-actions { gap: 12px; margin-top: 12px; }
+  .advanced-search-actions button { min-height: 46px; font-size: 14px; }
+  .sectionhead { margin: 32px 0 18px; align-items: center; gap: 20px; }
+  .sectionhead h2 { font-size: clamp(25px, 2vw, 32px); letter-spacing: -.7px; }
+  .filters { gap: 10px; margin: 0 0 20px; }
+  .chip { min-height: 40px; padding: 10px 16px; font-size: 14px; }
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+  .card { border-radius: 22px; }
+  .photo { aspect-ratio: 1.08 / 1; }
+  .cardbody { padding: 17px; }
+  .card h3 { font-size: 17px; line-height: 1.35; }
+  .card .want, .card .city { font-size: 13px; line-height: 1.5; }
+  .card .pill { min-height: 42px; font-size: 13px; }
+  #profileDashboard { max-width: 1120px; margin: 0 auto; }
+  .profile-card {
+    padding: 24px 28px;
+    border-radius: 26px;
+    gap: 20px;
+    margin: 4px 0 24px;
+  }
+  .profile-avatar { width: 76px; height: 76px; font-size: 30px; }
+  .profile-main h2 { font-size: 25px; }
+  .profile-main p { font-size: 14px; }
+  .profile-hub {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0 0 30px;
+  }
+  .profile-hub-row {
+    min-height: 104px;
+    padding: 20px;
+    gap: 16px;
+    border-radius: 24px;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .profile-hub-icon { flex-basis: 54px; height: 54px; border-radius: 18px; font-size: 24px; }
+  .profile-hub-copy b { font-size: 17px; }
+  .profile-hub-copy small { font-size: 14px; line-height: 1.45; }
+  .profile-hub-arrow { font-size: 27px; }
+  .profile-hub-row:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(20,35,29,.08); }
+  .profile-section { margin: 26px 0; }
+  .profile-section .sectionhead { margin: 0 0 18px; }
+  .my-listings { gap: 16px; }
+  #myListings { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+  .my-listing {
+    align-items: flex-start;
+    padding: 18px;
+    gap: 14px;
+    border-radius: 22px;
+    box-shadow: 0 4px 18px rgba(20,35,29,.035);
+  }
+  #myListings .my-listing { flex-wrap: wrap; align-content: flex-start; }
+  #myListings .my-listing .my-emoji { width: 60px; height: 60px; }
+  #myListings .my-listing .my-info { flex-basis: calc(100% - 76px); }
+  #myListings .my-listing .my-actions,
+  #myListings .my-listing .listing-actions { width: 100%; }
+  .my-listing h3 { font-size: 17px; line-height: 1.35; }
+  .my-listing p { font-size: 13px; line-height: 1.5; }
+  #chatWorkspace { max-width: 1180px; margin: 0 auto; }
+  #chatInbox { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  #chatInbox .my-listing { min-height: 100px; }
+  #chatThread { padding: 28px; border-radius: 28px; }
+  #chatMessages { min-height: 360px; max-height: min(58vh, 680px); }
+  #notificationsWorkspace { max-width: 1120px; margin: 0 auto; }
+  #notificationsList { gap: 12px; }
+  #notificationsList .my-listing { max-width: 100%; padding: 20px 22px; border-radius: 22px; }
+  .empty-state { padding: 44px 36px; border-radius: 28px; }
+  .empty-state p { max-width: 520px; font-size: 16px; }
+  .bottom {
+    width: min(820px, calc(100vw - 80px));
+    min-height: 82px;
+    bottom: 22px;
+    border-radius: 30px;
+  }
+  .bottom .nav { min-width: 0; flex: 1; font-size: 13px; }
+  .bottom .nav .nav-symbol { width: 25px; height: 25px; }
+  .bottom .nav .nav-symbol svg { width: 23px; height: 23px; }
+  .bottom .nav.active { font-weight: 700; }
+}
+@media (min-width: 1440px) {
+  .app { width: min(calc(100% - 120px), 1480px); max-width: 1480px; }
+  .grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; }
+  #myListings { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero .stats { grid-column: 1; grid-row: auto; border-left: 0; border-top: 1px solid rgba(255,255,255,.2); padding: 20px 0 0; }
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
