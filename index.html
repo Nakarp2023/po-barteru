@@ -3190,8 +3190,20 @@ async function persistFavoriteForAccount(id,isFavorite){
 }
 async function loadRemoteListings(){
  if(!db)return;
- const {data,error}=await db.from("listings").select("id,user_id,title,description,category,subcategory,city,region,want,estimated_value,image_urls,created_at").eq("status","active").order("created_at",{ascending:false}).limit(100);
+ let {data,error}=await db.from("listings").select("id,user_id,title,description,category,subcategory,city,region,want,estimated_value,image_urls,created_at").eq("status","active").order("created_at",{ascending:false}).limit(100);
  if(error){$("backendNote").textContent="База пока не готова: сначала выполни supabase/schema.sql в SQL Editor. Локальный режим продолжает работать.";return}
+ // Load this account's active favorites even when they are older than the first 100 catalog rows.
+ if(currentUser){
+  const {data:favRows,error:favError}=await db.from("favorites").select("listing_id").eq("user_id",currentUser.id);
+  if(!favError&&favRows?.length){
+   const loadedIds=new Set((data||[]).map(x=>String(x.id)));
+   const missingIds=[...new Set(favRows.map(x=>String(x.listing_id)).filter(id=>!loadedIds.has(id)))];
+   if(missingIds.length){
+    const {data:favoriteListings,error:favoriteListingsError}=await db.from("listings").select("id,user_id,title,description,category,subcategory,city,region,want,estimated_value,image_urls,created_at").eq("status","active").in("id",missingIds);
+    if(!favoriteListingsError&&favoriteListings?.length)data=[...(data||[]),...favoriteListings];
+   }
+  }
+ }
  const listingIds=(data||[]).map(x=>x.id);let promotions=[];if(listingIds.length){const {data:promotionRows}=await db.from("listing_promotions").select("listing_id,plan_code,starts_at,ends_at,created_at").eq("status","active").in("listing_id",listingIds).lte("starts_at",new Date().toISOString()).gt("ends_at",new Date().toISOString());promotions=promotionRows||[]}const promotionByListing=new Map(),promotionCodesByListing=new Map();for(const p of promotions){const key=String(p.listing_id),codes=promotionCodesByListing.get(key)||[];if(!codes.includes(p.plan_code))codes.push(p.plan_code);promotionCodesByListing.set(key,codes);const old=promotionByListing.get(key);const rank={boost_24h:4,vip_7d:3,highlight_7d:2};if(!old||(rank[p.plan_code]||0)>(rank[old.plan_code]||0))promotionByListing.set(key,p)}const remote=(data||[]).map(x=>({id:x.id,user_id:x.user_id,title:x.title,category:x.category,subcategory:x.subcategory||"",want:x.want,city:x.city,region:x.region||"",price:x.estimated_value||0,emoji:"🔄",desc:x.description||"",image_urls:x.image_urls||[],promotionCode:promotionByListing.get(String(x.id))?.plan_code||null,promotionCodes:promotionCodesByListing.get(String(x.id))||[],remote:true}));
  const local=loadJSON(STORE_ITEMS,[]).filter(x=>!x.remote);
  const listingKey=x=>[String(x.title||"").trim().toLowerCase(),String(x.category||"").trim().toLowerCase(),String(x.city||"").trim().toLowerCase(),String(x.want||"").trim().toLowerCase(),Number(x.price||0)].join("|");
@@ -3200,7 +3212,7 @@ async function loadRemoteListings(){
  const seenListings=new Set(remote.map(listingKey));
  const uniqueLocal=local.filter(x=>{const key=listingKey(x);if(seenListings.has(key))return false;seenListings.add(key);return true});
  items=[...uniqueRemote,...uniqueLocal];
- const validFavoriteIds=new Set(items.map(x=>String(x.id)));favorites=new Set([...favorites].filter(id=>validFavoriteIds.has(String(id))));
+
  try{localStorage.setItem(STORE_FAVS,JSON.stringify([...favorites]));if(JSON.stringify(uniqueLocal)!==JSON.stringify(local))localStorage.setItem(STORE_ITEMS,JSON.stringify(uniqueLocal))}catch(e){}
  render();
  $("backendNote").textContent="";
