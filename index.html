@@ -3050,7 +3050,7 @@ async function openConversation(id,title){
   chatOlderLoading=true;const btn=$("loadOlderMessages");btn.disabled=true;btn.textContent="Загружаем…";
   const cursor=chatOldestMessage;
   const {data:older,error:olderError}=await db.from("messages").select("id,sender_id,body,created_at,delivered_at,read_at").eq("conversation_id",id).or("created_at.lt."+cursor.created_at+",and(created_at.eq."+cursor.created_at+",id.lt."+cursor.id+")").order("created_at",{ascending:false}).order("id",{ascending:false}).limit(200);
-  if(activeConversationId!==id){chatOlderLoading=false;return}
+  if(activeConversationId!==id)return;
   if(olderError){toast("Не удалось загрузить историю сообщений.");btn.disabled=false;btn.textContent="Загрузить предыдущие сообщения";chatOlderLoading=false;return}
   const rows=older||[];
   if(!rows.length){chatHasOlderMessages=false;btn.hidden=true;chatOlderLoading=false;return}
