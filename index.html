@@ -1910,6 +1910,51 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 /* City field has no geolocation action in the create-listing form. */
 .listing-city-field{margin-bottom:14px}
 .listing-city-field #listingCitySuggestions{margin-bottom:0}
+
+/* Home screen polish — Apple-inspired hierarchy, compact controls, safer mobile spacing. */
+@media(max-width:759px){
+  .app{padding-bottom:calc(172px + env(safe-area-inset-bottom,0px))!important}
+  #homeHero{padding:20px 19px!important;border-radius:25px!important;margin-bottom:0!important}
+  #homeHero .eyebrow{font-size:10px!important;letter-spacing:1.7px!important;margin-bottom:7px!important}
+  #homeHero h1{font-size:clamp(27px,7.1vw,32px)!important;line-height:1.04!important;letter-spacing:-1.05px!important;margin:8px 0 10px!important;max-width:100%!important}
+  #homeHero p{font-size:14px!important;line-height:1.43!important;margin:0 0 12px!important;max-width:100%!important}
+  #homeHero>.pill{width:100%!important;min-height:46px!important;margin-top:2px!important;padding:11px 14px!important;border-radius:15px!important;font-size:14px!important}
+  #cityHomeBar.city-home-bar{padding:0 12px!important;margin:10px 0 8px!important;border-radius:18px!important;gap:0!important}
+  #cityHomeBar .city-home-main{min-height:48px!important;gap:8px!important}
+  #cityHomeBar .city-home-pin{flex:0 0 26px!important;width:26px!important;height:26px!important;font-size:19px!important}
+  #cityHomeBar #currentCityLabel{font-size:14px!important;font-weight:750!important;line-height:1.2!important;white-space:nowrap!important;text-overflow:ellipsis!important}
+  #cityHomeBar .city-home-change{font-size:12px!important;padding:8px 0 8px 5px!important;gap:2px!important}
+  #cityHomeBar .city-home-toggle{min-height:36px!important;padding:7px 0!important;gap:10px!important;font-size:12px!important;line-height:1.2!important}
+  #cityHomeBar .city-home-toggle-label{display:block!important;flex:1 1 auto!important;min-width:0!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;font-size:12px!important;font-weight:600!important}
+  #cityHomeBar .city-home-switch{flex:0 0 34px!important;width:34px!important;height:21px!important;padding:2px!important}
+  #cityHomeBar .city-home-switch i{width:17px!important;height:17px!important}
+  #cityHomeBar .city-home-toggle[aria-pressed="true"] .city-home-switch i{transform:translateX(13px)!important}
+  #homeSearch{margin-top:8px!important;gap:8px!important}
+  #homeSearch input,#homeSearch .pill{min-height:48px!important;border-radius:15px!important}
+  #homeSearch input{font-size:14px!important;padding:0 12px!important}
+  #homeSearch .pill{padding:10px 14px!important;font-size:13px!important}
+  .mobile-filter-toggle-wrap{margin:5px 0 0!important}
+  .mobile-filter-toggle{min-height:30px!important;padding:5px 11px!important;font-size:11px!important}
+  #advancedSearchPanel{margin-top:7px!important;padding:14px!important;border-radius:18px!important}
+  #advancedSearchPanel .advanced-search-head{margin-bottom:10px!important}
+  #advancedSearchPanel .advanced-search-fields{gap:8px!important}
+  #listHeader.sectionhead{margin:17px 0 9px!important;gap:8px!important}
+  #listHeader h2{font-size:19px!important;letter-spacing:-.45px!important}
+  #filters{gap:7px!important;padding:3px 0 8px!important;scrollbar-width:none!important}
+  #filters::-webkit-scrollbar{display:none!important}
+  #filters .chip{min-height:36px!important;padding:8px 12px!important;font-size:12px!important}
+  #list.grid{gap:9px!important}
+}
+@media(max-width:390px){
+  #homeHero{padding:18px 16px!important}
+  #homeHero h1{font-size:26px!important}
+  #homeHero p{font-size:13px!important}
+  #cityHomeBar #currentCityLabel{font-size:13px!important}
+  #cityHomeBar .city-home-change{font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #cityHomeBar .city-home-switch,#cityHomeBar .city-home-switch i{transition:none!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
