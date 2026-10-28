@@ -915,6 +915,38 @@ button:active,.pill:active,.chip:active,.offer:active{
  .bottom:before{background:rgba(255,255,255,.98)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
 
+
+/* Larger optical lens: selected tab gets a wider, taller glass magnifier surface. */
+.bottom:before{
+  top:2px!important;
+  bottom:2px!important;
+  border-radius:25px!important;
+  background:linear-gradient(150deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.38) 38%,rgba(255,255,255,.20) 100%)!important;
+  border:1px solid rgba(255,255,255,.88)!important;
+  box-shadow:0 4px 14px rgba(16,42,32,.10),inset 0 1.5px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(255,255,255,.38),0 0 0 1px rgba(255,255,255,.16)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(240%) brightness(1.12)!important;
+  backdrop-filter:blur(24px) saturate(240%) brightness(1.12)!important;
+}
+.bottom:after{
+  top:3px!important;
+  height:27px!important;
+  border-radius:25px 25px 18px 18px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.30) 45%,rgba(255,255,255,0) 100%)!important;
+  opacity:.92!important;
+}
+.bottom .nav.active span{
+  transform:translate3d(0,-2px,0) scale(1.14)!important;
+  filter:drop-shadow(0 1px 1px rgba(255,255,255,.9)) drop-shadow(0 2px 3px rgba(16,70,52,.16))!important;
+}
+.bottom .nav.active{
+  text-shadow:0 1px 0 rgba(255,255,255,.28);
+}
+@media(max-width:600px){
+ .bottom:before{top:2px!important;bottom:2px!important;border-radius:23px!important}
+ .bottom:after{top:3px!important;height:24px!important}
+ .bottom .nav.active span{transform:translate3d(0,-1px,0) scale(1.12)!important}
+}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
