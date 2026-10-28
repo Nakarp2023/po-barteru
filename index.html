@@ -1696,6 +1696,15 @@ button:active,.pill:active,.chip:active,.offer:active{
 .heart:active{transform:scale(.96)}
 @media(max-width:899px){#homeHero::before{display:none!important}}
 @media(max-width:899px) and (orientation:portrait){#homeHero::before{display:none!important}}
+/* My listings: align action rows across cards regardless of badge/text count. */
+@media(min-width:900px){
+#profileDashboard.listings-only #myListings{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:1fr!important;align-items:stretch!important;gap:14px!important}
+#profileDashboard.listings-only #myListings>.my-listing{display:grid!important;grid-template-columns:48px minmax(0,1fr)!important;grid-template-rows:minmax(132px,1fr) auto!important;align-items:start!important;height:100%!important;min-width:0!important;box-sizing:border-box!important}
+#profileDashboard.listings-only #myListings>.my-listing>.my-emoji{grid-column:1;grid-row:1}
+#profileDashboard.listings-only #myListings>.my-listing>.my-info{grid-column:2;grid-row:1;min-width:0!important;min-height:132px!important}
+#profileDashboard.listings-only #myListings>.my-listing>.my-actions{grid-column:1/-1!important;grid-row:2!important;align-self:end!important;width:100%!important;margin-top:0!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+#profileDashboard.listings-only #myListings>.my-listing>.my-actions button[data-permanent-delete-listing]{grid-column:1/-1!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
