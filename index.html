@@ -2100,6 +2100,34 @@ button:active,.pill:active,.chip:active,.offer:active{
 @media(max-width:600px){.bottom:before,.bottom:after{left:5px!important;width:calc((100% - 10px)/5)!important;max-width:calc((100% - 10px)/5)!important}}
 @media(prefers-reduced-transparency:reduce){.bottom{background:rgba(245,247,242,.96)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.bottom:before{background:rgba(255,255,255,.96)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 
+
+/* Premium Liquid Glass v2: optical depth, refraction and one coherent active lens. */
+.bottom{
+  background:rgba(231,242,235,.18)!important;border:1px solid rgba(255,255,255,.78)!important;
+  box-shadow:0 16px 42px rgba(14,43,32,.20),0 3px 10px rgba(14,43,32,.08),inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.24)!important;
+  -webkit-backdrop-filter:blur(34px) saturate(230%) brightness(1.08)!important;backdrop-filter:blur(34px) saturate(230%) brightness(1.08)!important;
+}
+.bottom:before{
+  left:6px!important;top:3px!important;bottom:3px!important;width:calc((100% - 12px)/5)!important;max-width:calc((100% - 12px)/5)!important;
+  border:1px solid rgba(255,255,255,.96)!important;border-radius:23px!important;
+  background:radial-gradient(ellipse at 24% 0%,rgba(255,255,255,.96) 0%,rgba(255,255,255,.48) 25%,rgba(255,255,255,.14) 58%,rgba(208,232,211,.20) 100%),linear-gradient(145deg,rgba(255,255,255,.38),rgba(255,255,255,.08) 58%,rgba(194,224,202,.24))!important;
+  box-shadow:0 5px 18px rgba(14,43,32,.15),0 1px 3px rgba(255,255,255,.8),inset 0 1.5px 0 rgba(255,255,255,1),inset 0 -1.5px 0 rgba(255,255,255,.44),inset 1px 0 0 rgba(255,255,255,.60),inset -1px 0 0 rgba(255,255,255,.34)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(235%) brightness(1.12)!important;backdrop-filter:blur(24px) saturate(235%) brightness(1.12)!important;
+  transform:translate3d(calc(var(--drag-index,var(--active-index,0))*100%),0,0)!important;transition:transform .42s cubic-bezier(.18,.82,.22,1),opacity .2s ease!important;
+}
+.bottom:after{
+  left:6px!important;top:4px!important;bottom:4px!important;width:calc((100% - 12px)/5)!important;max-width:calc((100% - 12px)/5)!important;border-radius:22px!important;height:auto!important;
+  background:linear-gradient(118deg,transparent 7%,rgba(255,255,255,.12) 24%,rgba(255,255,255,.70) 39%,rgba(255,255,255,.16) 54%,transparent 74%),linear-gradient(180deg,rgba(255,255,255,.48),transparent 70%)!important;
+  opacity:.72!important;mix-blend-mode:screen!important;transform:translate3d(calc(var(--drag-index,var(--active-index,0))*100%),0,0)!important;transition:transform .42s cubic-bezier(.18,.82,.22,1),opacity .2s ease!important;
+}
+.bottom.nav-dragging:before,.bottom.nav-dragging:after{transition:none!important}
+.bottom.nav-dragging .nav.active,.bottom.nav-dragging .nav.nav-following{background:transparent!important;border-color:transparent!important;box-shadow:none!important;color:rgba(44,65,56,.84)!important;text-shadow:none!important}
+.bottom.nav-dragging .nav.nav-following .nav-symbol,.bottom.nav-dragging .nav.nav-following .nav-icon-wrap{filter:none!important}
+.bottom .nav.active .nav-symbol,.bottom .nav.active .nav-icon-wrap{transform:translate3d(0,-1.5px,0) scale(1.10)!important;filter:drop-shadow(0 1px 0 rgba(255,255,255,.9)) drop-shadow(0 3px 5px rgba(21,63,53,.16))!important}
+.bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{transition:transform .32s cubic-bezier(.18,.82,.22,1),filter .24s ease,color .24s ease!important}
+@media(max-width:600px){.bottom:before,.bottom:after{left:5px!important;width:calc((100% - 10px)/5)!important;max-width:calc((100% - 10px)/5)!important}}
+@media(prefers-reduced-transparency:reduce){.bottom{background:rgba(245,247,242,.96)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}.bottom:before{background:rgba(255,255,255,.96)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
