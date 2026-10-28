@@ -1579,6 +1579,37 @@ button:active,.pill:active,.chip:active,.offer:active{
 @media (prefers-reduced-motion:reduce){
   #homeHero .hero-product{transform:none}
 }
+
+/* Desktop hero correction: restore contrast and balance the approved layout. */
+@media (min-width:900px){
+#homeHero{color:#153f34!important;background:radial-gradient(ellipse at 70% 46%,rgba(190,220,174,.38),transparent 42%),linear-gradient(120deg,#f7f7ef 0%,#eff2e7 100%)!important;grid-template-columns:minmax(340px,.92fr) minmax(400px,1.08fr);grid-template-rows:auto auto auto auto;column-gap:clamp(30px,4vw,68px);min-height:360px;padding:clamp(38px,4vw,62px);align-items:center}
+#homeHero .eyebrow{color:#54836b!important;font-weight:750;letter-spacing:.13em}
+#homeHero h1{color:#123f34!important;font-size:clamp(38px,3.4vw,56px);line-height:1.04;max-width:560px;text-wrap:balance}
+#homeHero p{color:#4b6258!important;font-size:clamp(16px,1.15vw,18px);line-height:1.6;max-width:500px}
+#homeHero>.pill{background:linear-gradient(135deg,#d9f5ae,#b9ed91)!important;color:#163f34!important;border:1px solid rgba(255,255,255,.95);box-shadow:0 8px 22px rgba(45,91,61,.13)}
+#homeHero .hero-showcase{grid-column:2;grid-row:1/5;grid-template-columns:minmax(0,1fr);gap:18px;align-self:stretch;align-content:center}
+#homeHero .hero-products{height:clamp(210px,20vw,280px);width:100%;max-width:570px;margin:0 auto}
+#homeHero .hero-product{background:#e7e9e3;box-shadow:0 14px 34px rgba(24,57,44,.16);border:2px solid rgba(255,255,255,.95)}
+#homeHero .hero-product img{object-fit:cover}
+#homeHero .hero-product-backpack{width:43%;height:88%;left:29%;top:5%;transform:rotate(-2deg)}
+#homeHero .hero-product-headphones{width:34%;height:46%;left:3%;top:1%;transform:rotate(-5deg)}
+#homeHero .hero-product-camera{width:34%;height:44%;right:2%;top:2%;transform:rotate(4deg)}
+#homeHero .hero-product-shoe{width:34%;height:42%;left:5%;bottom:0;transform:rotate(3deg)}
+#homeHero .hero-product-plant{width:31%;height:43%;right:3%;bottom:0;transform:rotate(-3deg)}
+#homeHero .hero-benefits{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;max-width:570px;margin:0 auto;width:100%}
+#homeHero .hero-benefit{grid-template-columns:34px minmax(0,1fr);gap:9px;padding:13px 11px;border-radius:17px;background:rgba(255,255,255,.72);border-color:rgba(255,255,255,.94);box-shadow:0 6px 20px rgba(33,61,48,.06)}
+#homeHero .hero-benefit-icon{width:32px;height:32px;border-radius:11px;font-size:20px}
+#homeHero .hero-benefit b{font-size:13px;line-height:1.25;color:#183d32}
+#homeHero .hero-benefit small{font-size:11px;line-height:1.35;color:#64766d}
+#homeHero .hero-benefit-arrow{display:none}
+}
+@media (min-width:900px) and (max-width:1199px){
+#homeHero{grid-template-columns:minmax(300px,.9fr) minmax(350px,1.1fr);column-gap:28px}
+#homeHero .hero-showcase{grid-template-columns:minmax(0,1fr)}
+#homeHero .hero-products{height:210px}
+#homeHero .hero-benefit{grid-template-columns:30px minmax(0,1fr);padding:10px 8px}
+#homeHero .hero-benefit-icon{width:28px;height:28px}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
