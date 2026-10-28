@@ -3135,11 +3135,15 @@ async function loadMyExchanges(){
  const hiddenProposalIds=new Set((hiddenRows||[]).map(x=>String(x.proposal_id)));
  const visibleOutgoing=(outgoing||[]).filter(x=>!hiddenProposalIds.has(String(x.id)));
  const visibleIncoming=(incoming||[]).filter(x=>!hiddenProposalIds.has(String(x.id)));
- const received=[];
- for(const x of visibleIncoming){
-  if(x.status!=="pending")continue;
-  const {data:listing}=await db.from("listings").select("id,title,user_id").eq("id",x.listing_id).eq("user_id",currentUser.id).maybeSingle();
-  if(listing)received.push({...x,listingTitle:listing.title});
+ const pendingIncoming=visibleIncoming.filter(x=>x.status==="pending");
+ const incomingListingIds=[...new Set(pendingIncoming.map(x=>String(x.listing_id)).filter(Boolean))];
+ let received=[];
+ if(incomingListingIds.length){
+  const {data:listingRows,error:listingRowsError}=await db.from("listings").select("id,title,user_id").in("id",incomingListingIds);
+  if(!listingRowsError){
+   const ownedListings=new Map((listingRows||[]).filter(listing=>String(listing.user_id)===String(currentUser.id)).map(listing=>[String(listing.id),listing]));
+   received=pendingIncoming.filter(x=>ownedListings.has(String(x.listing_id))).map(x=>({...x,listingTitle:ownedListings.get(String(x.listing_id)).title}));
+  }
  }
  const splitProposalMessage=(value)=>{const parts=String(value||"Пользователь предлагает обмен").split(/\n\s*\nТип сделки:\s*/);return {offer:(parts[0]||"Пользователь предлагает обмен").trim(),terms:parts.length>1?("Тип сделки: "+parts.slice(1).join("\n\nТип сделки:")).trim():""}};
  const proposalText=(value)=>{const p=splitProposalMessage(value);return '<p>'+esc(p.offer)+'</p>'+(p.terms?'<div style="margin-top:8px;padding:10px 12px;border-radius:12px;background:#f0f3ec;color:#29483d;font-size:13px;line-height:1.45"><strong>Условия сделки</strong><br>'+esc(p.terms)+'</div>':"")};
