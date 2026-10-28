@@ -976,6 +976,43 @@ button:active,.pill:active,.chip:active,.offer:active{
 .bottom .nav .nav-icon-wrap .nav-badge{display:block}
 @media(max-width:600px){.bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{width:23px;height:23px;flex-basis:23px}.bottom .nav .nav-symbol svg{width:22px;height:22px}}
 
+
+/* Home page Apple-inspired refinement */
+#homeHero{border-radius:28px;background:radial-gradient(90% 90% at 100% 0%,rgba(100,160,122,.16),transparent 60%),linear-gradient(145deg,#174f40,#103e32);box-shadow:0 16px 38px rgba(14,58,44,.10),inset 0 1px 0 rgba(255,255,255,.1)}
+#homeHero h1{font-size:clamp(29px,6.5vw,43px);line-height:1.05;letter-spacing:-1.25px;font-weight:760}
+#homeHero p{font-size:clamp(15px,2.3vw,18px);line-height:1.52;color:rgba(246,250,247,.84)}
+#homeHero .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;border-top:1px solid rgba(255,255,255,.16);padding-top:18px;margin-top:24px;font-size:12px;line-height:1.4}
+#homeHero .stats b{font-size:clamp(12px,2vw,16px);line-height:1.25;white-space:normal;margin-bottom:4px}
+#homeSearch{gap:9px;margin-top:16px;align-items:stretch}
+#homeSearch input{min-height:50px;padding:0 15px;border-radius:16px;background:rgba(255,255,255,.9);border:1px solid rgba(42,61,50,.13);font-size:15px}
+#homeSearch input:focus{border-color:rgba(31,112,83,.42);box-shadow:0 0 0 4px rgba(31,112,83,.09);outline:none}
+#homeSearch .pill{min-height:50px;padding:0 19px;border-radius:16px;white-space:nowrap}
+.advanced-search{padding:15px;background:rgba(255,255,255,.9);border-radius:20px;border-color:rgba(36,54,45,.11);box-shadow:0 6px 22px rgba(27,43,34,.035)}
+.advanced-search-head{font-size:15px;margin-bottom:12px}
+.advanced-search-fields{gap:8px}
+.advanced-search-fields input{min-height:44px;padding:11px 13px;border-radius:13px;border-color:rgba(36,54,45,.14);font-size:14px}
+.advanced-search-actions{gap:8px;margin-top:10px}
+.advanced-search-actions button{min-height:41px;border-radius:13px}
+.sectionhead{margin:26px 0 13px;gap:10px}
+.sectionhead h2{font-size:clamp(20px,3vw,25px);letter-spacing:-.55px;line-height:1.15}
+.filters{gap:8px;padding:2px 0 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.filters::-webkit-scrollbar{display:none}
+.chip{padding:9px 14px;background:rgba(255,255,255,.86);border-color:rgba(40,55,46,.1);color:#4f5852;font-size:13px;font-weight:550}
+.chip.active{background:#202a25;color:white;border-color:#202a25;box-shadow:0 3px 9px rgba(22,36,29,.1)}
+.grid{gap:11px;align-items:stretch}
+.card{background:rgba(255,255,255,.97);border:1px solid rgba(36,54,45,.1);border-radius:19px;box-shadow:0 4px 15px rgba(22,37,28,.035);min-width:0}
+.photo{height:auto;aspect-ratio:1/1;overflow:hidden;position:relative;background:linear-gradient(145deg,#edf1e9,#f4f1e8)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.cardbody{padding:11px 11px 12px}
+.card .category{font-size:10px;letter-spacing:.65px;color:#747c76;font-weight:700}
+.card h3{font-size:14px;line-height:1.28;letter-spacing:-.2px;font-weight:720;margin:6px 0}
+.card .want{font-size:12px;line-height:1.4;color:#737a76;min-height:0;margin-top:7px}
+.card .city{font-size:12px;line-height:1.35;margin-top:8px;color:#737a76}
+.card .offer{min-height:38px;margin-top:11px;border-radius:13px;padding:9px 7px;font-size:12px;background:linear-gradient(180deg,#205c49,#174b3d);box-shadow:inset 0 1px 0 rgba(255,255,255,.13)}
+.card .heart{width:33px;height:33px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.9);box-shadow:0 3px 12px rgba(15,30,22,.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.photo{aspect-ratio:1.12/1}}
+@media(max-width:600px){#homeHero{padding:21px 19px 20px;border-radius:25px}#homeHero .eyebrow{font-size:10px;letter-spacing:1.6px;margin-bottom:11px}#homeHero h1{font-size:clamp(27px,7.4vw,34px);line-height:1.06;letter-spacing:-1px;margin-bottom:12px}#homeHero p{font-size:14px;line-height:1.5}#homeHero .pill{margin-top:16px;min-height:42px;padding:10px 16px;font-size:13px}#homeHero .stats{gap:8px;margin-top:20px;padding-top:15px;font-size:11px}#homeHero .stats b{font-size:12px;margin-bottom:3px}#homeSearch{margin-top:14px;gap:8px}#homeSearch input{min-height:46px;padding:0 12px;border-radius:14px;font-size:14px}#homeSearch .pill{min-height:46px;padding:0 15px;border-radius:14px;font-size:13px}.advanced-search{padding:13px;border-radius:18px}.advanced-search-head{font-size:14px;margin-bottom:10px}.advanced-search-fields{gap:7px}.advanced-search-fields input{min-height:41px;padding:10px;border-radius:12px;font-size:13px}.advanced-search-actions{gap:7px}.advanced-search-actions button{min-height:38px;border-radius:12px;font-size:11px}.sectionhead{margin:23px 0 11px}.sectionhead h2{font-size:19px;letter-spacing:-.4px}.chip{font-size:12px;padding:9px 12px}.grid{gap:9px}.card{border-radius:16px}.cardbody{padding:9px}.card h3{font-size:13px;margin:5px 0}.card .category{font-size:9px;letter-spacing:.5px}.card .want,.card .city{font-size:11px}.card .city{margin-top:7px}.card .offer{min-height:34px;margin-top:9px;border-radius:11px;font-size:10px;padding:8px 4px}.card .heart{width:30px;height:30px}}
+@media(prefers-reduced-motion:reduce){.card,.chip{transition:none}}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
