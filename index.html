@@ -1757,6 +1757,14 @@ button:active,.pill:active,.chip:active,.offer:active{
 .brand-home-link{appearance:none;-webkit-appearance:none;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;padding:0;border-radius:12px}
 .brand-home-link:focus-visible{outline:3px solid rgba(31,126,98,.35);outline-offset:5px}
 .brand-home-link:hover{opacity:.88}
+/* Only the logo itself is clickable; preserve a strong wordmark beside it. */
+.brand{display:flex!important;align-items:center!important;gap:12px!important;font-weight:900!important;font-size:18px!important;min-width:0!important;flex:1 1 auto!important}
+.brand-logo-link{appearance:none;-webkit-appearance:none;border:0!important;background:transparent!important;padding:0!important;margin:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;cursor:pointer!important;border-radius:14px!important;line-height:0!important}
+.brand-logo-link .mark{display:block!important}
+.brand-logo-link:focus-visible{outline:3px solid rgba(31,126,98,.35);outline-offset:4px}
+.brand-logo-link:hover{transform:translateY(-1px)}
+.brand-wordmark{font-size:18px!important;font-weight:900!important;letter-spacing:-.45px!important;line-height:1.1!important;color:#202321!important;white-space:nowrap!important}
+@media(max-width:899px){.brand{gap:9px!important}.brand-wordmark{font-size:16px!important;letter-spacing:-.3px!important}}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
@@ -1775,7 +1783,7 @@ if (Capacitor.isNativePlatform()) {
     } catch (error) { console.error("Deep link processing failed", error); }
   });
 }
-</script></head><body><main class="app"><header class="top"><button type="button" class="brand brand-home-link" id="brandHomeLink" aria-label="ПО БАРТЕРУ — перейти на главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span><span>ПО БАРТЕРУ</span></button><button class="pill notification-top" id="notificationTop" aria-label="Уведомления">🔔<span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
+</script></head><body><main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления">🔔<span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
     <div class="hero-product hero-product-headphones"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt=""></div>
