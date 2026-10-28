@@ -1911,7 +1911,12 @@ if (Capacitor.isNativePlatform()) {
   position:relative!important;
 }
 #profileDashboard.listings-only #myListings>.my-listing>.my-info{
-  padding-right:42px!important;
+  padding-right:0!important;
+}
+#profileDashboard.listings-only #myListings>.my-listing>.my-info>h3,
+#profileDashboard.listings-only #myListings>.my-listing>.my-info>.my-listing-meta,
+#profileDashboard.listings-only #myListings>.my-listing>.my-info>.my-listing-status{
+  padding-right:40px!important;
 }
 #profileDashboard.listings-only #myListings>.my-listing>.my-info>.my-actions{
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
@@ -1949,7 +1954,7 @@ if (Capacitor.isNativePlatform()) {
     width:auto!important;
   }
   #profileDashboard.listings-only #myListings>.my-listing>.my-info{
-    padding-right:38px!important;
+    padding-right:0!important;
   }
   #profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
     top:10px!important;
