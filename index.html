@@ -2160,6 +2160,40 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
   #listingDetailModal .listing-detail-scroll{padding-left:16px!important;padding-right:16px!important}
   #listingDetailModal .listing-detail-gallery{margin-left:-16px!important;margin-right:-16px!important}
 }
+
+/* Stable detail-sheet geometry: async reputation must not resize the modal after opening. */
+#listingDetailModal.modal{
+  align-items:center!important;
+  justify-content:center!important;
+}
+#listingDetailModal .listing-detail-sheet{
+  height:min(70dvh,760px)!important;
+  min-height:min(70dvh,760px)!important;
+  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 16px)!important;
+  flex:0 0 auto!important;
+  align-self:center!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+#listingDetailModal .listing-detail-scroll{
+  box-sizing:border-box!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  flex:1 1 auto!important;
+  overscroll-behavior:contain!important;
+  overflow-y:auto!important;
+}
+#listingDetailModal .listing-detail-gallery{flex:0 0 auto!important}
+#listingDetailModal .listing-detail-image,
+#listingDetailModal .listing-detail-emoji{flex:0 0 auto!important}
+@media(max-height:650px){
+  #listingDetailModal .listing-detail-sheet{
+    height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px)!important;
+    min-height:0!important;
+  }
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
