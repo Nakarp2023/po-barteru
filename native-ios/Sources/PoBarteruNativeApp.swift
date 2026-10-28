@@ -103,11 +103,12 @@ struct ContentView: View {
                         } label: {
                             VStack(spacing: 4) {
                                 Image(systemName: tab.symbol)
-                                    .font(.system(size: 19 + proximity * 1.5, weight: proximity > 0.5 ? .semibold : .regular))
+                                    .font(.system(size: 19 + proximity * 1.5, weight: proximity > 0.5 ? .semibold : .regular, design: .default))
                                     .symbolVariant(selectedTab == tab ? .fill : .none)
                                     .frame(height: 23)
                                 Text(tab.title)
-                                    .font(.system(size: 10, weight: selectedTab == tab ? .semibold : .medium))
+                                    .tracking(-0.2)
+                                    .font(.system(size: 10, weight: selectedTab == tab ? .semibold : .medium, design: .default))
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.8)
                             }
