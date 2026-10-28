@@ -2634,7 +2634,8 @@ function categoryPlaceholder(category,extraClass="",title="",subcategory=""){
  try{const last=Number(localStorage.getItem(key)||0);if(now-last<86400000)return;localStorage.setItem(key,String(now))}catch(e){}
  db.from("listing_views").insert({listing_id:item.id,viewer_id:currentUser?.id||null}).then(({error})=>{if(error){try{localStorage.removeItem(key)}catch(e){}console.warn("Listing view was not recorded",error.message)}})
 }
-function closeListingDetails(){const modal=$("listingDetailModal");modal.classList.remove("open");modal.setAttribute("aria-hidden","true")}
+let listingDetailRequestId=0;
+function closeListingDetails(){listingDetailRequestId++;const modal=$("listingDetailModal");modal.classList.remove("open");modal.setAttribute("aria-hidden","true")}
 let listingDetailImageIndex=0;
 function setListingDetailImage(index,item){
  const urls=Array.isArray(item.image_urls)?item.image_urls.filter(Boolean):[];
@@ -2647,6 +2648,7 @@ function setListingDetailImage(index,item){
 }
 async function openListingDetails(item){
  const modal=$("listingDetailModal"),content=$("listingDetailContent");if(!modal||!content)return;
+ const requestId=++listingDetailRequestId;
  const imageUrls=Array.isArray(item.image_urls)?item.image_urls.filter(Boolean):[];
  listingDetailImageIndex=0;
  const image=imageUrls.length?'<div class="listing-detail-gallery" id="listingDetailGallery"><img class="listing-detail-image" id="listingDetailImage" src="'+esc(imageUrls[0])+'" alt="'+esc(item.title)+' — фото 1">'+(imageUrls.length>1?'<button type="button" class="listing-gallery-arrow prev" id="listingGalleryPrev" aria-label="Предыдущее фото">‹</button><button type="button" class="listing-gallery-arrow next" id="listingGalleryNext" aria-label="Следующее фото">›</button><span class="listing-gallery-count" id="listingGalleryCount">1 / '+imageUrls.length+'</span>':"")+'</div>'+(imageUrls.length>1?'<div class="listing-gallery-dots" id="listingGalleryDots">'+imageUrls.map((_,i)=>'<button type="button" class="'+(i===0?"active":"")+'" data-gallery-index="'+i+'" aria-label="Фото '+(i+1)+'" aria-current="'+(i===0?"true":"false")+'"></button>').join("")+'</div>':""):categoryPlaceholder(item.category,"listing-detail-emoji",item.title,item.subcategory||"");
@@ -2666,10 +2668,11 @@ async function openListingDetails(item){
  const reputation=$("publicSellerReputation"),reviewList=$("publicSellerReviews");
  if(reputation&&reviewList&&db&&item.user_id){
   const {data:reviews,error}=await db.from("exchange_reviews").select("id,reviewer_id,rating,comment,created_at").eq("reviewed_user_id",item.user_id).order("created_at",{ascending:false}).limit(20);
-  if(!modal.classList.contains("open"))return;
+  if(!modal.classList.contains("open")||requestId!==listingDetailRequestId)return;
   if(error){reputation.textContent="Репутация временно недоступна.";reviewList.innerHTML="";return}
   const rows=reviews||[],avg=rows.length?rows.reduce((sum,x)=>sum+Number(x.rating||0),0)/rows.length:0;
   const {data:profiles}=rows.length?await db.from("profiles").select("id,display_name,show_public_name").in("id",[...new Set(rows.map(x=>x.reviewer_id))]):{data:[],error:null};
+  if(!modal.classList.contains("open")||requestId!==listingDetailRequestId)return;
   const names=new Map((profiles||[]).map(p=>[String(p.id),p.display_name]));
   reputation.innerHTML=rows.length?'<b>Рейтинг автора: '+avg.toFixed(1).replace(".",",")+' ★</b> · '+rows.length+' '+(rows.length===1?'отзыв':'отзывов'):'У автора пока нет отзывов';
   reviewList.innerHTML=rows.length?'<div class="listing-detail-label" style="margin-top:16px">Отзывы об авторе</div>'+rows.map(r=>'<article class="card" style="padding:12px;margin:8px 0"><b>'+esc((profiles||[]).find(p=>String(p.id)===String(r.reviewer_id))?.show_public_name===false?"Пользователь":(names.get(String(r.reviewer_id))||"Пользователь"))+'</b><div style="margin:4px 0;color:var(--muted)">'+("★".repeat(Number(r.rating))+"☆".repeat(5-Number(r.rating)))+' · '+new Date(r.created_at).toLocaleDateString("ru-RU")+'</div>'+(r.comment?'<p>'+esc(r.comment)+'</p>':'')+'</article>').join(""):'<p class="category">После завершённых обменов здесь появятся оценки и отзывы других пользователей.</p>';
