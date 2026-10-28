@@ -81,7 +81,7 @@ struct ContentView: View {
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(.clear)
-                    .glassEffect(.regular, in: Capsule())
+                    .modifier(NativeLensMaterial())
                     .overlay(Capsule().strokeBorder(.white.opacity(0.24), lineWidth: 0.7))
 
                 Capsule()
@@ -92,7 +92,8 @@ struct ContentView: View {
                     .animation(dragPosition == nil ? .spring(response: 0.34, dampingFraction: 0.76) : nil, value: lens)
 
                 HStack(spacing: 0) {
-                    ForEach(Array(tabs.enumerated()), id: \.element.id) { index, tab in
+                    ForEach(tabs.indices, id: \.self) { index in
+                        let tab = tabs[index]
                         let proximity = max(0, 1 - abs(CGFloat(index) - lens))
                         Button {
                             guard selectedTab != tab else { return }
