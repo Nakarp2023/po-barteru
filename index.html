@@ -3130,12 +3130,13 @@ async function openConversation(id,title){
   if(chatSyncBusy||!db||!currentUser||!activeConversationId||$("chatThread").hidden||document.hidden)return;
   chatSyncBusy=true;const cid=activeConversationId;
   try{
-   const {data:latest,error:syncError}=await db.from("messages").select("id,sender_id,body,created_at,delivered_at,read_at").eq("conversation_id",cid).order("created_at",{ascending:true}).limit(200);
+   const {data:latest,error:syncError}=await db.from("messages").select("id,sender_id,body,created_at,delivered_at,read_at").eq("conversation_id",cid).order("created_at",{ascending:false}).order("id",{ascending:false}).limit(200);
    if(syncError)throw syncError;
    if(cid!==activeConversationId||!Array.isArray(latest))return;
+   const orderedLatest=[...latest].reverse();
    const rendered=new Set(Array.from($("chatMessages").querySelectorAll("[data-message-row]")).map(el=>el.dataset.messageRow));
    let addedIncoming=false;
-   for(const m of latest){
+   for(const m of orderedLatest){
     if(rendered.has(String(m.id)))continue;
     const mine=m.sender_id===currentUser.id;
     const row=document.createElement("div");row.className="chat-message-row "+(mine?"mine":"theirs");row.dataset.messageRow=m.id;row.dataset.own=mine?"1":"0";
@@ -3151,7 +3152,7 @@ async function openConversation(id,title){
    }
    // Do not scroll during periodic polling: it runs every 2.5 seconds and causes viewport jumps.
    // Poll read receipts in case the Realtime UPDATE event was missed.
-   const ownRows=latest.filter(m=>m.sender_id===currentUser.id&&m.read_at);
+   const ownRows=orderedLatest.filter(m=>m.sender_id===currentUser.id&&m.read_at);
    ownRows.forEach(m=>{const row=$("chatMessages").querySelector('[data-message-row="'+m.id+'"]');const status=row?.querySelector(".message-status");if(status){status.className="message-status read";status.textContent="✓✓";status.setAttribute("aria-label","Прочитано");status.title="Прочитано"}});
    if(addedIncoming){await db.rpc("mark_conversation_messages_read",{p_conversation_id:cid});await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",cid).is("read_at",null);await refreshNotificationCount();loadChats()}else{await refreshNotificationCount()}
   }catch(e){console.warn("Chat fallback sync failed:",e?.message||e)}finally{chatSyncBusy=false}
