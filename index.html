@@ -2027,6 +2027,33 @@ button:active,.pill:active,.chip:active,.offer:active{
   .top .notification-top{width:42px!important;min-width:42px!important;height:42px!important;box-sizing:border-box!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;justify-self:center!important;margin:0!important;transform:none!important}
   .top #addTop{justify-self:end!important;white-space:nowrap!important;margin:0!important}
 }
+
+/* Liquid Glass precision pass: keep the lens and its white specular highlight on one track. */
+.bottom{
+  gap:0!important;
+}
+.bottom:before,.bottom:after{
+  left:6px!important;
+  width:calc((100% - 12px)/5)!important;
+  max-width:calc((100% - 12px)/5)!important;
+  box-sizing:border-box!important;
+  transform:translate3d(calc(var(--drag-index,var(--active-index,0))*100%),0,0)!important;
+}
+.bottom:after{
+  right:auto!important;
+  bottom:auto!important;
+  pointer-events:none!important;
+}
+@media(max-width:600px){
+  .bottom{gap:0!important}
+  .bottom:before,.bottom:after{
+    left:5px!important;
+    width:calc((100% - 10px)/5)!important;
+    max-width:calc((100% - 10px)/5)!important;
+    transform:translate3d(calc(var(--drag-index,var(--active-index,0))*100%),0,0)!important;
+  }
+}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
