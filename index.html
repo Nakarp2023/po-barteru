@@ -3041,8 +3041,8 @@ function chatMessageHTML(m){
 async function openConversation(id,title){
  if(!currentUser||!db)return;activeConversationId=id;if(chatReceiptChannel){await db.removeChannel(chatReceiptChannel);chatReceiptChannel=null}await db.rpc("mark_conversation_messages_read",{p_conversation_id:id});await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",id).is("read_at",null);await refreshNotificationCount();$("chatThread").hidden=false;$("chatInbox").hidden=true;$("refreshChats").hidden=true;$("chatTitle").textContent=title||"Переписка";chatOldestMessage=null;chatHasOlderMessages=false;chatOlderLoading=false;$("loadOlderMessages").hidden=true;$("loadOlderMessages").disabled=false;$("loadOlderMessages").textContent="Загрузить предыдущие сообщения";$("chatMessages").innerHTML='<p class="category">Загружаем сообщения…</p>';
  const {data:msgs,error}=await db.from("messages").select("id,sender_id,body,created_at,delivered_at,read_at").eq("conversation_id",id).order("created_at",{ascending:false}).order("id",{ascending:false}).limit(200);
- if(error){$("chatMessages").innerHTML='<p class="category">Не удалось загрузить сообщения: '+esc(error.message)+'</p>';return}
  if(activeConversationId!==id)return;
+ if(error){$("chatMessages").innerHTML='<p class="category">Не удалось загрузить сообщения: '+esc(error.message)+'</p>';return}
  chatOldestMessage=(msgs||[]).length?msgs[msgs.length-1]:null;chatHasOlderMessages=(msgs||[]).length===200;$("loadOlderMessages").hidden=!chatHasOlderMessages;
  $("chatMessages").innerHTML=(msgs||[]).length?msgs.map(chatMessageHTML).reverse().join(""):'<p class="category">Это начало переписки. Напиши первое сообщение ниже.</p>';
  $("loadOlderMessages").onclick=async()=>{
