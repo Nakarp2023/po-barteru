@@ -1874,6 +1874,8 @@ button:active,.pill:active,.chip:active,.offer:active{
   }
   .grid .card .photo .vip-ribbon,
   .grid .card .photo .heart{z-index:2!important}
+  /* Keep emoji-only fallback thumbnails centered; real photos still fill the frame. */
+  .grid .card .photo:not(:has(img)){display:grid!important;place-items:center!important;font-size:48px!important}
 }
 
 /* Mobile UX pass — six agreed refinements. */
