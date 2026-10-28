@@ -1765,6 +1765,17 @@ button:active,.pill:active,.chip:active,.offer:active{
 .brand-logo-link:hover{transform:translateY(-1px)}
 .brand-wordmark{font-size:18px!important;font-weight:900!important;letter-spacing:-.45px!important;line-height:1.1!important;color:#202321!important;white-space:nowrap!important}
 @media(max-width:899px){.brand{gap:9px!important}.brand-wordmark{font-size:16px!important;letter-spacing:-.3px!important}}
+/* Mobile home: remove the decorative product collage entirely; keep the useful benefit rows. */
+@media(max-width:899px){
+  #homeHero .hero-showcase .hero-products,
+  #homeHero .hero-showcase .hero-products .hero-product{display:none!important;visibility:hidden!important}
+  #homeHero .hero-showcase .hero-products{width:0!important;height:0!important;min-height:0!important;max-height:0!important;flex:0 0 0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:none!important}
+  #homeHero .hero-showcase{margin-top:16px!important;gap:0!important;min-height:0!important}
+}
+@media(max-width:899px) and (orientation:portrait){
+  #homeHero{background-image:none!important}
+  #homeHero::before{display:none!important;content:none!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
