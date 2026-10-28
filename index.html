@@ -1471,6 +1471,57 @@ button:active,.pill:active,.chip:active,.offer:active{
     padding-top: 20px;
   }
 }
+
+/* Refined desktop hero: compact, balanced value-proposition stack rather than a detached footer strip. */
+@media (min-width: 1200px) {
+  #homeHero {
+    grid-template-columns: minmax(0, 1.12fr) minmax(310px, .72fr);
+    grid-template-rows: auto auto auto auto;
+    column-gap: clamp(48px, 6vw, 100px);
+    min-height: 0;
+    padding: clamp(42px, 4.4vw, 68px);
+    align-items: start;
+  }
+  #homeHero .eyebrow { grid-column: 1; grid-row: 1; }
+  #homeHero h1 { grid-column: 1; grid-row: 2; max-width: 660px; }
+  #homeHero p { grid-column: 1; grid-row: 3; max-width: 560px; }
+  #homeHero > .pill { grid-column: 1; grid-row: 4; margin-top: 28px; }
+  #homeHero .stats {
+    grid-column: 2;
+    grid-row: 1 / 5;
+    align-self: center;
+    justify-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    max-width: 390px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  #homeHero .stats > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+    padding: 19px 0 20px;
+    border: 0;
+    border-bottom: 1px solid rgba(255,255,255,.17);
+    overflow-wrap: normal;
+  }
+  #homeHero .stats > div:first-child { padding-top: 0; }
+  #homeHero .stats > div:last-child { padding-bottom: 0; border-bottom: 0; }
+  #homeHero .stats b {
+    display: block;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.25;
+    letter-spacing: -.025em;
+    font-weight: 650;
+  }
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
