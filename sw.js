@@ -1,4 +1,4 @@
-const CACHE_NAME = "po-barteru-shell-v5";
+const CACHE_NAME = "po-barteru-shell-v6";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg", "/logo.webp?v=3"];
 
 self.addEventListener("install", event => {
