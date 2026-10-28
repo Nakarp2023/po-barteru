@@ -1914,14 +1914,20 @@ button:active,.pill:active,.chip:active,.offer:active{
 }
 @media(min-width:760px){.highlight-ribbon{display:none!important}}
 
-/* Restore the approved translucent glass material on mobile tab navigation. */
+/* Stronger Liquid Glass for the mobile bottom navigation. */
 @media (max-width: 759px) {
   .bottom {
-    background: rgba(245,247,246,.54) !important;
-    border: 1px solid rgba(255,255,255,.62) !important;
-    box-shadow: 0 10px 34px rgba(23,48,39,.13), inset 0 1px 0 rgba(255,255,255,.86), inset 0 -1px 0 rgba(255,255,255,.25) !important;
-    -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
-    backdrop-filter: blur(32px) saturate(180%) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,.34), rgba(239,247,242,.24)) !important;
+    border: 1px solid rgba(255,255,255,.82) !important;
+    box-shadow: 0 12px 36px rgba(23,48,39,.14), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(255,255,255,.32) !important;
+    -webkit-backdrop-filter: blur(42px) saturate(210%) !important;
+    backdrop-filter: blur(42px) saturate(210%) !important;
+  }
+  .bottom .nav.active {
+    background: rgba(223,243,189,.58) !important;
+    box-shadow: 0 4px 18px rgba(31,73,51,.09), inset 0 1px 0 rgba(255,255,255,.85) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+    backdrop-filter: blur(18px) saturate(180%) !important;
   }
 }
 @media (max-width: 759px) and (prefers-reduced-transparency: reduce) {
