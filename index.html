@@ -376,6 +376,9 @@ button{min-height:42px}
 
 
 
+/* Auth panel belongs only to the unauthenticated Profile screen. */
+main.app:not(.show-auth) #authBox{display:none!important}
+main.app.show-auth #authBox{display:block!important}
 /* iOS-inspired Liquid Glass visual system — translucent materials, system typography, floating tab bar. */
 :root{
   --glass-white:rgba(255,254,250,.68);
