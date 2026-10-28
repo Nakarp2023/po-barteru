@@ -2591,3 +2591,21 @@ document.addEventListener("click",function(e){if(e.target&&e.target.closest("#fa
 $("advancedSearchToggle")?.addEventListener("click",()=>{advancedSearchExpanded=!advancedSearchExpanded;render()});
 </script>
 </body></html>
+
+/* Restore the approved translucent glass material on mobile tab navigation. */
+@media (max-width: 759px) {
+  .bottom {
+    background: rgba(245,247,246,.54) !important;
+    border: 1px solid rgba(255,255,255,.62) !important;
+    box-shadow: 0 10px 34px rgba(23,48,39,.13), inset 0 1px 0 rgba(255,255,255,.86), inset 0 -1px 0 rgba(255,255,255,.25) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
+    backdrop-filter: blur(32px) saturate(180%) !important;
+  }
+}
+@media (max-width: 759px) and (prefers-reduced-transparency: reduce) {
+  .bottom {
+    background: rgba(245,247,242,.96) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
