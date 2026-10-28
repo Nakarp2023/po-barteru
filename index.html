@@ -1846,6 +1846,28 @@ button:active,.pill:active,.chip:active,.offer:active{
 #cityPickerModal .city-picker-results{max-height:min(32vh,300px);min-height:76px}
 #cityPickerModal .sheet .actions{z-index:2;flex:0 0 auto}
 body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
+/* Compact, accessible city picker layout for iPhone */
+#cityPickerModal{align-items:center!important;padding:12px 12px max(12px,env(safe-area-inset-bottom))!important}
+#cityPickerModal .city-picker-sheet{width:min(560px,100%);max-height:min(82dvh,760px);padding:22px 18px max(16px,env(safe-area-inset-bottom));overflow:hidden;display:flex;flex-direction:column;gap:0}
+#cityPickerModal .city-picker-sheet h2{font-size:clamp(24px,6vw,32px);line-height:1.12;margin:0 0 8px}
+#cityPickerModal .city-picker-sheet>p{font-size:12px;letter-spacing:.07em;line-height:1.45;margin:0 0 16px}
+#cityPickerModal .city-picker-sheet .field{margin:0 0 12px;flex:0 0 auto}
+#cityPickerModal .city-picker-sheet .field input{min-height:48px;height:48px;padding:11px 14px;font-size:16px}
+#cityPickerModal .city-picker-locate{width:auto;align-self:flex-start;margin:0 0 14px;padding:5px 0;background:transparent;box-shadow:none;border:0;color:var(--green);font-size:13px;font-weight:700;min-height:30px}
+#cityPickerModal .city-picker-results-field{display:flex;flex:1 1 auto;flex-direction:column;min-height:0;margin:0 0 12px!important;gap:8px!important}
+#cityPickerModal .city-picker-results-label{font-size:13px;letter-spacing:.02em;flex:0 0 auto}
+#cityPickerModal .city-picker-results{display:block;flex:1 1 auto;min-height:80px;max-height:none;overflow-y:auto;overscroll-behavior:contain;padding:0 2px 4px;scrollbar-width:thin}
+#cityPickerModal .city-picker-result{display:flex;flex-direction:row;align-items:center;gap:10px;padding:11px 12px;margin:0 0 6px;border-radius:12px;background:#fff;border:1px solid #e8ebe6;box-shadow:none;min-height:58px}
+#cityPickerModal .city-picker-result span{display:block;font-size:15px;line-height:1.25;font-weight:700;flex:1;min-width:0}
+#cityPickerModal .city-picker-result small{display:block;font-size:12px;line-height:1.25;text-align:right;max-width:42%;overflow-wrap:anywhere}
+#cityPickerModal .city-picker-result.selected{background:#eef7e3;border-color:#a9cd83;box-shadow:inset 0 0 0 1px #a9cd83}
+#cityPickerModal .city-picker-result.selected:after{content:"✓";display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:#397568;color:#fff;font-size:14px;font-weight:800;order:3}
+#cityPickerModal .city-picker-result.selected small{margin-left:auto}
+#cityPickerModal .sheet .actions{position:static;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:0;padding:12px 0 0;background:#fff;border-top:1px solid #eef0ec;flex:0 0 auto}
+#cityPickerModal .sheet .actions button{height:48px;min-height:48px;padding:10px 12px;border-radius:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;line-height:1.15}
+#cityPickerModal #cityPickerConfirm{max-width:none;width:100%;font-size:15px}
+@media(max-height:700px){#cityPickerModal .city-picker-sheet{max-height:calc(100dvh - 20px);padding:16px 14px 12px}#cityPickerModal .city-picker-sheet>p{margin-bottom:10px}#cityPickerModal .city-picker-locate{margin-bottom:8px}#cityPickerModal .city-picker-result{min-height:50px;padding:8px 10px}}
+@media(max-width:380px){#cityPickerModal .city-picker-sheet{padding-left:14px;padding-right:14px}#cityPickerModal .city-picker-result{gap:7px}#cityPickerModal .city-picker-result small{max-width:38%;font-size:11px}}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
