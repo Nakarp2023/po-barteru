@@ -2074,6 +2074,37 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
  .cardbody .offer{font-size:13px}
 }
 @media(prefers-reduced-motion:reduce){.card,.bottom::before{transition:none!important}}
+
+/* Hotfix after iPhone screenshots: prevent legacy mobile !important rules from clipping exchange text. */
+@media(max-width:759px){
+  .grid .card .cardbody .want{
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;
+    box-sizing:border-box!important;width:100%!important;height:auto!important;
+    min-height:60px!important;max-height:none!important;overflow:visible!important;
+    white-space:normal!important;gap:5px!important;padding:9px 10px!important;
+    margin:4px 0 0!important;line-height:1.3!important;
+  }
+  .grid .card .cardbody .want-label{display:block!important;line-height:1.2!important;white-space:normal!important}
+  .grid .card .cardbody .want-value{
+    display:-webkit-box!important;position:static!important;height:auto!important;max-height:2.6em!important;
+    min-height:1.3em!important;overflow:hidden!important;white-space:normal!important;
+    -webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;
+    line-height:1.3!important;overflow-wrap:anywhere!important;word-break:normal!important;
+  }
+  .grid .card .cardbody .card-meta{height:auto!important;min-height:53px!important;max-height:none!important;overflow:visible!important;margin-top:9px!important}
+  .grid .card .cardbody .city{height:auto!important;min-height:0!important;max-height:none!important;overflow-wrap:anywhere!important;white-space:normal!important}
+  .grid .card .cardbody .offer{flex-shrink:0!important;min-height:44px!important;white-space:normal!important}
+}
+.app{scroll-padding-bottom:calc(160px + env(safe-area-inset-bottom,0px))}
+#list{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+#empty{margin-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+@media(max-width:480px){
+  .grid .card .photo{aspect-ratio:1/1!important;height:auto!important;min-height:0!important;max-height:none!important;flex-basis:auto!important}
+  .grid .card .cardbody{min-width:0!important}
+  .grid .card .cardbody h3{overflow-wrap:anywhere!important}
+  .bottom{bottom:max(12px,env(safe-area-inset-bottom,0px))!important}
+}
+/* Use less misleading fallbacks for demo titles when an actual user photo is absent. */
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
@@ -2481,6 +2512,9 @@ $("cityPickerSearch")?.addEventListener("input",filterCityPicker);$("cityPickerR
 $("chooseCityBtn")?.addEventListener("click",()=>openCityPicker("home"));$("profileChooseCityBtn")?.addEventListener("click",()=>openCityPicker("home"));$("profileLocateCityBtn")?.addEventListener("click",()=>locateRussianCity("home"));
 updateHomeCityLabel();loadRussianCityCatalog();
 const categoryTitleRules=[
+ {re:/(^|\\s)(лодка|катер|байдарка|каяк)(\\s|$)/i,file:"21_travel.png"},
+ {re:/(тарелк|кружк|чашк|миска|столов(ый|ая) прибор|посуда)/i,file:"24_other_goods.png"},
+ {re:/(мотик|мопед|скутер|мотоцикл)/i,file:"07_cars.png"},
  {re:/(ремонт|починк|настройк|установк|доставк|перевозк|уборк|фотосъ[её]мк|дизайн|репетитор|мастер|услуг)/i,file:"12_services_partnership.png",category:"Услуги"},
  {re:/(кофемашин|кофевар|чайник|стиральн(ая|ой)|холодильник|микроволнов|пылесос|посудомоечн|утюг)/i,file:"02_home_appliances.png"},
  {re:/(ноутбук|компьютер|монитор|клавиатур|мышь компьютер|принтер|планшет|смартфон|телефон|наушник|камера|фотоаппарат)/i,file:"22_computers_office.png"},
