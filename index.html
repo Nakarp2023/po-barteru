@@ -354,7 +354,27 @@ button{min-height:42px}
 @media(orientation:landscape) and (max-height:500px){
  .modal{align-items:flex-start}
  .sheet{max-height:calc(100dvh - 16px);border-radius:16px}
-}</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
+}
+/* My Listings: one clear page title, compact top spacing, and comfortable iPhone actions. */
+#profileDashboard.listings-only{margin-top:0!important;padding-top:0!important}
+#profileDashboard.listings-only>.profile-section:has(#myListings){margin:0!important}
+#profileDashboard.listings-only>.profile-section:has(#myListings)>.sectionhead{justify-content:flex-end;margin:0 0 12px!important;padding:0}
+#profileDashboard.listings-only>.profile-section:has(#myListings)>.sectionhead h2{display:none!important}
+#profileDashboard.listings-only>.profile-section:has(#myListings)>.sectionhead #profileAddListing{min-height:44px;padding:11px 16px;font-size:14px}
+#profileDashboard.listings-only .my-listings{gap:12px}
+#profileDashboard.listings-only .my-listing{padding:12px;gap:10px}
+#profileDashboard.listings-only .my-listing .my-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#profileDashboard.listings-only .my-listing .my-actions button{min-height:46px;padding:10px 8px;font-size:13px;border-radius:11px;line-height:1.25}
+#profileDashboard.listings-only .my-listing .my-actions button[data-permanent-delete-listing]{grid-column:1 / -1}
+#profileDashboard.listings-only .my-listing .service-indicators{gap:6px}
+#profileDashboard.listings-only .my-listing .service-indicator{font-size:11px;padding:5px 8px}
+@media(max-width:380px){
+ #profileDashboard.listings-only .my-listing{padding:10px}
+ #profileDashboard.listings-only .my-listing .my-actions{gap:7px}
+ #profileDashboard.listings-only .my-listing .my-actions button{font-size:12px;padding:9px 6px}
+}
+
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
 // Expose the native runtime flag to the regular authentication handler below.
