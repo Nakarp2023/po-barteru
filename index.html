@@ -947,6 +947,20 @@ button:active,.pill:active,.chip:active,.offer:active{
  .bottom .nav.active span{transform:translate3d(0,-1px,0) scale(1.12)!important}
 }
 
+
+/* Keep the moving glass lens fully inside the five-tab rail, including Profile. */
+.bottom{position:fixed;box-sizing:border-box;overflow:hidden;isolation:isolate}
+.bottom:before,.bottom:after{
+  left:6px!important;
+  width:calc((100% - 12px)/5)!important;
+  max-width:calc((100% - 12px)/5)!important;
+  box-sizing:border-box!important;
+  transform:translate3d(calc(var(--drag-index,var(--active-index,0))*100%),0,0)!important;
+}
+.bottom:before{right:auto!important}
+.bottom:after{right:auto!important}
+.bottom .nav{box-sizing:border-box;min-width:0}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
