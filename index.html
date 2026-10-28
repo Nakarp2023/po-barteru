@@ -1392,6 +1392,85 @@ button:active,.pill:active,.chip:active,.offer:active{
   }
 }
 #homeSearch input#q[readonly] { cursor: text; }
+
+/* Desktop hero: make the three value propositions feel intentional, not like a detached footer. */
+@media (min-width: 1024px) {
+  #homeHero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(360px, .92fr);
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: clamp(36px, 5vw, 84px);
+    align-items: start;
+    padding: clamp(42px, 4.2vw, 64px);
+    min-height: 390px;
+    position: relative;
+    overflow: hidden;
+  }
+  #homeHero .eyebrow,
+  #homeHero h1,
+  #homeHero p,
+  #homeHero > .pill {
+    grid-column: 1;
+    justify-self: start;
+  }
+  #homeHero .eyebrow { grid-row: 1; margin: 0 0 18px; }
+  #homeHero h1 { grid-row: 2; max-width: 660px; font-size: clamp(38px, 3.6vw, 54px); line-height: 1.02; letter-spacing: -.055em; margin: 0 0 20px; }
+  #homeHero p { grid-row: 3; max-width: 580px; font-size: 18px; line-height: 1.6; margin: 0; color: rgba(255,255,255,.82); }
+  #homeHero > .pill { grid-row: 4; margin-top: 26px; min-height: 50px; padding: 0 24px; }
+  #homeHero .stats {
+    grid-column: 2;
+    grid-row: 1 / 5;
+    align-self: end;
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    padding: 22px 0 0;
+    border: 0;
+    border-top: 1px solid rgba(255,255,255,.24);
+    color: rgba(255,255,255,.72);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  #homeHero .stats > div {
+    min-width: 0;
+    padding: 0 14px;
+    border-left: 1px solid rgba(255,255,255,.17);
+    overflow-wrap: anywhere;
+  }
+  #homeHero .stats > div:first-child { padding-left: 0; border-left: 0; }
+  #homeHero .stats > div:last-child { padding-right: 0; }
+  #homeHero .stats b {
+    display: block;
+    margin: 0 0 7px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.25;
+    letter-spacing: -.02em;
+    font-weight: 650;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1199px) {
+  #homeHero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto auto;
+    min-height: 0;
+    row-gap: 0;
+  }
+  #homeHero .eyebrow, #homeHero h1, #homeHero p, #homeHero > .pill, #homeHero .stats {
+    grid-column: 1;
+  }
+  #homeHero .eyebrow { grid-row: 1; }
+  #homeHero h1 { grid-row: 2; }
+  #homeHero p { grid-row: 3; }
+  #homeHero > .pill { grid-row: 4; }
+  #homeHero .stats {
+    grid-row: 5;
+    margin-top: 34px;
+    padding-top: 20px;
+  }
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
