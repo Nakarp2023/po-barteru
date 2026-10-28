@@ -2017,6 +2017,14 @@ button:active,.pill:active,.chip:active,.offer:active{
  #myListings .my-actions button{font-size:11px;padding:8px 5px}
 }
 @media(prefers-reduced-motion:reduce){.my-listing-filter,.my-listing .my-actions button{transition:none!important}}
+
+/* Mobile header alignment: keep the notification bell centered in its own stable slot. */
+@media(max-width:759px){
+  .top{display:grid!important;grid-template-columns:minmax(0,1fr) 42px auto!important;column-gap:9px!important;align-items:center!important;width:100%!important;box-sizing:border-box!important;padding-left:0!important;padding-right:0!important}
+  .top .brand{min-width:0!important;justify-self:start!important}
+  .top .notification-top{width:42px!important;min-width:42px!important;height:42px!important;box-sizing:border-box!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;justify-self:center!important;margin:0!important;transform:none!important}
+  .top #addTop{justify-self:end!important;white-space:nowrap!important;margin:0!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
