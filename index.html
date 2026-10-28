@@ -1709,7 +1709,7 @@ button:active,.pill:active,.chip:active,.offer:active{
 }
 @media(min-width:760px){.highlight-ribbon{display:none!important}}
 
-/* Stronger Liquid Glass for the mobile bottom navigation. */
+
 @media (max-width: 759px) {
   .bottom {
     background: linear-gradient(135deg, rgba(255,255,255,.48), rgba(248,250,248,.30)) !important;
@@ -1847,8 +1847,7 @@ button:active,.pill:active,.chip:active,.offer:active{
 
 
 
-/* Canonical Liquid Glass navigation — single surface, single moving lens, one synchronized highlight. */
-.bottom{
+/* Canonical Liquid Glass navigation — single surface, single moving lens{
   --nav-index:var(--drag-index,var(--active-index,0));
   position:fixed!important;
   z-index:40!important;
@@ -1874,96 +1873,14 @@ button:active,.pill:active,.chip:active,.offer:active{
   touch-action:pan-y;
   user-select:none;-webkit-user-select:none;
 }
-.bottom::before{
-  content:"";
-  position:absolute;z-index:0;pointer-events:none;
-  left:7px;top:7px;bottom:7px;
-  width:calc((100% - 14px)/5);
-  box-sizing:border-box;
-  border:1px solid rgba(255,255,255,.88);
-  border-radius:22px;
-  background:
-    radial-gradient(ellipse at 24% 0%,rgba(255,255,255,.88) 0%,rgba(255,255,255,.34) 32%,transparent 70%),
-    radial-gradient(ellipse at 78% 100%,rgba(193,226,194,.26),transparent 65%),
-    linear-gradient(155deg,rgba(255,255,255,.48) 0%,rgba(255,255,255,.20) 40%,rgba(224,239,229,.13) 72%,rgba(255,255,255,.28) 100%);
-  box-shadow:0 7px 19px rgba(20,45,35,.15),inset 0 1.5px 0 rgba(255,255,255,.98),inset 0 -1.5px 0 rgba(255,255,255,.34),inset 1px 0 0 rgba(255,255,255,.45),inset -1px 0 0 rgba(255,255,255,.25);
-  -webkit-backdrop-filter:blur(23px) saturate(225%) brightness(1.10);
-  backdrop-filter:blur(23px) saturate(225%) brightness(1.10);
-  transform:translate3d(calc(var(--nav-index)*100%),0,0);
-  transition:transform .44s cubic-bezier(.18,.82,.22,1),background .25s ease,box-shadow .25s ease;
-  will-change:transform;
-}
-.bottom .nav{
-  position:relative!important;z-index:1!important;
-  display:flex!important;flex-direction:column!important;
-  align-items:center!important;justify-content:center!important;
-  gap:5px!important;
-  min-width:0!important;min-height:60px!important;height:60px!important;
-  margin:0!important;padding:5px 2px!important;
-  border:1px solid transparent!important;border-radius:21px!important;
-  background:transparent!important;box-shadow:none!important;
-  color:rgba(39,58,49,.72)!important;
-  font:600 10.5px/1.12 -apple-system,BlinkMacSystemFont,system-ui,sans-serif!important;
-  letter-spacing:-.015em!important;text-align:center!important;
-  white-space:normal!important;overflow-wrap:anywhere;
-  transition:color .24s ease,transform .28s cubic-bezier(.18,.82,.22,1),font-weight .2s ease!important;
-  -webkit-tap-highlight-color:transparent;
-}
-.bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{
-  position:relative;
-  display:grid;place-items:center;
-  width:25px;height:25px;flex:0 0 25px;
-  color:currentColor;
-  transform:translate3d(0,var(--lens-y,0px),0) scale(var(--lens-scale,1));
-  transform-origin:50% 72%;
-  transition:transform .32s cubic-bezier(.18,.82,.22,1),filter .24s ease,color .24s ease;
-}
-.bottom .nav .nav-symbol svg,.bottom .nav .nav-icon-wrap svg{
-  display:block;width:24px;height:24px;overflow:visible;
-  fill:none;stroke:currentColor;stroke-width:1.8;
-  stroke-linecap:round;stroke-linejoin:round;
-}
-.bottom .nav.active{
-  color:#174f3e!important;
-  font-weight:750!important;
-}
-.bottom .nav.active .nav-symbol,.bottom .nav.active .nav-icon-wrap{
-  transform:translate3d(0,-1.5px,0) scale(1.1);
-  filter:drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 3px 5px rgba(21,63,53,.18));
-}
-.bottom .nav.active .nav-symbol svg,.bottom .nav.active .nav-icon-wrap svg{stroke-width:2}
-.bottom.nav-dragging::before{
-  transition:transform .055s linear,background .15s ease,box-shadow .15s ease;
-  border-color:rgba(255,255,255,.98);
-  background:
-    radial-gradient(ellipse at 24% 0%,rgba(255,255,255,.96),rgba(255,255,255,.42) 32%,transparent 70%),
-    radial-gradient(ellipse at 78% 100%,rgba(193,226,194,.32),transparent 65%),
-    linear-gradient(155deg,rgba(255,255,255,.56),rgba(255,255,255,.22) 44%,rgba(224,239,229,.18) 75%,rgba(255,255,255,.32));
-  box-shadow:0 8px 24px rgba(20,45,35,.17),inset 0 1.5px 0 #fff,inset 0 -1.5px 0 rgba(255,255,255,.42),inset 1px 0 0 rgba(255,255,255,.5),inset -1px 0 0 rgba(255,255,255,.3);
-}
-.bottom.nav-dragging .nav{transition:color .1s ease!important}
-.bottom.nav-dragging .nav.active,
-.bottom.nav-dragging .nav.nav-following{
-  background:transparent!important;border-color:transparent!important;box-shadow:none!important;
-  color:#174f3e!important;text-shadow:none!important;
-}
-.bottom.nav-dragging .nav .nav-symbol,.bottom.nav-dragging .nav .nav-icon-wrap{filter:none}
-.bottom .nav:active{transform:scale(.97)}
 @media(max-width:600px){
-  .bottom{left:10px!important;right:10px!important;min-height:70px!important;padding:5px!important;border-radius:26px!important}
-  .bottom::before{left:5px;top:5px;bottom:5px;width:calc((100% - 10px)/5);border-radius:21px}
-  .bottom .nav{min-height:58px!important;height:58px!important;gap:4px!important;padding:4px 1px!important;font-size:9.5px!important}
-  .bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{width:24px;height:24px;flex-basis:24px}
-  .bottom .nav .nav-symbol svg,.bottom .nav .nav-icon-wrap svg{width:23px;height:23px}
 }
-@media(min-width:701px){.bottom{left:50%!important;right:auto!important;width:min(560px,calc(100% - 48px))!important;transform:translateX(-50%)!important}}
+@media(min-width:701px){}
 @media(prefers-reduced-transparency:reduce){
-  .bottom{background:rgba(245,247,242,.94)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-  .bottom::before{background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(236,243,235,.9));-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 5px 16px rgba(20,45,35,.1),inset 0 1px 0 #fff}
 }
 @media(prefers-reduced-motion:reduce){
-  .bottom::before,.bottom .nav,.bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{transition:none!important}
 }
+
 
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
