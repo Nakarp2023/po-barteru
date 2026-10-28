@@ -810,6 +810,84 @@ button:active,.pill:active,.chip:active,.offer:active{
 }
 @media(prefers-reduced-motion:reduce){.bottom:before,.notification-swipe .notification-card{transition:none!important}}
 
+
+/* Liquid Glass tab bar — one continuous material, quiet labels, one soft active lens. */
+.bottom{
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:2px!important;
+  padding:6px!important;
+  min-height:70px!important;
+  border:1px solid rgba(255,255,255,.62)!important;
+  border-radius:30px!important;
+  background:rgba(245,247,246,.54)!important;
+  box-shadow:0 10px 34px rgba(23,48,39,.13),inset 0 1px 0 rgba(255,255,255,.86),inset 0 -1px 0 rgba(255,255,255,.25)!important;
+  -webkit-backdrop-filter:blur(32px) saturate(180%)!important;
+  backdrop-filter:blur(32px) saturate(180%)!important;
+}
+.bottom:before{
+  left:6px!important;
+  top:6px!important;
+  bottom:6px!important;
+  width:calc((100% - 12px - 8px)/5)!important;
+  border:1px solid rgba(255,255,255,.9)!important;
+  border-radius:24px!important;
+  background:linear-gradient(155deg,rgba(255,255,255,.84),rgba(255,255,255,.42) 65%,rgba(255,255,255,.30))!important;
+  box-shadow:0 2px 8px rgba(20,40,32,.07),inset 0 1px 0 rgba(255,255,255,.96),inset 0 -1px 0 rgba(255,255,255,.58)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(165%)!important;
+  backdrop-filter:blur(18px) saturate(165%)!important;
+  transform:translate3d(calc(var(--drag-index,var(--active-index,0))*calc(100% + 2px)),0,0)!important;
+  transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .2s ease!important;
+  opacity:1!important;
+}
+.bottom:after{
+  content:""!important;
+  position:absolute!important;
+  z-index:0!important;
+  top:7px!important;bottom:auto!important;
+  left:calc(6px + (var(--drag-index,var(--active-index,0)) * ((100% - 20px)/5)))!important;
+  width:calc((100% - 20px)/5)!important;height:20px!important;
+  border-radius:22px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0))!important;
+  opacity:.65!important;pointer-events:none!important;mix-blend-mode:screen!important;
+}
+.bottom .nav{
+  position:relative!important;z-index:1!important;
+  min-height:56px!important;height:56px!important;
+  padding:4px 1px!important;margin:0!important;
+  border:1px solid transparent!important;border-radius:23px!important;
+  background:transparent!important;box-shadow:none!important;
+  color:rgba(44,65,56,.82)!important;
+  font-size:10px!important;font-weight:550!important;line-height:1.12!important;
+  letter-spacing:-.015em!important;gap:4px!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  transition:color .2s ease,transform .2s ease!important;
+}
+.bottom .nav span{
+  font-size:21px!important;line-height:1!important;
+  filter:none!important;
+  transition:transform .24s cubic-bezier(.2,.8,.2,1),color .2s ease!important;
+}
+.bottom .nav.active{
+  color:#176b55!important;font-weight:700!important;
+  background:transparent!important;border-color:transparent!important;
+  box-shadow:none!important;
+}
+.bottom .nav.active span{transform:translate3d(0,-1px,0) scale(1.04)!important;filter:none!important}
+.bottom.nav-dragging:before,.bottom.nav-dragging:after{transition:none!important}
+.bottom.nav-dragging .nav,.bottom.nav-dragging .nav span{transition:none!important}
+@media(max-width:600px){
+ .bottom{left:12px!important;right:12px!important;min-height:68px!important;padding:5px!important;gap:1px!important;border-radius:27px!important}
+ .bottom:before{left:5px!important;top:5px!important;bottom:5px!important;width:calc((100% - 10px - 4px)/5)!important;border-radius:22px!important}
+ .bottom:after{left:calc(5px + (var(--drag-index,var(--active-index,0)) * ((100% - 18px)/5)))!important;width:calc((100% - 18px)/5)!important;top:6px!important}
+ .bottom .nav{min-height:56px!important;height:56px!important;font-size:9.5px!important;gap:4px!important;padding:4px 1px!important}
+ .bottom .nav span{font-size:20px!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ .bottom{background:rgba(245,247,242,.96)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ .bottom:before{background:rgba(255,255,255,.98)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
