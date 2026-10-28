@@ -1992,6 +1992,13 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 #cityPickerModal .city-picker-result small{max-width:45%;text-align:right;color:var(--muted);font-size:12px}
 #cityPickerModal .city-picker-result.selected{background:#edf7df;border-color:#b9d99c;color:#173f32}
 #filterCityOnly:disabled{opacity:.35}
+
+/* City picker: keep the result list scrollable above its persistent action row. */
+#cityPickerModal.open{align-items:center!important;overflow:hidden!important;padding:12px!important}
+#cityPickerModal .sheet{display:flex!important;flex-direction:column!important;max-height:calc(100dvh - 48px)!important;overflow:hidden!important;min-height:0!important}
+#cityPickerModal #cityPickerResults{flex:1 1 auto!important;min-height:90px!important;max-height:min(34dvh,300px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important}
+#cityPickerModal .actions{flex:0 0 auto!important;position:sticky!important;bottom:0!important;background:#fff!important;padding-top:12px!important}
+#cityPickerModal .city-picker-result{min-height:58px!important}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
@@ -2277,11 +2284,12 @@ async function loadRussianCityCatalog(){
   refreshCityCatalogStatus("Основной каталог загружен. Подгружаем посёлки и небольшие населённые пункты…");
   fetchCityJson(SETTLEMENT_CATALOG_URL,8000).then(mapping=>{
    if(!mapping||typeof mapping!=="object"||Array.isArray(mapping))throw new Error("invalid settlement catalog");
-   const known=new Set(russianCities.map(c=>normalizeCityText(c.name)+"|"+normalizeCityText(c.region.fullname||c.region.name)));
+   const cityRegionKey=(city)=>normalizeCityText(city.region?.fullname||city.region?.name).replace(/\s*[-–—]\s*кузбасс\s*$/i,"").replace(/\s*\(кузбасс\)\s*$/i,"");
+   const known=new Set(russianCities.map(c=>normalizeCityText(c.name)+"|"+cityRegionKey(c)));
    const settlements=Object.entries(mapping)
     .filter(([name,region])=>name&&typeof region==="string"&&region.trim())
     .map(([name,region])=>({name,region:{name:region,fullname:region},coords:null,source:"kladr"}))
-    .filter(c=>!known.has(normalizeCityText(c.name)+"|"+normalizeCityText(c.region.fullname)));
+    .filter(c=>{const key=normalizeCityText(c.name)+"|"+cityRegionKey(c);if(known.has(key))return false;known.add(key);return true;});
    russianCities=sortCities([...russianCities,...settlements]);
    refreshCityCatalogStatus("Каталог загружен: "+russianCities.length.toLocaleString("ru-RU")+" населённых пунктов.");
   }).catch(error=>{
