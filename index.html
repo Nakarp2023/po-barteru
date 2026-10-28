@@ -374,6 +374,15 @@ button{min-height:42px}
  #profileDashboard.listings-only .my-listing .my-actions button{font-size:12px;padding:9px 6px}
 }
 
+
+/* iPhone: keep the fixed tab bar from covering the end of any section. */
+.app{padding-bottom:calc(156px + env(safe-area-inset-bottom))!important}
+@media(max-width:480px){.app{padding-bottom:calc(164px + env(safe-area-inset-bottom))!important}}
+.bottom{padding-bottom:calc(12px + env(safe-area-inset-bottom));background:#fffefa;border-top:1px solid var(--line);backdrop-filter:none;-webkit-backdrop-filter:none}
+.top,.top .brand,.top .brand>span,.top .brand img,.top button{filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;opacity:1}
+.top .brand>span:last-child{color:var(--ink);text-shadow:none}
+.top .brand img{image-rendering:auto}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
