@@ -1838,6 +1838,29 @@ button:active,.pill:active,.chip:active,.offer:active{
   .card .offer{font-size:10px!important}
   .bottom .nav{font-size:9px!important}
 }
+
+/* Mobile listing photos: show the full source image without cutting off the sides. */
+@media(max-width:759px){
+  .grid .card .photo{
+    background:#f5f6f2!important;
+    overflow:hidden!important;
+    padding:7px!important;
+    box-sizing:border-box!important;
+  }
+  .grid .card .photo img,
+  .grid .card .photo .card-photo-img{
+    position:relative!important;
+    inset:auto!important;
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    object-fit:contain!important;
+    object-position:center center!important;
+    border-radius:8px!important;
+  }
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
