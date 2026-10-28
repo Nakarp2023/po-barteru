@@ -2108,10 +2108,11 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 
 /* Final iPhone pass: reserve real scroll space for the floating tab bar and Safari chrome. */
 @media(max-width:700px){
-  .app{padding-bottom:calc(188px + env(safe-area-inset-bottom,0px))!important}
-  #list{padding-bottom:calc(176px + env(safe-area-inset-bottom,0px))!important;scroll-margin-bottom:calc(176px + env(safe-area-inset-bottom,0px))}
-  #other{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
-  #empty{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px));margin-bottom:0!important}
+  /* Keep a single moderate scroll reserve; app and list padding must not stack excessively. */
+  .app{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
+  #list{padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))!important;scroll-margin-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  #other{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+  #empty{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));margin-bottom:0!important}
   .bottom{
     bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
     min-height:74px!important;
