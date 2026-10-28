@@ -678,6 +678,34 @@ button:active,.pill:active,.chip:active,.offer:active{
 @media(prefers-reduced-motion:reduce){
   button,.pill,.chip,.offer{transition:none}
 }
+
+/* Profile hub: concise iOS-style account home; keep original feature DOM and data handlers intact. */
+.profile-hub{display:grid;gap:8px;margin:18px 0 24px}
+.profile-hub-row{display:flex;align-items:center;gap:12px;width:100%;min-width:0;padding:14px;border:1px solid rgba(255,255,255,.78);border-radius:20px;background:rgba(255,255,255,.66);text-align:left;color:var(--ink);box-shadow:0 6px 22px rgba(20,35,29,.045),inset 0 1px 0 rgba(255,255,255,.9);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%)}
+.profile-hub-icon{display:grid;place-items:center;flex:0 0 44px;height:44px;border-radius:15px;background:rgba(215,239,170,.48);color:var(--green);font-size:23px}
+.profile-hub-copy{display:grid;gap:4px;flex:1;min-width:0}
+.profile-hub-copy b{font-size:15px;font-weight:700;letter-spacing:-.02em}
+.profile-hub-copy small{font-size:12px;line-height:1.35;color:var(--muted)}
+.profile-hub-arrow{font-size:26px;color:#8a948e;line-height:1}
+#profileDashboard>.profile-stats,#profileDashboard>.profile-edit,#profileDashboard>#exchangeSection,#profileDashboard>#exchangeReputationSection,#profileDashboard>#savedSearchesPanel,#profileDashboard>#monetizationSection,#profileDashboard>#purchaseHistorySection{display:none!important}
+#profileDashboard.profile-show-account>.profile-edit{display:flex!important}
+#profileDashboard.profile-show-account>.profile-edit{margin-top:16px}
+#profileDashboard.profile-show-exchanges>#exchangeSection,
+#profileDashboard.profile-show-reputation>#exchangeReputationSection,
+#profileDashboard.profile-show-settings>#savedSearchesPanel,
+#profileDashboard.profile-show-settings>#monetizationSection,
+#profileDashboard.profile-show-settings>#purchaseHistorySection{display:block!important}
+#profileDashboard.profile-show-history>#exchangeReputationSection{display:block!important}
+#profileDashboard.profile-show-history #exchangeHistoryDetails{display:block!important}
+#profileDashboard.profile-show-history #exchangeHistoryDetails>div{display:block}
+#profileDashboard.profile-show-account .profile-edit,
+#profileDashboard.profile-show-exchanges>#exchangeSection,
+#profileDashboard.profile-show-reputation>#exchangeReputationSection,
+#profileDashboard.profile-show-settings>#savedSearchesPanel,
+#profileDashboard.profile-show-settings>#monetizationSection,
+#profileDashboard.profile-show-settings>#purchaseHistorySection,
+#profileDashboard.profile-show-history>#exchangeReputationSection{scroll-margin-top:24px}
+@media(prefers-reduced-transparency:reduce){.profile-hub-row{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
@@ -705,6 +733,14 @@ if (Capacitor.isNativePlatform()) {
 <button class="pill" id="authOut" hidden>Выйти</button>
 <section id="profileDashboard" hidden>
 <div class="profile-card"><div class="profile-avatar" id="profileAvatar">Б</div><div class="profile-main"><h2 id="profileName">Мой профиль</h2><p id="profileEmail" class="category"></p></div><span class="category">Аккаунт</span></div>
+<div class="profile-hub" id="profileHub">
+  <button type="button" class="profile-hub-row" data-profile-open="account"><span class="profile-hub-icon">👤</span><span class="profile-hub-copy"><b>Личные данные</b><small>Имя, город, уведомления и пароль</small></span><span class="profile-hub-arrow">›</span></button>
+  <button type="button" class="profile-hub-row" data-profile-open="my-listings"><span class="profile-hub-icon">▣</span><span class="profile-hub-copy"><b>Мои объявления</b><small>Публикации, статусы и архив</small></span><span class="profile-hub-arrow">›</span></button>
+  <button type="button" class="profile-hub-row" data-profile-open="exchanges"><span class="profile-hub-icon">⇄</span><span class="profile-hub-copy"><b>Предложения обмена</b><small>Входящие и отправленные предложения</small></span><span class="profile-hub-arrow">›</span></button>
+  <button type="button" class="profile-hub-row" data-profile-open="reputation"><span class="profile-hub-icon">★</span><span class="profile-hub-copy"><b>Репутация и отзывы</b><small id="profileHubReputation">Рейтинг и отзывы участников</small></span><span class="profile-hub-arrow">›</span></button>
+  <button type="button" class="profile-hub-row" data-profile-open="history"><span class="profile-hub-icon">↻</span><span class="profile-hub-copy"><b>История обменов</b><small>Завершённые сделки и отзывы</small></span><span class="profile-hub-arrow">›</span></button>
+  <button type="button" class="profile-hub-row" data-profile-open="settings"><span class="profile-hub-icon">⚙</span><span class="profile-hub-copy"><b>Настройки</b><small>Тарифы, продвижение и сохранённые поиски</small></span><span class="profile-hub-arrow">›</span></button>
+</div>
 <div class="profile-edit profile-top-settings"><h3>Личные данные и настройки</h3><div class="push-settings"><div><b>Push-уведомления</b><p class="category" id="pushStatus">Уведомления на экране устройства</p></div><button type="button" class="pill" id="pushToggle">Включить</button></div><label class="field">Имя<input id="profileNameInput" maxlength="50" placeholder="Как к тебе обращаться"></label><label class="field">Город<input id="profileCityInput" maxlength="60" placeholder="Твой город"></label><label class="public-name-toggle" for="showPublicReviewName"><input id="showPublicReviewName" type="checkbox" checked><span class="public-name-toggle-text"><b>Показывать моё имя рядом с отзывами</b><small>Если отключить, другим пользователям будет показано «Пользователь».</small></span></label><p class="category">Способ входа: <span id="profileLoginMethod">Email</span></p><div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px"><h3>Пароль аккаунта</h3><label class="field">Новый пароль<input id="profileNewPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Не менее 8 символов"></label><label class="field">Повтори новый пароль<input id="profileConfirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Повтори пароль"></label><button type="button" class="pill" id="savePasswordBtn">Установить / изменить пароль</button><p class="category">Если ты вошёл по ссылке из письма, здесь можно задать пароль для следующих входов.</p></div><div class="profile-actions"><button class="pill" id="saveProfileBtn">Сохранить данные</button><button class="pill" id="profileSettingsMenu">Выйти из аккаунта</button></div></div>
 <div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div><div class="profile-section"><div class="sectionhead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div></div><div class="profile-section" id="exchangeSection"><div class="sectionhead"><h2>Предложения обмена</h2><button class="chip" id="refreshExchanges">Обновить</button></div><div id="myExchanges" class="my-listings"><p class="category">Загружаем предложения…</p></div></div><div class="profile-section" id="exchangeReputationSection"><div class="sectionhead"><h2>Моя репутация</h2><button type="button" class="chip" id="refreshExchangeHistory">Обновить</button></div><div id="exchangeReputationSummary" class="profile-stats"><div><b>—</b><span>Рейтинг</span></div><div><b>—</b><span>Отзывов</span></div><div><b>—</b><span>Обменов</span></div></div><h3 style="margin:18px 0 8px">Отзывы обо мне</h3><div id="exchangePublicReviews" class="my-listings" style="margin:12px 0"><p class="category">Загружаем отзывы…</p></div><details id="outgoingReviewsDetails" class="purchase-history-details" style="margin:16px 0"><summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#fff;font-weight:700"><span>Мои отзывы другим</span><span class="category" style="margin:0">⌄</span></summary><div id="exchangeOutgoingReviews" class="my-listings" style="margin-top:12px"><p class="category">Загружаем твои отзывы…</p></div></details><details id="exchangeHistoryDetails" class="purchase-history-details"><summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#fff;font-weight:700"><span id="exchangeHistorySummaryLabel">Показать историю обменов</span><span class="category" style="margin:0">⌄</span></summary><div id="exchangeHistoryList" class="my-listings" style="margin-top:12px"><p class="category">Загружаем историю обменов…</p></div></details></div><div class="profile-section" id="savedSearchesPanel" hidden><div class="sectionhead"><h2>Сохранённые поиски</h2></div><div id="savedSearchesList" class="my-listings"></div></div><section class="profile-section" id="monetizationSection">
 <div class="sectionhead"><h2>Тарифы и продвижение</h2><span class="category">Монетизация</span></div>
@@ -715,7 +751,7 @@ if (Capacitor.isNativePlatform()) {
 </section>
 
 
-<div class="profile-section" style="margin-top:20px"><div class="sectionhead"><h2 style="margin:0">История покупок</h2><button type="button" class="chip" id="refreshMonetizationOrders">Обновить</button></div><div id="monetizationOrders"><p class="category">Загружаем историю…</p></div></div>
+<div id="purchaseHistorySection" class="profile-section" style="margin-top:20px"><div class="sectionhead"><h2 style="margin:0">История покупок</h2><button type="button" class="chip" id="refreshMonetizationOrders">Обновить</button></div><div id="monetizationOrders"><p class="category">Загружаем историю…</p></div></div>
 
 </section><p id="backendNote" class="category"></p><button class="pill" id="backHome">Вернуться к объявлениям</button></section></main><nav class="bottom"><button class="nav active" data-page="home"><span>⌂</span>Главная</button><button class="nav" data-page="favorites"><span>♡</span>Избранное</button><button class="nav" data-page="my-listings"><span>▣</span>Мои объявления</button><button class="nav" data-page="chats"><span class="nav-icon-wrap">▤<span id="chatUnreadBadge" class="ios-badge nav-badge" hidden>0</span></span>Сообщения</button><button class="nav" data-page="profile"><span>☻</span>Профиль</button></nav><div class="modal" id="modal"><form class="sheet" id="form"><h2 id="listingFormTitle">Новое предложение</h2><p style="color:#68756e;margin-top:-5px">Расскажи, что предлагаешь и что хочешь получить.</p><label class="field">Название<input name="title" required maxlength="80" placeholder="Например, велосипед горный"></label><label class="field">Категория<select name="category"><option>Техника</option><option>Электроника</option><option>Дом и мебель</option><option>Одежда</option><option>Обувь и аксессуары</option><option>Спорт</option><option>Авто и транспорт</option><option>Недвижимость</option><option>Земельные участки</option><option>Коммерческие помещения</option><option>Детские товары</option><option>Игрушки</option><option>Книги</option><option>Хобби и творчество</option><option>Красота и здоровье</option><option>Животные</option><option>Продукты питания</option><option>Строительство и ремонт</option><option>Услуги</option><option>Другое</option></select></label><div class="field listing-images-field" id="listingImagesField"><label for="listingImages">Фотографии товара (можно несколько)</label><input id="listingImages" name="images" type="file" accept="image/*" multiple><small>До 5 изображений, каждое до 5 МБ.</small><div id="imagePreview" class="image-preview"></div></div><label class="field">Что хочешь взамен?<input name="want" required maxlength="120" placeholder="Например, смартфон или услуги"></label><label class="field">Город<input name="city" required maxlength="60" placeholder="Твой город"></label><label class="field">Примерная стоимость, ₽<input name="price" type="number" min="0" placeholder="Необязательно"></label><label class="field">Описание<textarea name="description" rows="3" maxlength="500" placeholder="Состояние, условия обмена…"></textarea></label><div class="actions"><button type="button" id="cancel">Отмена</button><button class="primary" id="listingSubmit" type="submit">Опубликовать объявление</button></div></form></div><div class="modal promotion-picker" id="promotionPickerModal" aria-hidden="true"><section class="sheet promotion-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="promotionPickerTitle"><h2 id="promotionPickerTitle">К какому объявлению применить услугу?</h2><p class="picker-intro">Выбери объявление, для которого создаётся заказ на продвижение.</p><div class="promotion-list" id="promotionPickerList"></div><div class="promotion-picker-actions"><button type="button" class="promotion-picker-cancel" id="promotionPickerCancel">Отмена</button><button type="button" class="promotion-picker-confirm" id="promotionPickerConfirm" disabled>Продолжить</button></div></section></div><div class="modal" id="listingDetailModal" aria-hidden="true"><section class="sheet listing-detail-sheet" role="dialog" aria-modal="true" aria-labelledby="listingDetailTitle"><div id="listingDetailContent" class="listing-detail-scroll"></div></section></div><div class="toast" id="toast"></div><script>
 const seed=[{id:1,title:"Велосипед горный",category:"Спорт",want:"Смартфон или планшет",city:"Москва",price:18000,emoji:"🚲",desc:"Хорошее состояние, готов к обмену."},{id:2,title:"Наушники беспроводные",category:"Техника",want:"Настольная игра или книги",city:"Санкт-Петербург",price:7000,emoji:"🎧",desc:"Работают отлично, есть коробка."},{id:3,title:"Помощь с дизайном",category:"Услуги",want:"Ремонт или настройка техники",city:"Казань",price:0,emoji:"🎨",desc:"Сделаю баннер, логотип или оформление."},{id:4,title:"Кофемашина",category:"Дом и мебель",want:"Электроинструмент",city:"Екатеринбург",price:12000,emoji:"☕",desc:"Исправная, обмен с доплатой обсуждается."},{id:5,title:"Детский самокат",category:"Детские товары",want:"Детские книги или конструктор",city:"Новосибирск",price:3500,emoji:"🛴",desc:"В хорошем состоянии."},{id:6,title:"Фотосессия на час",category:"Услуги",want:"Стрижка или услуги мастера",city:"Краснодар",price:5000,emoji:"📸",desc:"Портретная или семейная съёмка."},{id:7,title:"Игровая приставка",category:"Техника",want:"Ноутбук с доплатой",city:"Нижний Новгород",price:22000,emoji:"🎮",desc:"Рабочая приставка, детали обсудим."},{id:8,title:"Книжная полка",category:"Дом и мебель",want:"Комнатное растение или лампа",city:"Пермь",price:2500,emoji:"📚",desc:"Самовывоз, состояние хорошее."}];const SUPABASE_URL="https://qxsnjksepzmpsifpxyea.supabase.co",SUPABASE_KEY="sb_publishable_rYAZPOkGIrxOHX_IEupByw_PZmPhVty";const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY);window.db=db;let currentUser=null,activePlanCode="free";const STORE_ITEMS="po_barteru_items_v1",STORE_FAVS="po_barteru_favs_v1";function loadJSON(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch{return fallback}}let items=loadJSON(STORE_ITEMS,[...seed]),favorites=new Set(loadJSON(STORE_FAVS,[]).map(String)),category="Все",page="home";const $=id=>document.getElementById(id);function persist(){try{localStorage.setItem(STORE_ITEMS,JSON.stringify(items));localStorage.setItem(STORE_FAVS,JSON.stringify([...favorites]))}catch(e){toast("Не удалось сохранить данные на устройстве")}}const cats=["Все","Техника","Электроника","Дом и мебель","Одежда","Обувь и аксессуары","Спорт","Авто и транспорт","Недвижимость","Земельные участки","Коммерческие помещения","Детские товары","Игрушки","Книги","Хобби и творчество","Красота и здоровье","Животные","Продукты питания","Строительство и ремонт","Услуги","Другое"];function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2400)}function recordListingView(item){
@@ -1268,4 +1304,46 @@ async function refreshPushUi(){const btn=$("pushToggle"),status=$("pushStatus");
 async function togglePush(){if(!currentUser||!db)return toast("Сначала войди в аккаунт");if(!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window))return toast("Push не поддерживается этим браузером");const btn=$("pushToggle");btn.disabled=true;try{const reg=await navigator.serviceWorker.register("/sw.js?v=4",{updateViaCache:"none"});let sub=await reg.pushManager.getSubscription();if(sub){const endpoint=sub.endpoint;await sub.unsubscribe();const {error}=await db.from("push_subscriptions").delete().eq("user_id",currentUser.id).eq("endpoint",endpoint);if(error)throw error;toast("Push-уведомления выключены")}else{const permission=await Notification.requestPermission();if(permission!=="granted")throw new Error("Разрешение на уведомления не выдано");sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:pushKeyBytes(PUSH_VAPID_PUBLIC_KEY)});const json=sub.toJSON();const {error}=await db.from("push_subscriptions").upsert({user_id:currentUser.id,endpoint:json.endpoint,p256dh:json.keys.p256dh,auth:json.keys.auth,user_agent:navigator.userAgent,updated_at:new Date().toISOString()},{onConflict:"user_id,endpoint"});if(error){await sub.unsubscribe();throw error}toast("Устройство подписано на push-уведомления")} }catch(e){console.error(e);toast(e.message||"Не удалось настроить push")}finally{btn.disabled=false;await refreshPushUi()}}
 $("pushToggle").addEventListener("click",togglePush);
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js?v=3",{updateViaCache:"none"}).then(()=>refreshPushUi()).catch(err=>console.warn("Service Worker registration failed",err)));}
+
+/* Profile hub navigation: expose existing account panels without duplicating or deleting data. */
+(()=>{
+ const dashboard=document.getElementById("profileDashboard");
+ const hub=document.getElementById("profileHub");
+ if(!dashboard||!hub)return;
+ const classes=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
+ const openMap={
+  account:{cls:"profile-show-account",target:".profile-edit"},
+  exchanges:{cls:"profile-show-exchanges",target:"#exchangeSection"},
+  reputation:{cls:"profile-show-reputation",target:"#exchangeReputationSection"},
+  settings:{cls:"profile-show-settings",target:"#monetizationSection"},
+  history:{cls:"profile-show-history",target:"#exchangeHistoryDetails"}
+ };
+ function openPanel(key){
+  if(key==="my-listings"){if(typeof setPage==="function")setPage("my-listings");return}
+  const item=openMap[key];if(!item)return;
+  const wasOpen=dashboard.classList.contains(item.cls);
+  classes.forEach(c=>dashboard.classList.remove(c));
+  if(!wasOpen)dashboard.classList.add(item.cls);
+  if(!wasOpen){
+   const target=dashboard.querySelector(item.target);
+   if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:"smooth",block:"start"}));
+  }
+ }
+ hub.querySelectorAll("[data-profile-open]").forEach(btn=>btn.addEventListener("click",()=>{
+  const key=btn.dataset.profileOpen;
+  if(key==="history"){openPanel("history");const details=document.getElementById("exchangeHistoryDetails");if(details)details.open=true;return}
+  openPanel(key);
+ }));
+ const syncReputation=()=>{
+  const summary=document.getElementById("exchangeReputationSummary");
+  const target=document.getElementById("profileHubReputation");
+  if(!summary||!target)return;
+  const vals=[...summary.querySelectorAll("b")].map(el=>el.textContent.trim());
+  const labels=[...summary.querySelectorAll("span")].map(el=>el.textContent.trim());
+  if(vals.length>=3)target.textContent=vals[0]+" ★ · "+vals[1]+" отзывов · "+vals[2]+" обменов";
+ };
+ const summary=document.getElementById("exchangeReputationSummary");
+ if(summary&&"MutationObserver"in window)new MutationObserver(syncReputation).observe(summary,{childList:true,subtree:true,characterData:true});
+ syncReputation();
+})();
 </script></body></html>
