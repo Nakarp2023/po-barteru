@@ -1522,6 +1522,63 @@ button:active,.pill:active,.chip:active,.offer:active{
     font-weight: 650;
   }
 }
+
+/* Homepage hero concept: editorial product collage + compact benefit cards */
+.hero{position:relative;isolation:isolate;overflow:hidden}
+.hero .eyebrow,.hero h1,.hero p,.hero > .pill{position:relative;z-index:2}
+.hero-showcase{display:none}
+@media (min-width: 900px){
+  #homeHero{
+    display:grid;
+    grid-template-columns:minmax(360px,.92fr) minmax(460px,1.18fr) minmax(230px,.68fr);
+    grid-template-rows:auto auto auto 1fr;
+    column-gap:clamp(24px,2.8vw,46px);
+    row-gap:0;
+    align-items:center;
+    min-height:330px;
+    padding:clamp(32px,3.5vw,58px);
+    background:
+      radial-gradient(ellipse at 70% 35%,rgba(143,202,151,.23),transparent 38%),
+      linear-gradient(115deg,#f6f5ec 0%,#f1f2e8 52%,#e7eee2 100%);
+    color:#103d33;
+    box-shadow:0 22px 60px rgba(23,55,44,.09);
+  }
+  #homeHero .eyebrow{grid-column:1;grid-row:1;color:#3e765f;margin-bottom:18px}
+  #homeHero h1{grid-column:1;grid-row:2;color:#103d33;font-size:clamp(36px,3.3vw,56px);line-height:1.02;letter-spacing:-.065em;max-width:570px;margin:0 0 20px}
+  #homeHero p{grid-column:1;grid-row:3;color:#41554e;font-size:clamp(15px,1.2vw,18px);line-height:1.55;max-width:440px;margin:0 0 24px}
+  #homeHero > .pill{grid-column:1;grid-row:4;justify-self:start;margin:0;background:linear-gradient(135deg,#b8ef8b,#7fe5a0);color:#103d33;border:1px solid rgba(255,255,255,.7);box-shadow:0 8px 22px rgba(77,148,89,.16);padding:15px 24px;font-size:15px;font-weight:650}
+  #homeHero .hero-showcase{display:grid;grid-column:2 / 4;grid-row:1 / 5;grid-template-columns:minmax(0,1fr) minmax(220px,.62fr);align-items:center;gap:clamp(18px,2vw,30px);min-width:0}
+  #homeHero .hero-products{height:270px;position:relative;min-width:0}
+  #homeHero .hero-product{position:absolute;overflow:hidden;border-radius:24px;background:#fff;box-shadow:0 18px 40px rgba(24,57,44,.14);border:1px solid rgba(255,255,255,.85)}
+  #homeHero .hero-product img{width:100%;height:100%;display:block;object-fit:cover}
+  #homeHero .hero-product-backpack{width:49%;height:88%;left:27%;top:5%;z-index:2;transform:rotate(-3deg);border-radius:28px}
+  #homeHero .hero-product-headphones{width:37%;height:47%;left:1%;top:0;transform:rotate(-7deg)}
+  #homeHero .hero-product-camera{width:38%;height:44%;right:1%;top:2%;transform:rotate(5deg)}
+  #homeHero .hero-product-shoe{width:40%;height:44%;left:0;bottom:0;transform:rotate(4deg)}
+  #homeHero .hero-product-plant{width:34%;height:46%;right:1%;bottom:0;transform:rotate(-3deg)}
+  #homeHero .hero-benefits{display:grid;gap:10px;align-content:center;min-width:0}
+  #homeHero .hero-benefit{display:grid;grid-template-columns:44px minmax(0,1fr) 12px;align-items:center;gap:12px;padding:15px 14px;border:1px solid rgba(255,255,255,.86);border-radius:19px;background:rgba(255,255,255,.64);box-shadow:0 8px 26px rgba(33,61,48,.055);backdrop-filter:blur(18px) saturate(145%);-webkit-backdrop-filter:blur(18px) saturate(145%);min-width:0}
+  #homeHero .hero-benefit-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#e3f6df,#c9f4bd);color:#155d48;font-size:25px;font-weight:650}
+  #homeHero .hero-benefit b{display:block;color:#172f28;font-size:15px;line-height:1.25;letter-spacing:-.02em}
+  #homeHero .hero-benefit small{display:block;margin-top:4px;color:#65736d;font-size:12px;line-height:1.3}
+  #homeHero .hero-benefit-arrow{font-size:22px;color:#81938a}
+}
+@media (min-width:900px) and (max-width:1199px){
+  #homeHero{grid-template-columns:minmax(300px,.9fr) minmax(380px,1.1fr);row-gap:20px}
+  #homeHero .hero-showcase{grid-column:2;grid-row:1 / 5;grid-template-columns:minmax(0,1fr);gap:14px}
+  #homeHero .hero-products{height:220px}
+  #homeHero .hero-benefits{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  #homeHero .hero-benefit{grid-template-columns:1fr;gap:6px;padding:12px;border-radius:15px}
+  #homeHero .hero-benefit-icon{width:34px;height:34px;font-size:21px}
+  #homeHero .hero-benefit-arrow{display:none}
+}
+@media (max-width:899px){
+  #homeHero{display:block}
+  #homeHero .hero-showcase{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  #homeHero .hero-product{transform:none}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
@@ -1540,7 +1597,20 @@ if (Capacitor.isNativePlatform()) {
     } catch (error) { console.error("Deep link processing failed", error); }
   });
 }
-</script></head><body><main class="app"><header class="top"><div class="brand"><span class="mark" aria-label="Логотип ПО БАРТЕРУ"><img src="/logo.webp?v=3" alt="" /></span><span>ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления">🔔<span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="stats"><div><b>Товары</b>и услуги</div><div><b>Вся Россия</b>рядом и онлайн</div><div><b>Без комиссии</b>за обмен в MVP</div></div></section><div class="search" id="homeSearch"><input id="q" type="search" name="barter-search-query" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="search" data-form-type="other" data-lpignore="true" readonly onfocus="this.removeAttribute('readonly')" placeholder="🔎  Что хочешь найти?"><button class="pill" id="searchBtn">Найти</button></div><section class="advanced-search" id="advancedSearchPanel" hidden><div class="advanced-search-head"><span>Расширенный поиск</span><span class="category">PRO</span></div><div class="advanced-search-fields"><input class="city-filter" id="advancedCity" maxlength="60" placeholder="Город"><input id="advancedMinPrice" type="number" min="0" placeholder="Цена от, ₽"><input id="advancedMaxPrice" type="number" min="0" placeholder="Цена до, ₽"></div><div class="advanced-search-actions"><button type="button" class="advanced-search-reset" id="resetAdvancedSearch">Сбросить</button><button type="button" class="advanced-search-save" id="saveMatchingSearch">Сохранить поиск</button></div><p class="advanced-search-note">Сохранённый поиск присылает уведомления о новых совпадениях, пока активен тариф PRO или выше.</p></section><div class="sectionhead" id="listHeader"><h2 id="listTitle">Подходящие предложения</h2><span id="count" class="category"></span></div><div class="filters" id="filters"></div><section class="grid" id="list"></section><p class="empty" id="empty" hidden>Ничего не найдено. Попробуй другую категорию или поисковый запрос.</p><section id="other" hidden><div class="sectionhead"><h2 id="otherTitle">Раздел</h2></div><div id="otherEmpty" class="empty-state" hidden><div class="empty-icon" id="otherEmptyIcon">✉</div><h3 id="otherEmptyTitle">Пока здесь пусто</h3><p id="otherEmptyText">Когда появятся обновления, они будут здесь.</p><button class="pill" id="otherEmptyAction">Перейти к объявлениям</button></div><section id="notificationsWorkspace" hidden><div class="sectionhead notification-head"><h2>Уведомления</h2><div class="notification-actions"><button class="chip" id="markAllNotificationsRead">Пометить все как прочитанные</button><button class="chip" id="deleteAllNotifications">Удалить все</button></div></div><div id="notificationsList" class="my-listings"><p class="category">Загружаем уведомления…</p></div></section><section id="chatWorkspace" hidden><div id="chatNotice" class="category" style="margin:12px 0"></div><div id="chatInbox" class="my-listings"></div><div id="chatThread" hidden class="profile-edit"><div class="sectionhead"><h2 id="chatTitle">Переписка</h2><button class="chip" id="chatBack">← Все чаты</button></div><div id="chatDealPanel" class="my-listing" style="display:block;margin-top:12px" hidden></div><div id="chatMessages" style="display:grid;gap:10px;margin:14px 0"></div><form id="chatSendForm"><label class="field">Сообщение<textarea id="chatMessageInput" rows="2" maxlength="4000" required placeholder="Напиши сообщение…"></textarea></label><button class="pill" type="submit">Отправить</button></form></div><button class="chip" id="refreshChats" style="margin-top:14px">Обновить сообщения</button></section><p id="profileStatus" hidden>Подключение к сервису…</p>
+</script></head><body><main class="app"><header class="top"><div class="brand"><span class="mark" aria-label="Логотип ПО БАРТЕРУ"><img src="/logo.webp?v=3" alt="" /></span><span>ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления">🔔<span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
+  <div class="hero-products" aria-hidden="true">
+    <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
+    <div class="hero-product hero-product-headphones"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt=""></div>
+    <div class="hero-product hero-product-camera"><img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=500&q=85" alt=""></div>
+    <div class="hero-product hero-product-shoe"><img src="https://images.unsplash.com/photo-1542291026-7eec264c6a62?auto=format&fit=crop&w=500&q=85" alt=""></div>
+    <div class="hero-product hero-product-plant"><img src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=500&q=85" alt=""></div>
+  </div>
+  <div class="hero-benefits">
+    <div class="hero-benefit"><span class="hero-benefit-icon">◇</span><span><b>Товары</b><small>и услуги</small></span><span class="hero-benefit-arrow">›</span></div>
+    <div class="hero-benefit"><span class="hero-benefit-icon">⌖</span><span><b>Вся Россия</b><small>рядом и онлайн</small></span><span class="hero-benefit-arrow">›</span></div>
+    <div class="hero-benefit"><span class="hero-benefit-icon">％</span><span><b>Без комиссии</b><small>за обмен в MVP</small></span><span class="hero-benefit-arrow">›</span></div>
+  </div>
+</div></section><div class="search" id="homeSearch"><input id="q" type="search" name="barter-search-query" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="search" data-form-type="other" data-lpignore="true" readonly onfocus="this.removeAttribute('readonly')" placeholder="🔎  Что хочешь найти?"><button class="pill" id="searchBtn">Найти</button></div><section class="advanced-search" id="advancedSearchPanel" hidden><div class="advanced-search-head"><span>Расширенный поиск</span><span class="category">PRO</span></div><div class="advanced-search-fields"><input class="city-filter" id="advancedCity" maxlength="60" placeholder="Город"><input id="advancedMinPrice" type="number" min="0" placeholder="Цена от, ₽"><input id="advancedMaxPrice" type="number" min="0" placeholder="Цена до, ₽"></div><div class="advanced-search-actions"><button type="button" class="advanced-search-reset" id="resetAdvancedSearch">Сбросить</button><button type="button" class="advanced-search-save" id="saveMatchingSearch">Сохранить поиск</button></div><p class="advanced-search-note">Сохранённый поиск присылает уведомления о новых совпадениях, пока активен тариф PRO или выше.</p></section><div class="sectionhead" id="listHeader"><h2 id="listTitle">Подходящие предложения</h2><span id="count" class="category"></span></div><div class="filters" id="filters"></div><section class="grid" id="list"></section><p class="empty" id="empty" hidden>Ничего не найдено. Попробуй другую категорию или поисковый запрос.</p><section id="other" hidden><div class="sectionhead"><h2 id="otherTitle">Раздел</h2></div><div id="otherEmpty" class="empty-state" hidden><div class="empty-icon" id="otherEmptyIcon">✉</div><h3 id="otherEmptyTitle">Пока здесь пусто</h3><p id="otherEmptyText">Когда появятся обновления, они будут здесь.</p><button class="pill" id="otherEmptyAction">Перейти к объявлениям</button></div><section id="notificationsWorkspace" hidden><div class="sectionhead notification-head"><h2>Уведомления</h2><div class="notification-actions"><button class="chip" id="markAllNotificationsRead">Пометить все как прочитанные</button><button class="chip" id="deleteAllNotifications">Удалить все</button></div></div><div id="notificationsList" class="my-listings"><p class="category">Загружаем уведомления…</p></div></section><section id="chatWorkspace" hidden><div id="chatNotice" class="category" style="margin:12px 0"></div><div id="chatInbox" class="my-listings"></div><div id="chatThread" hidden class="profile-edit"><div class="sectionhead"><h2 id="chatTitle">Переписка</h2><button class="chip" id="chatBack">← Все чаты</button></div><div id="chatDealPanel" class="my-listing" style="display:block;margin-top:12px" hidden></div><div id="chatMessages" style="display:grid;gap:10px;margin:14px 0"></div><form id="chatSendForm"><label class="field">Сообщение<textarea id="chatMessageInput" rows="2" maxlength="4000" required placeholder="Напиши сообщение…"></textarea></label><button class="pill" type="submit">Отправить</button></form></div><button class="chip" id="refreshChats" style="margin-top:14px">Обновить сообщения</button></section><p id="profileStatus" hidden>Подключение к сервису…</p>
 <div id="authBox">
 <div style="display:flex;gap:8px;margin:12px 0"><button type="button" class="pill" id="authEmailMode">По email</button><button type="button" class="pill" id="authPhoneMode" style="background:#e7eae5">По телефону</button></div>
 <div id="emailAuthPane"><label class="field">Email<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label class="field">Пароль<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Не менее 8 символов"></label><button class="pill" id="authPasswordLogin">Войти по паролю</button><button class="pill" id="authPasswordSignup" style="margin-top:8px;background:#e7eae5">Создать аккаунт с паролем</button><button class="chip" id="authPasswordReset" style="margin-top:8px">Забыли пароль?</button><div style="height:1px;background:var(--line);margin:14px 0"></div><button class="pill" id="authSend">Войти по ссылке из письма</button><p class="category">Можно войти по паролю или по одноразовой ссылке из письма. При создании аккаунта с паролем Supabase может попросить подтвердить email.</p></div>
