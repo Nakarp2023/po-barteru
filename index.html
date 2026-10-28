@@ -376,18 +376,129 @@ button{min-height:42px}
 
 
 
-/* Auth panel belongs only to the unauthenticated Profile screen. */
-main.app:not(.show-auth) #authBox{display:none!important}
-main.app.show-auth #authBox{display:block!important}
-/* Mobile layout: fixed navigation clearance and crisp, unfiltered brand. */
-.app{padding-bottom:calc(112px + env(safe-area-inset-bottom))!important}
+/* iOS-inspired Liquid Glass visual system — translucent materials, system typography, floating tab bar. */
+:root{
+  --glass-white:rgba(255,254,250,.68);
+  --glass-border:rgba(255,255,255,.78);
+  --glass-shadow:0 8px 30px rgba(20,48,39,.10),inset 0 1px 0 rgba(255,255,255,.82);
+}
+html{scroll-padding-bottom:calc(118px + env(safe-area-inset-bottom))}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+button,input,select,textarea{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.app{padding-bottom:calc(124px + env(safe-area-inset-bottom))!important}
+.top{
+  position:relative;
+  isolation:isolate;
+}
+.top:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:0 -12px;
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.22));
+  box-shadow:0 6px 22px rgba(23,63,53,.035),inset 0 1px 0 rgba(255,255,255,.8);
+  -webkit-backdrop-filter:blur(22px) saturate(175%);
+  backdrop-filter:blur(22px) saturate(175%);
+}
+.brand{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;letter-spacing:-.35px}
+.brand>span:last-child{font-weight:800;letter-spacing:-.45px;color:var(--ink);text-shadow:none}
+.mark{box-shadow:0 3px 12px rgba(15,50,39,.14);border:1px solid rgba(255,255,255,.5)}
+.pill,.chip,.offer,.actions button{
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .18s ease,background-color .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.pill:active,.chip:active,.nav:active,.actions button:active{transform:scale(.97)}
+.card,.profile-section,.profile-card,.my-listing,.advanced-search,.empty-card{
+  border-color:rgba(207,218,207,.76);
+  box-shadow:0 3px 14px rgba(28,55,43,.035),inset 0 1px 0 rgba(255,255,255,.78);
+}
+.search input,.field input,.field select,.field textarea,.sheet .field input,.sheet .field select,.sheet .field textarea{
+  background:rgba(255,255,255,.78);
+  border-color:rgba(208,218,207,.85);
+  border-radius:16px;
+}
+.bottom{
+  position:fixed;
+  left:12px;
+  right:12px;
+  bottom:calc(8px + env(safe-area-inset-bottom));
+  width:auto;
+  display:flex;
+  justify-content:space-around;
+  align-items:stretch;
+  gap:3px;
+  padding:8px 7px calc(8px + env(safe-area-inset-bottom));
+  border:1px solid rgba(255,255,255,.82);
+  border-radius:27px;
+  background:rgba(250,251,247,.70);
+  box-shadow:0 10px 34px rgba(17,42,33,.16),inset 0 1px 0 rgba(255,255,255,.9);
+  -webkit-backdrop-filter:blur(28px) saturate(185%);
+  backdrop-filter:blur(28px) saturate(185%);
+  z-index:20;
+}
+.nav{
+  flex:1 1 0;
+  min-width:0;
+  min-height:52px;
+  padding:5px 2px 4px;
+  border-radius:19px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  font-size:10px;
+  line-height:1.15;
+  font-weight:550;
+  color:rgba(53,76,65,.82);
+}
+.nav span{font-size:22px;line-height:1.1}
+.nav.active{
+  color:var(--green);
+  background:rgba(217,237,181,.76);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+  font-weight:800;
+}
+.hero{
+  box-shadow:0 14px 36px rgba(23,63,53,.12),inset 0 1px 0 rgba(255,255,255,.13);
+}
+.modal{ -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px) }
+.sheet{
+  border-color:rgba(255,255,255,.85);
+  background:rgba(255,254,250,.94);
+  -webkit-backdrop-filter:blur(24px) saturate(150%);
+  backdrop-filter:blur(24px) saturate(150%);
+  box-shadow:0 22px 70px rgba(13,29,24,.22),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.toast{
+  background:rgba(24,36,31,.88);
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
+}
 @media(max-width:600px){
-  .app{padding-bottom:calc(136px + env(safe-area-inset-bottom))!important}
-  html,body{scroll-padding-bottom:calc(136px + env(safe-area-inset-bottom))}
-  .bottom{background:#fffefa;border-top:1px solid var(--line);backdrop-filter:none;-webkit-backdrop-filter:none;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
-  .top,.top .brand,.top .brand>span,.top .brand img,.top button{filter:none!important;-webkit-filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;opacity:1!important;transform:none!important}
-  .top .brand>span:last-child{color:var(--ink);text-shadow:none;font-weight:900;letter-spacing:-.25px}
-  .top .brand img{image-rendering:auto}
+  .app{padding-bottom:calc(126px + env(safe-area-inset-bottom))!important}
+  .top{padding-top:max(14px,env(safe-area-inset-top));padding-bottom:18px}
+  .top:before{inset:2px -5px 4px}
+  .bottom{left:10px;right:10px;gap:2px}
+  .nav{font-size:9.5px;letter-spacing:-.1px}
+  .nav span{font-size:21px}
+  .brand{gap:9px;font-size:18px}
+  .mark{width:46px;height:46px;flex-basis:46px}
+}
+@media(prefers-reduced-transparency:reduce){
+  .top:before,.bottom,.sheet,.toast{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--surface)}
+}
+@media(prefers-reduced-motion:reduce){
+  .pill,.chip,.offer,.actions button,.nav{transition:none}
 }
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
