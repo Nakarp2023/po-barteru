@@ -375,23 +375,14 @@ button{min-height:42px}
 }
 
 
-/* iPhone: keep the fixed tab bar from covering the end of any section. */
-.app{padding-bottom:calc(156px + env(safe-area-inset-bottom))!important}
-@media(max-width:480px){.app{padding-bottom:calc(164px + env(safe-area-inset-bottom))!important}}
-.bottom{padding-bottom:calc(12px + env(safe-area-inset-bottom));background:#fffefa;border-top:1px solid var(--line);backdrop-filter:none;-webkit-backdrop-filter:none}
-.top,.top .brand,.top .brand>span,.top .brand img,.top button{filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;opacity:1}
+
+/* Consolidated mobile viewport rules: one source of truth for fixed navigation clearance. */
+.app{padding-bottom:calc(128px + env(safe-area-inset-bottom))!important}
+@media(max-width:480px){.app{padding-bottom:calc(136px + env(safe-area-inset-bottom))!important}}
+html,body{scroll-padding-bottom:calc(136px + env(safe-area-inset-bottom))}
+.bottom{background:#fffefa;border-top:1px solid var(--line);backdrop-filter:none;-webkit-backdrop-filter:none}
+.top,.top .brand,.top .brand>span,.top .brand img,.top button{filter:none!important;-webkit-filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;opacity:1!important}
 .top .brand>span:last-child{color:var(--ink);text-shadow:none}
-.top .brand img{image-rendering:auto}
-
-
-/* Final iPhone viewport clearance: the fixed five-tab bar must not hide the last controls. */
-.app{padding-bottom:calc(220px + env(safe-area-inset-bottom))!important}
-@media(max-width:480px){.app{padding-bottom:calc(230px + env(safe-area-inset-bottom))!important}}
-html,body{scroll-padding-bottom:calc(230px + env(safe-area-inset-bottom))}
-#profileDashboard,#myListings,#myListings> :last-child{scroll-margin-bottom:calc(230px + env(safe-area-inset-bottom))}
-.top{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;transform:none!important}
-.top .brand{filter:none!important;-webkit-filter:none!important;text-shadow:none!important}
-.top .brand>span:last-child{font-weight:900;letter-spacing:-.25px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
