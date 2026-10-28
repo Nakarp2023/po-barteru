@@ -594,6 +594,90 @@ button:active{transform:scale(.985)}
 #modal.modal{z-index:100!important}
 body.form-open{overflow:hidden}
 #modal.modal.open .sheet{visibility:visible}
+
+/* iOS 27-inspired Liquid Glass: unify interactive controls and make the composer usable. */
+:root{
+  --glass-white:rgba(255,255,255,.62);
+  --glass-edge:rgba(255,255,255,.78);
+  --glass-shadow:0 8px 24px rgba(20,35,29,.10),inset 0 1px 0 rgba(255,255,255,.88);
+}
+button,.pill,.chip,.offer,.actions button,.sheet .actions button,
+.advanced-search-save,.promotion-picker-confirm,.promotion-picker-cancel{
+  border-radius:999px!important;
+  border:1px solid rgba(255,255,255,.62)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(175%);
+  backdrop-filter:blur(18px) saturate(175%);
+  box-shadow:var(--glass-shadow);
+  transition:background-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+.pill,.advanced-search-save,.promotion-picker-confirm{
+  background:rgba(215,239,170,.78)!important;
+  color:#153f35!important;
+}
+.top #addTop,.offer,.actions .primary,.sheet .actions .primary,
+#listingSubmit,.profile-actions .primary{
+  background:rgba(21,63,53,.82)!important;
+  color:#fff!important;
+  border-color:rgba(255,255,255,.25)!important;
+}
+.chip,.actions button:not(.primary),.sheet .actions button:not(.primary),
+.promotion-picker-cancel{
+  background:rgba(255,255,255,.58)!important;
+  color:var(--ink)!important;
+  border-color:rgba(255,255,255,.78)!important;
+}
+button:active,.pill:active,.chip:active,.offer:active{
+  transform:scale(.985);
+  box-shadow:inset 0 1px 5px rgba(20,35,29,.12);
+}
+#modal .sheet{
+  border:1px solid rgba(255,255,255,.82);
+  background:rgba(249,250,249,.91);
+  -webkit-backdrop-filter:blur(32px) saturate(180%);
+  backdrop-filter:blur(32px) saturate(180%);
+  box-shadow:0 24px 70px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.9);
+  padding-bottom:max(26px,env(safe-area-inset-bottom));
+}
+#modal .sheet .actions{
+  position:static!important;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:12px;
+  margin:16px 0 0;
+  padding:14px 0 4px;
+  background:transparent!important;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+#modal .sheet .actions button{
+  min-width:0;
+  min-height:56px;
+  white-space:normal;
+  line-height:1.2;
+  padding:12px 10px;
+}
+#modal .sheet .actions button:not(.primary){
+  background:rgba(232,233,236,.76)!important;
+}
+@media(max-width:700px){
+  #modal.modal.open{padding:8px 8px calc(116px + env(safe-area-inset-bottom))}
+  #modal .sheet{
+    max-height:calc(100dvh - 132px - env(safe-area-inset-top));
+    overflow-y:auto;
+    padding-bottom:24px;
+  }
+}
+@media(prefers-reduced-transparency:reduce){
+  button,.pill,.chip,.offer,.actions button,.sheet .actions button,
+  .advanced-search-save,.promotion-picker-confirm,.promotion-picker-cancel,
+  #modal .sheet{
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+    background-color:#f5f6f2!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  button,.pill,.chip,.offer{transition:none}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
