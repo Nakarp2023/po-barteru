@@ -1,0 +1,45 @@
+name: Build native iOS app (unsigned)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: native-ios
+        run: xcodegen generate
+
+      - name: Build device app without signing
+        working-directory: native-ios
+        run: |
+          xcodebuild \
+            -project PoBarteruNative.xcodeproj \
+            -scheme PoBarteruNative \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Package unsigned IPA
+        working-directory: native-ios
+        run: |
+          mkdir -p build/Payload
+          cp -R build/DerivedData/Build/Products/Release-iphoneos/PoBarteruNative.app build/Payload/
+          cd build
+          zip -r PoBarteruNative-unsigned.ipa Payload
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: PoBarteruNative-unsigned-ipa
+          path: native-ios/build/PoBarteruNative-unsigned.ipa
+          if-no-files-found: error
