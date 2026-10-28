@@ -61,9 +61,9 @@ struct ContentView: View {
             let rawTab = tab.rawValue
             let js = """
             (() => {
-              const tab = document.querySelector('.bottom .nav[data-page="\\(rawTab)"]');
+              const tab = document.querySelector('.bottom .nav[data-page="\(rawTab)"]');
               if (tab) tab.click();
-              else if (typeof window.setPage === 'function') window.setPage('\\(rawTab)');
+              else if (typeof window.setPage === 'function') window.setPage('\(rawTab)');
             })();
             """
             store.webView?.evaluateJavaScript(js)
