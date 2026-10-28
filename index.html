@@ -3055,7 +3055,7 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
   });
 })();
 document.addEventListener("click",function(e){if(e.target&&e.target.closest("#favoritesEmptyAction")){const home=document.querySelector('.bottom .nav[data-page="home"]');if(home)home.click();window.scrollTo({top:0,behavior:"smooth"});}});
-document.addEventListener("click",function(e){if(!e.target||!e.target.closest("#emptyResetSearch"))return;$("q").value="";filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";category="Все";advancedSearchExpanded=false;render();window.scrollTo({top:0,behavior:"smooth"});});
+document.addEventListener("click",function(e){if(!e.target||!e.target.closest("#emptyResetSearch"))return;$("q").value="";$("advancedCity").value="";filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";category="Все";advancedSearchExpanded=false;render();window.scrollTo({top:0,behavior:"smooth"});});
 $("advancedSearchToggle")?.addEventListener("click",()=>{advancedSearchExpanded=!advancedSearchExpanded;render()});
 $("filtersBackdrop")?.addEventListener("click",()=>{advancedSearchExpanded=false;render()});
 $("closeFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;render()});
