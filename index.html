@@ -1905,6 +1905,57 @@ if (Capacitor.isNativePlatform()) {
 
 
 /* Use the Liquid Glass motion rules defined with the navigation component above. */
+
+/* My Listings: move the overflow menu to the card's top-right and keep only two primary actions below. */
+#profileDashboard.listings-only #myListings>.my-listing{
+  position:relative!important;
+}
+#profileDashboard.listings-only #myListings>.my-listing>.my-info{
+  padding-right:42px!important;
+}
+#profileDashboard.listings-only #myListings>.my-listing>.my-info>.my-actions{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  position:static!important;
+}
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
+  position:absolute!important;
+  top:12px!important;
+  right:12px!important;
+  z-index:6!important;
+  width:38px!important;
+  min-width:38px!important;
+  margin:0!important;
+  justify-self:auto!important;
+  grid-column:auto!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu>summary{
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  min-height:38px!important;
+  box-sizing:border-box!important;
+  padding:0!important;
+  border-radius:50%!important;
+  background:rgba(246,248,243,.96)!important;
+  font-size:23px!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete{
+  right:0!important;
+  top:calc(100% + 7px)!important;
+}
+@media(max-width:600px){
+  #profileDashboard.listings-only #myListings>.my-listing{
+    margin-inline:3px!important;
+    width:auto!important;
+  }
+  #profileDashboard.listings-only #myListings>.my-listing>.my-info{
+    padding-right:38px!important;
+  }
+  #profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
+    top:10px!important;
+    right:10px!important;
+  }
+}
 </style>
 </head><body><main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления">🔔<span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
