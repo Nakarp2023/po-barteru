@@ -1839,7 +1839,7 @@ button:active,.pill:active,.chip:active,.offer:active{
   .bottom .nav{font-size:9px!important}
 }
 
-/* Mobile listing photos: full-width image element, no cropping, no side gutters. */
+/* Mobile listing photos: fill the complete image frame without side gutters. */
 @media(max-width:759px){
   .grid .card .photo{
     position:relative!important;
@@ -1866,8 +1866,8 @@ button:active,.pill:active,.chip:active,.offer:active{
     max-height:none!important;
     margin:0!important;
     padding:0!important;
-    object-fit:contain!important;
-    object-position:center!important;
+    object-fit:cover!important;
+    object-position:center center!important;
     border:0!important;
     border-radius:0!important;
     box-sizing:border-box!important;
