@@ -3302,4 +3302,58 @@ $("filterSort")?.addEventListener("change",event=>{filterSortMode=event.target.v
 $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;render()});
 
 </script>
+
+<style id="listing-detail-stability-fix">
+/* Final override: keep listing details at one fixed viewport-relative size while async seller data arrives. */
+#listingDetailModal.modal.open{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#listingDetailModal .listing-detail-sheet{
+  box-sizing:border-box!important;
+  height:min(70dvh,760px)!important;
+  min-height:min(70dvh,760px)!important;
+  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 16px)!important;
+  flex:0 0 min(70dvh,760px)!important;
+  overflow:hidden!important;
+}
+#listingDetailModal .listing-detail-scroll{
+  box-sizing:border-box!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  flex:1 1 0!important;
+  overflow-y:auto!important;
+  overflow-anchor:none;
+}
+#listingDetailModal #publicSellerReputation{
+  display:block!important;
+  min-height:24px!important;
+}
+#listingDetailModal #publicSellerReviews{
+  min-height:36px;
+}
+#listingDetailModal .listing-detail-gallery,
+#listingDetailModal .listing-detail-image,
+#listingDetailModal .listing-detail-emoji{
+  flex-shrink:0!important;
+}
+@media(max-height:650px){
+  #listingDetailModal .listing-detail-sheet{
+    height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px)!important;
+    min-height:0!important;
+    flex-basis:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px)!important;
+  }
+}
+@media(prefers-reduced-motion:no-preference){
+  #listingDetailModal.open{animation:listingDetailBackdropIn .18s ease-out both}
+  #listingDetailModal.open .listing-detail-sheet{animation:listingDetailAppear .22s cubic-bezier(.2,.75,.25,1) both}
+  @keyframes listingDetailBackdropIn{from{opacity:0}to{opacity:1}}
+  @keyframes listingDetailAppear{from{opacity:.92}to{opacity:1}}
+}
+@media(prefers-reduced-motion:reduce){
+  #listingDetailModal.open,#listingDetailModal.open .listing-detail-sheet{animation:none!important}
+}
+</style>
 </body></html>
