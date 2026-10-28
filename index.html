@@ -706,6 +706,33 @@ button:active,.pill:active,.chip:active,.offer:active{
 #profileDashboard.profile-show-settings>#purchaseHistorySection,
 #profileDashboard.profile-show-history>#exchangeReputationSection{scroll-margin-top:24px}
 @media(prefers-reduced-transparency:reduce){.profile-hub-row{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* Hotfix: keep account editor hidden until requested; force a single-column layout when opened. */
+#profileDashboard:not(.profile-show-account) .profile-top-settings{display:none!important}
+#profileDashboard.profile-show-account .profile-top-settings{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  overflow:hidden;
+}
+#profileDashboard.profile-show-account .profile-top-settings>.field,
+#profileDashboard.profile-show-account .profile-top-settings>.push-settings,
+#profileDashboard.profile-show-account .profile-top-settings>.public-name-toggle,
+#profileDashboard.profile-show-account .profile-top-settings>.profile-actions{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+#profileDashboard.profile-show-account .profile-top-settings>.field,
+#profileDashboard.profile-show-account .profile-top-settings>.push-settings{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+#profileDashboard.profile-show-account .profile-top-settings input,
+#profileDashboard.profile-show-account .profile-top-settings button{max-width:100%!important;box-sizing:border-box!important}
+#profileDashboard.profile-show-account .profile-top-settings .public-name-toggle{display:flex!important;align-items:flex-start!important;gap:10px!important;overflow-wrap:anywhere}
+#profileDashboard.profile-show-account .profile-top-settings .public-name-toggle-text{min-width:0!important;flex:1!important;overflow-wrap:anywhere}
+#profileDashboard.profile-show-account .profile-top-settings .profile-actions{display:flex!important;flex-direction:column!important}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
