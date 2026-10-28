@@ -1776,6 +1776,12 @@ button:active,.pill:active,.chip:active,.offer:active{
   #homeHero{background-image:none!important}
   #homeHero::before{display:none!important;content:none!important}
 }
+/* Mobile home: remove redundant benefit cards; preserve them on desktop. */
+@media(max-width:899px){
+  #homeHero .hero-showcase .hero-benefits{display:none!important;visibility:hidden!important}
+  #homeHero .hero-showcase{display:none!important}
+  #homeHero{padding-bottom:24px!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
