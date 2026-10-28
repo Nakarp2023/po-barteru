@@ -1,5 +1,5 @@
-const CACHE_NAME = "po-barteru-shell-v4";
-const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg", "/logo.webp?v=2"];
+const CACHE_NAME = "po-barteru-shell-v5";
+const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg", "/logo.webp?v=3"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
@@ -72,8 +72,8 @@ self.addEventListener("push", event => {
   const title = payload.title || "ПО БАРТЕРУ";
   const options = {
     body: payload.body || "У вас новое событие",
-    icon: "/logo.webp?v=2",
-    badge: "/logo.webp?v=2",
+    icon: "/logo.webp?v=3",
+    badge: "/logo.webp?v=3",
     tag: payload.tag || payload.conversation_id || payload.proposal_id || "po-barteru-notification",
     renotify: false,
     data: { url: payload.url || "/", conversation_id: payload.conversation_id || null, proposal_id: payload.proposal_id || null }
