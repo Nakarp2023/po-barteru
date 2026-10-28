@@ -42,6 +42,7 @@ final class WebViewStore: ObservableObject {
 struct ContentView: View {
     @StateObject private var store = WebViewStore()
     @State private var selectedTab: AppTab = .home
+    @State private var dragPosition: CGFloat? = nil
 
     var body: some View {
         ZStack {
@@ -71,36 +72,74 @@ struct ContentView: View {
     }
 
     private var nativeTabBar: some View {
-        HStack(spacing: 0) {
-            ForEach(AppTab.allCases) { tab in
-                Button {
-                    guard selectedTab != tab else { return }
-                    withAnimation(.spring(response: 0.34, dampingFraction: 0.78)) {
-                        selectedTab = tab
+        GeometryReader { geometry in
+            let tabs = AppTab.allCases
+            let slot = geometry.size.width / CGFloat(tabs.count)
+            let selectedIndex = CGFloat(tabs.firstIndex(of: selectedTab) ?? 0)
+            let lens = dragPosition ?? selectedIndex
+
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(.clear)
+                    .glassEffect(.regular, in: Capsule())
+                    .overlay(Capsule().strokeBorder(.white.opacity(0.24), lineWidth: 0.7))
+
+                Capsule()
+                    .fill(.clear)
+                    .frame(width: max(44, slot - 5), height: 53)
+                    .modifier(NativeLensMaterial())
+                    .offset(x: lens * slot + 2.5)
+                    .animation(dragPosition == nil ? .spring(response: 0.34, dampingFraction: 0.76) : nil, value: lens)
+
+                HStack(spacing: 0) {
+                    ForEach(Array(tabs.enumerated()), id: \.element.id) { index, tab in
+                        let proximity = max(0, 1 - abs(CGFloat(index) - lens))
+                        Button {
+                            guard selectedTab != tab else { return }
+                            withAnimation(.spring(response: 0.34, dampingFraction: 0.76)) {
+                                selectedTab = tab
+                            }
+                        } label: {
+                            VStack(spacing: 4) {
+                                Image(systemName: tab.symbol)
+                                    .font(.system(size: 19 + proximity * 1.5, weight: proximity > 0.5 ? .semibold : .regular))
+                                    .symbolVariant(selectedTab == tab ? .fill : .none)
+                                    .frame(height: 23)
+                                Text(tab.title)
+                                    .font(.system(size: 10, weight: selectedTab == tab ? .semibold : .medium))
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
+                            }
+                            .foregroundStyle(proximity > 0.55 ? Color(red: 0.08, green: 0.35, blue: 0.28) : Color.secondary)
+                            .scaleEffect(1 + proximity * 0.08)
+                            .offset(y: -proximity * 1.5)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 58)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(tab.title)
+                        .accessibilityAddTraits(selectedTab == tab ? .isSelected : [])
                     }
-                } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: tab.symbol)
-                            .font(.system(size: 19, weight: selectedTab == tab ? .semibold : .regular))
-                            .symbolVariant(selectedTab == tab ? .fill : .none)
-                            .frame(height: 22)
-                        Text(tab.title)
-                            .font(.system(size: 10, weight: selectedTab == tab ? .semibold : .medium))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                    }
-                    .foregroundStyle(selectedTab == tab ? Color(red: 0.08, green: 0.35, blue: 0.28) : Color.secondary)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(tab.title)
-                .accessibilityAddTraits(selectedTab == tab ? .isSelected : [])
             }
+            .contentShape(Capsule())
+            .gesture(
+                DragGesture(minimumDistance: 5)
+                    .onChanged { value in
+                        dragPosition = min(CGFloat(tabs.count - 1), max(0, value.location.x / slot - 0.5))
+                    }
+                    .onEnded { value in
+                        let position = min(CGFloat(tabs.count - 1), max(0, value.location.x / slot - 0.5))
+                        selectedTab = tabs[Int(position.rounded())]
+                        withAnimation(.spring(response: 0.34, dampingFraction: 0.76)) {
+                            dragPosition = nil
+                        }
+                    }
+            )
         }
+        .frame(height: 64)
         .padding(.horizontal, 7)
-        .padding(.vertical, 3)
         .background {
             if #available(iOS 26.0, *) {
                 Capsule().fill(.clear).glassEffect(.regular, in: Capsule())
@@ -111,43 +150,4 @@ struct ContentView: View {
                     .shadow(color: .black.opacity(0.10), radius: 18, y: 7)
             }
         }
-        .overlay {
-            if #available(iOS 26.0, *) {
-                Capsule().strokeBorder(.white.opacity(0.36), lineWidth: 0.7)
-                    .allowsHitTesting(false)
-            }
-        }
     }
-}
-
-struct NativeSiteWebView: UIViewRepresentable {
-    @ObservedObject var store: WebViewStore
-    private let siteURL = URL(string: "https://po-barteru.onrender.com")!
-
-    func makeUIView(context: Context) -> WKWebView {
-        let controller = WKUserContentController()
-        let css = """
-        const style = document.createElement('style');
-        style.id = 'po-barteru-native-shell';
-        style.textContent = '.bottom{display:none!important} body{padding-bottom:calc(92px + env(safe-area-inset-bottom))!important}';
-        (document.head || document.documentElement).appendChild(style);
-        """
-        controller.addUserScript(WKUserScript(source: css, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
-
-        let configuration = WKWebViewConfiguration()
-        configuration.userContentController = controller
-        configuration.allowsInlineMediaPlayback = true
-
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.isOpaque = false
-        webView.backgroundColor = UIColor(red: 0.95, green: 0.97, blue: 0.95, alpha: 1)
-        webView.scrollView.backgroundColor = webView.backgroundColor
-        webView.scrollView.contentInsetAdjustmentBehavior = .automatic
-        webView.allowsBackForwardNavigationGestures = true
-        webView.load(URLRequest(url: siteURL, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 30))
-        store.webView = webView
-        return webView
-    }
-
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
-}
