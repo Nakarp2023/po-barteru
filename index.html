@@ -2105,6 +2105,60 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
   .bottom{bottom:max(12px,env(safe-area-inset-bottom,0px))!important}
 }
 /* Use less misleading fallbacks for demo titles when an actual user photo is absent. */
+
+/* Final iPhone pass: reserve real scroll space for the floating tab bar and Safari chrome. */
+@media(max-width:700px){
+  .app{padding-bottom:calc(188px + env(safe-area-inset-bottom,0px))!important}
+  #list{padding-bottom:calc(176px + env(safe-area-inset-bottom,0px))!important;scroll-margin-bottom:calc(176px + env(safe-area-inset-bottom,0px))}
+  #other{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+  #empty{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px));margin-bottom:0!important}
+  .bottom{
+    bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
+    min-height:74px!important;
+    padding:6px!important;
+  }
+}
+/* Listing detail sheet: keep its own scroll area inside the visible viewport. */
+#listingDetailModal.modal{
+  z-index:80!important;
+  padding: max(8px,env(safe-area-inset-top,0px)) 8px max(8px,env(safe-area-inset-bottom,0px))!important;
+  overscroll-behavior:contain;
+}
+#listingDetailModal .listing-detail-sheet{
+  width:min(560px,100%)!important;
+  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 16px)!important;
+  height:auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  padding:0!important;
+  border-radius:28px!important;
+  box-shadow:0 24px 80px rgba(9,24,18,.22)!important;
+}
+#listingDetailModal .listing-detail-scroll{
+  width:100%!important;
+  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 16px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  padding:0 18px max(22px,env(safe-area-inset-bottom,0px))!important;
+  scrollbar-width:none;
+}
+#listingDetailModal .listing-detail-scroll::-webkit-scrollbar{display:none}
+#listingDetailModal .listing-detail-gallery{margin:0 -18px!important}
+#listingDetailModal .listing-detail-image{height:clamp(180px,34dvh,260px)!important;object-fit:contain!important}
+#listingDetailModal .listing-detail-top{margin-top:18px!important}
+#listingDetailModal .listing-detail-close{
+  width:44px!important;height:44px!important;flex:0 0 44px!important;
+  display:grid!important;place-items:center!important;font-size:25px!important;
+  touch-action:manipulation!important;
+}
+@media(max-width:480px){
+  #listingDetailModal.modal{padding:8px 8px max(8px,env(safe-area-inset-bottom,0px))!important}
+  #listingDetailModal .listing-detail-sheet{border-radius:26px!important}
+  #listingDetailModal .listing-detail-scroll{padding-left:16px!important;padding-right:16px!important}
+  #listingDetailModal .listing-detail-gallery{margin-left:-16px!important;margin-right:-16px!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
