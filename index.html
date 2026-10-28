@@ -3269,24 +3269,31 @@ async function loadRemoteListings(){
 async function loadMoreRemoteListings(){
  if(!db||!hasMoreRemoteListings||loadingMoreRemoteListings)return;
  loadingMoreRemoteListings=true;render();
- const cursor=remoteCatalogCursor;
- let query=db.from("listings").select("id,user_id,title,description,category,subcategory,city,region,want,estimated_value,image_urls,created_at").eq("status","active");
- if(cursor)query=query.or("created_at.lt."+cursor.created_at+",and(created_at.eq."+cursor.created_at+",id.lt."+cursor.id+")");
- const {data,error}=await query.order("created_at",{ascending:false}).order("id",{ascending:false}).limit(100);
- if(error){loadingMoreRemoteListings=false;render();toast("Не удалось загрузить следующие объявления. Попробуй ещё раз.");return}
- const rows=data||[];
- if(rows.length)remoteCatalogCursor=rows[rows.length-1];hasMoreRemoteListings=rows.length===100;
- const remoteRows=await mapRemoteListingRows(rows);
- const allRemoteById=new Map(items.filter(x=>x.remote).map(x=>[String(x.id),x]));
- for(const item of remoteRows)allRemoteById.set(String(item.id),item);
- const allRemote=[...allRemoteById.values()];
- const local=loadJSON(STORE_ITEMS,[]).filter(x=>!x.remote);
- const listingKey=x=>[String(x.title||"").trim().toLowerCase(),String(x.category||"").trim().toLowerCase(),String(x.city||"").trim().toLowerCase(),String(x.want||"").trim().toLowerCase(),Number(x.price||0)].join("|");
- const seenListings=new Set(allRemote.map(listingKey));
- const uniqueLocal=local.filter(x=>{const key=listingKey(x);if(seenListings.has(key))return false;seenListings.add(key);return true});
- items=[...allRemote,...uniqueLocal];
- try{localStorage.setItem(STORE_FAVS,JSON.stringify([...favorites]));if(JSON.stringify(uniqueLocal)!==JSON.stringify(local))localStorage.setItem(STORE_ITEMS,JSON.stringify(uniqueLocal))}catch(e){}
- loadingMoreRemoteListings=false;render();
+ try{
+  const cursor=remoteCatalogCursor;
+  let query=db.from("listings").select("id,user_id,title,description,category,subcategory,city,region,want,estimated_value,image_urls,created_at").eq("status","active");
+  if(cursor)query=query.or("created_at.lt."+cursor.created_at+",and(created_at.eq."+cursor.created_at+",id.lt."+cursor.id+")");
+  const {data,error}=await query.order("created_at",{ascending:false}).order("id",{ascending:false}).limit(100);
+  if(error)throw error;
+  const rows=data||[];
+  if(rows.length)remoteCatalogCursor=rows[rows.length-1];
+  hasMoreRemoteListings=rows.length===100;
+  const remoteRows=await mapRemoteListingRows(rows);
+  const allRemoteById=new Map(items.filter(x=>x.remote).map(x=>[String(x.id),x]));
+  for(const item of remoteRows)allRemoteById.set(String(item.id),item);
+  const allRemote=[...allRemoteById.values()];
+  const local=loadJSON(STORE_ITEMS,[]).filter(x=>!x.remote);
+  const listingKey=x=>[String(x.title||"").trim().toLowerCase(),String(x.category||"").trim().toLowerCase(),String(x.city||"").trim().toLowerCase(),String(x.want||"").trim().toLowerCase(),Number(x.price||0)].join("|");
+  const seenListings=new Set(allRemote.map(listingKey));
+  const uniqueLocal=local.filter(x=>{const key=listingKey(x);if(seenListings.has(key))return false;seenListings.add(key);return true});
+  items=[...allRemote,...uniqueLocal];
+  try{localStorage.setItem(STORE_FAVS,JSON.stringify([...favorites]));if(JSON.stringify(uniqueLocal)!==JSON.stringify(local))localStorage.setItem(STORE_ITEMS,JSON.stringify(uniqueLocal))}catch(e){}
+ }catch(error){
+  toast("Не удалось загрузить следующие объявления. Попробуй ещё раз.");
+  console.warn("Catalog pagination failed:",error?.message||error);
+ }finally{
+  loadingMoreRemoteListings=false;render();
+ }
 }
 $("loadMoreListings").onclick=loadMoreRemoteListings;
 async function saveListing(item){
