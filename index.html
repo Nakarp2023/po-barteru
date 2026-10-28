@@ -2200,6 +2200,23 @@ if (Capacitor.isNativePlatform()) {
   #list .card-photo-img,.bottom::before{transition:none!important}
 }
 
+
+/* Final iPhone ergonomics: keep primary actions and category chips comfortably tappable. */
+@media(max-width:600px){
+  .top{grid-template-columns:minmax(0,1fr) 44px auto!important;column-gap:8px!important}
+  .top .notification-top{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important}
+  .top #addTop{min-height:44px!important;padding:10px 13px!important;font-size:12px!important;line-height:1.15!important}
+  #homeHero>.pill{min-height:44px!important}
+  #advancedSearchToggle{min-height:40px!important;padding:8px 13px!important}
+  #filters .chip{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:40px!important;padding:9px 13px!important}
+  #listHeader #count{font-size:11px!important;line-height:1.2!important;letter-spacing:.35px!important;white-space:nowrap!important}
+}
+@media(max-width:370px){
+  .top{column-gap:6px!important}
+  .top #addTop{padding-inline:10px!important;font-size:11px!important}
+  .brand-wordmark{font-size:14px!important}
+}
+
 </style>
 </head><body><main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления">🔔<span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop">＋ Объявление</button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
