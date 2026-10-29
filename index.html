@@ -3246,7 +3246,7 @@ let chatHasOlderMessages=false;
 let chatOlderLoading=false;
 let dealPanelRefreshTimer=null;
 let dealCountdownTimer=null;
-function startDealPanelRefresh(id){if(dealPanelRefreshTimer)clearInterval(dealPanelRefreshTimer);let refreshing=false;dealPanelRefreshTimer=setInterval(async()=>{if(document.hidden||refreshing||activeConversationId!==id||$("chatThread").hidden)return;const panel=$("chatDealPanel");const focused=panel&&panel.contains(document.activeElement)&&/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName);if(focused)return;refreshing=true;try{await loadChatDealPanel(id)}finally{refreshing=false}},3000)}
+function startDealPanelRefresh(id){if(dealPanelRefreshTimer)clearInterval(dealPanelRefreshTimer);let refreshing=false;dealPanelRefreshTimer=setInterval(async()=>{if(document.hidden||refreshing||activeConversationId!==id||$("chatThread").hidden)return;const panel=$("chatDealPanel");const focused=panel&&panel.contains(document.activeElement)&&/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName);const editingTerms=!!panel?.querySelector(".deal-edit-details[open]");if(focused||editingTerms)return;refreshing=true;try{await loadChatDealPanel(id)}finally{refreshing=false}},3000)}
 
 function enableSwipeToReveal(root,selector){
  if(!root)return;
