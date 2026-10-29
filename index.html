@@ -3929,5 +3929,34 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  #chatInbox>.chat-row>[data-chat-hide]{width:48px!important;min-width:48px!important;max-width:48px!important}
  #notificationsList .notification-delete svg,.chat-row [data-chat-hide] svg{width:22px!important;height:22px!important;flex-basis:22px!important}
 }
+
+/* Chat inbox: keep the trash action tucked under the row until the user swipes left. */
+#chatInbox>.chat-row{position:relative!important;overflow:hidden!important;isolation:isolate}
+#chatInbox>.chat-row>[data-chat-open]{
+ position:relative!important;z-index:1!important;
+ flex:0 0 100%!important;width:100%!important;max-width:100%!important;
+ transition:transform .22s cubic-bezier(.2,.8,.2,1)!important;
+ will-change:transform;
+}
+#chatInbox>.chat-row>[data-chat-hide]{
+ position:absolute!important;z-index:0!important;
+ top:4px!important;right:4px!important;bottom:4px!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ opacity:0!important;pointer-events:none!important;
+ transition:opacity .16s ease!important;
+}
+#chatInbox>.chat-row.swipe-revealed>[data-chat-open]{
+ transform:translateX(-62px)!important;
+}
+#chatInbox>.chat-row.swipe-revealed>[data-chat-hide]{
+ opacity:1!important;pointer-events:auto!important;
+}
+@media(max-width:480px){
+ #chatInbox>.chat-row.swipe-revealed>[data-chat-open]{transform:translateX(-56px)!important}
+ #chatInbox>.chat-row.swipe-revealed>[data-chat-hide]{width:48px!important;min-width:48px!important;max-width:48px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #chatInbox>.chat-row>[data-chat-open],#chatInbox>.chat-row>[data-chat-hide]{transition:none!important}
+}
 </style>
 </body></html>
