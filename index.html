@@ -2453,6 +2453,36 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 /* Deal summary uses one CSS-drawn chevron; no nested icon is needed. */
 @media(max-width:600px){.deal-direction-list{margin-top:10px;padding:9px 10px}.deal-direction-row{gap:8px}.deal-direction-row span{font-size:11px}.deal-direction-row strong{font-size:12px}}
 
+<style>
+.profile-support-box{margin:22px 0;padding:18px;border:1px solid var(--line);border-radius:22px;background:#fff}
+.profile-support-description{margin:0 0 14px;color:var(--muted);line-height:1.5}
+.profile-support-form .field{display:grid;gap:7px;margin:0 0 13px}
+.profile-support-form .field>span{font-size:13px;font-weight:700;color:var(--ink)}
+.profile-support-form .field input,.profile-support-form .field select,.profile-support-form .field textarea{width:100%;min-width:0;box-sizing:border-box;border:1px solid var(--line);border-radius:13px;background:#fbfcf9;padding:13px 14px;font:inherit;font-size:16px;color:var(--ink)}
+.profile-support-form .field textarea{resize:vertical;min-height:110px}
+.profile-support-submit{width:100%;min-height:50px;border-radius:15px}
+.profile-support-submit:disabled{opacity:.65;cursor:wait}
+.profile-support-status{font-size:13px;line-height:1.45;color:var(--green);margin:0 0 10px}
+.profile-support-status.is-error{color:#a63d35}
+.profile-support-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:24px 0 10px}
+.profile-support-history-head h4{margin:0;font-size:17px}
+.profile-support-refresh{border:1px solid var(--line);background:#f7f9f4;border-radius:11px;padding:9px 12px;color:var(--green);font-weight:700}
+.profile-support-tickets{display:grid;gap:10px}
+.profile-support-empty{margin:0;padding:16px;border-radius:14px;background:#f6f8f3;color:var(--muted);font-size:13px;line-height:1.5}
+.profile-support-ticket{min-width:0;padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff}
+.profile-support-ticket-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.profile-support-ticket-category{font-size:11px;font-weight:800;color:var(--muted)}
+.profile-support-ticket-state{font-size:11px;font-weight:800;border-radius:99px;padding:5px 9px;background:#edf3e8;color:#315b45}
+.profile-support-ticket-state.state-answered{background:#e0f2e7;color:#205b3e}
+.profile-support-ticket-state.state-closed{background:#f0f1ee;color:#68756e}
+.profile-support-ticket h5{font-size:15px;margin:10px 0 6px;overflow-wrap:anywhere}
+.profile-support-ticket-message,.profile-support-reply p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:13px;margin:0 0 8px}
+.profile-support-ticket time{font-size:11px;color:var(--muted)}
+.profile-support-reply{margin-top:13px;padding:13px;border-radius:12px;background:#f0f6e9;border:1px solid #dce9d0}
+.profile-support-reply b{display:block;font-size:12px;margin-bottom:7px;color:var(--green)}
+.profile-support-reply p{margin-bottom:7px}
+@media(max-width:420px){.profile-support-box{padding:14px}.profile-support-history-head h4{font-size:16px}}
+</style>
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
@@ -3475,7 +3505,21 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       <span class="profile-info-contact-state">Контакт настраивается</span>
     </div>
   </div>
-  <p class="profile-info-contact-note">Ссылка на Telegram поддержки будет добавлена после подтверждения официального аккаунта. Не отправляйте пароли, коды входа и полные данные банковских карт.</p>
+  <p class="profile-info-contact-note">Напишите нам прямо здесь — обращение сохранится в вашем аккаунте. Не отправляйте пароли, коды входа и полные данные банковских карт.</p>
+
+  <section class="profile-support-box" aria-labelledby="profileSupportTitle">
+    <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">СВЯЗЬ С КОМАНДОЙ</p><h4 id="profileSupportTitle">Написать в поддержку</h4></div></div>
+    <p class="profile-support-description">Опишите вопрос. Мы сохраним обращение, чтобы вы могли вернуться к нему и увидеть ответ.</p>
+    <form id="profileSupportForm" class="profile-support-form">
+      <label class="field"><span>Тема обращения</span><select id="profileSupportCategory" required><option value="account">Аккаунт и вход</option><option value="listing">Объявление</option><option value="exchange">Обмен или сделка</option><option value="payment">Оплата и услуги</option><option value="safety">Безопасность или жалоба</option><option value="technical">Техническая проблема</option><option value="other">Другой вопрос</option></select></label>
+      <label class="field"><span>Кратко о проблеме</span><input id="profileSupportSubject" maxlength="120" minlength="4" required placeholder="Например, не получается опубликовать объявление"></label>
+      <label class="field"><span>Подробности</span><textarea id="profileSupportMessage" maxlength="5000" minlength="10" required rows="4" placeholder="Опишите, что произошло и что вы уже пробовали…"></textarea></label>
+      <p class="profile-support-status" id="profileSupportStatus" role="status" aria-live="polite"></p>
+      <button class="pill profile-support-submit" type="submit" id="profileSupportSubmit">Отправить обращение</button>
+    </form>
+    <div class="profile-support-history-head"><h4>Мои обращения</h4><button type="button" id="profileSupportRefresh" class="profile-support-refresh">Обновить</button></div>
+    <div id="profileSupportTickets" class="profile-support-tickets"><p class="profile-support-empty">Войдите в аккаунт, чтобы создавать обращения и смотреть ответы.</p></div>
+  </section>
 
   <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">БЫСТРЫЕ ОТВЕТЫ</p><h4>Помощь по темам</h4></div><span class="profile-info-count" id="profileInfoHelpCount">5 тем</span></div>
   <div class="profile-info-topic-list" id="profileInfoHelpTopics">
@@ -4637,6 +4681,49 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
 @media(prefers-reduced-motion:reduce){.profile-info-chevron{transition:none}}
 
 
+
+/* Real support ticket intake and personal ticket history. */
+(()=>{
+ const form=document.getElementById("profileSupportForm");
+ const status=document.getElementById("profileSupportStatus");
+ const submit=document.getElementById("profileSupportSubmit");
+ const list=document.getElementById("profileSupportTickets");
+ const category=document.getElementById("profileSupportCategory");
+ const subject=document.getElementById("profileSupportSubject");
+ const message=document.getElementById("profileSupportMessage");
+ const refresh=document.getElementById("profileSupportRefresh");
+ if(!form||!list)return;
+ const statusLabels={open:"Ожидает ответа",in_progress:"В работе",answered:"Есть ответ",closed:"Закрыто"};
+ const categoryLabels={account:"Аккаунт и вход",listing:"Объявление",exchange:"Обмен или сделка",payment:"Оплата и услуги",safety:"Безопасность или жалоба",technical:"Техническая проблема",other:"Другой вопрос"};
+ const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+ const setStatus=(text,isError=false)=>{if(status){status.textContent=text;status.classList.toggle("is-error",isError)}};
+ const loadTickets=async()=>{
+   if(!db||!currentUser){list.innerHTML='<p class="profile-support-empty">Войдите в аккаунт, чтобы видеть свои обращения и ответы команды.</p>';return}
+   list.innerHTML='<p class="profile-support-empty">Загружаем обращения…</p>';
+   const {data,error}=await db.from("support_tickets").select("id,category,subject,message,status,support_reply,created_at,replied_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(30);
+   if(error){console.error("Support tickets load failed",error);list.innerHTML='<p class="profile-support-empty">Не удалось загрузить обращения. Попробуйте обновить страницу чуть позже.</p>';return}
+   if(!data?.length){list.innerHTML='<p class="profile-support-empty">Пока обращений нет. Если нужна помощь, заполните форму выше.</p>';return}
+   list.innerHTML=data.map(t=>'<article class="profile-support-ticket"><div class="profile-support-ticket-top"><span class="profile-support-ticket-category">'+esc(categoryLabels[t.category]||categoryLabels.other)+'</span><span class="profile-support-ticket-state state-'+esc(t.status)+'">'+esc(statusLabels[t.status]||"На рассмотрении")+'</span></div><h5>'+esc(t.subject)+'</h5><p class="profile-support-ticket-message">'+esc(t.message)+'</p><time>'+esc(new Date(t.created_at).toLocaleString("ru-RU",{dateStyle:"medium",timeStyle:"short"}))+'</time>'+(t.support_reply?'<div class="profile-support-reply"><b>Ответ поддержки</b><p>'+esc(t.support_reply)+'</p>'+(t.replied_at?'<time>'+esc(new Date(t.replied_at).toLocaleString("ru-RU",{dateStyle:"medium",timeStyle:"short"}))+'</time>':'')+'</div>':'')+'</article>').join("");
+ };
+ form.addEventListener("submit",async event=>{
+   event.preventDefault();
+   if(!db||!currentUser){setStatus("Для отправки обращения сначала войдите в аккаунт.",true);return}
+   const title=subject.value.trim(),body=message.value.trim();
+   if(title.length<4||body.length<10){setStatus("Укажите тему (от 4 символов) и подробности (от 10 символов).",true);return}
+   submit.disabled=true;submit.textContent="Отправляем…";setStatus("");
+   try{
+     const {error}=await db.from("support_tickets").insert({user_id:currentUser.id,category:category.value,subject:title,message:body});
+     if(error)throw error;
+     form.reset();setStatus("Обращение отправлено и сохранено. Ответ появится в разделе «Мои обращения».");
+     await loadTickets();
+   }catch(error){console.error("Support ticket submit failed",error);setStatus(error?.code==="42P01"||error?.code==="PGRST205"?"Раздел поддержки ещё подключается. Попробуйте немного позже.":"Не удалось отправить обращение. Проверьте соединение и попробуйте снова.",true)}
+   finally{submit.disabled=false;submit.textContent="Отправить обращение"}
+ });
+ refresh?.addEventListener("click",loadTickets);
+ window.loadProfileSupportTickets=loadTickets;
+ if(db)db.auth.onAuthStateChange(()=>setTimeout(loadTickets,0));
+ loadTickets();
+})();
 
 /* Search/filter interactions for the support center. No data is sent or stored. */
 (()=>{
