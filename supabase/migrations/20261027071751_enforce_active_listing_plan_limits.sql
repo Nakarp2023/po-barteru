@@ -1,6 +1,3 @@
--- Enforce active listing limits from the user's currently valid subscription.
--- Apply after the monetization_plans and user_subscriptions tables exist.
-
 create or replace function public.enforce_active_listing_limit()
 returns trigger
 language plpgsql
@@ -14,9 +11,6 @@ begin
   if new.status <> 'active' then
     return new;
   end if;
-
-  -- Serialize concurrent active-listing writes for the same owner.
-  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(new.user_id::text, 0));
 
   select max(mp.active_listing_limit)
     into v_limit
