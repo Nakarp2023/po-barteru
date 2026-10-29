@@ -4641,4 +4641,57 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     padding:10px 12px!important;
   }
 }
+
+/* Final approved delete interaction: compact floating danger label + restrained confirmation sheet. */
+#profileDashboard.listings-only #myListings .my-listing{position:relative!important;overflow:visible!important}
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
+  position:absolute!important;top:10px!important;right:10px!important;z-index:30!important;
+  display:block!important;width:38px!important;min-width:38px!important;margin:0!important;
+  grid-column:auto!important;justify-self:auto!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu>summary{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;
+  padding:0!important;box-sizing:border-box!important;border:1px solid #e1e7df!important;
+  border-radius:50%!important;background:#f7f9f4!important;color:#52635a!important;
+  box-shadow:0 2px 7px rgba(31,57,43,.045)!important;font-size:22px!important;line-height:1!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open]>summary{
+  background:#e4f5c7!important;border-color:#d1e8ad!important;color:#214c3d!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
+  position:absolute!important;top:calc(100% + 7px)!important;right:0!important;z-index:31!important;
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;
+  box-sizing:border-box!important;width:max-content!important;min-width:0!important;
+  max-width:min(220px,calc(100vw - 36px))!important;min-height:40px!important;height:auto!important;
+  margin:0!important;padding:10px 13px!important;border:1px solid #ebc9c5!important;
+  border-radius:13px!important;background:rgba(255,241,239,.98)!important;color:#a9443d!important;
+  box-shadow:0 7px 20px rgba(105,48,41,.10),inset 0 1px 0 rgba(255,255,255,.9)!important;
+  font-size:13px!important;font-weight:700!important;line-height:1.25!important;text-align:left!important;
+  white-space:nowrap!important;overflow:visible!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete::before{
+  content:"";display:block;flex:0 0 15px;width:15px;height:15px;background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete:active{
+  background:#fbe5e2!important;transform:scale(.985);
+}
+/* Match the confirmation modal to the agreed soft-red palette instead of a harsh alert red. */
+.delete-confirm-icon{
+  background:linear-gradient(145deg,#fff2f0,#fbe5e2)!important;color:#b44740!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 4px 12px rgba(105,48,41,.045)!important;
+}
+.delete-confirm-icon svg{filter:none!important}
+.delete-confirm-submit{
+  background:#b94b43!important;color:#fff!important;
+  box-shadow:0 3px 9px rgba(148,57,49,.16)!important;
+}
+.delete-confirm-submit:active{background:#a9443d!important}
+@media(max-width:380px){
+  #profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
+    max-width:calc(100vw - 32px)!important;padding:10px 11px!important;font-size:12.5px!important;
+  }
+}
 </style>
