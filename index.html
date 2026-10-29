@@ -4201,4 +4201,159 @@ main.app:not(.show-auth) #authOut{display:none!important}
 .top #addTop{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;background:#e4f5c7!important;color:#214c3d!important;border:1px solid rgba(210,232,174,.95)!important;box-shadow:0 4px 12px rgba(39,88,58,.07),inset 0 1px 0 rgba(255,255,255,.8)!important}
 .top #addTop .add-top-plus{display:inline-grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:9px;background:#315d50;color:#fff;font-size:21px;font-weight:500;line-height:1}
 .top #addTop:active{filter:brightness(.98)}
+
+/* === PO BARTERU: shared visual system pass === */
+:root{
+  --ui-green:#315d50;
+  --ui-green-deep:#214c3d;
+  --ui-lime:#e4f5c7;
+  --ui-lime-border:#d1e8ad;
+  --ui-surface:#ffffff;
+  --ui-surface-soft:#f7f9f4;
+  --ui-border:#e1e6df;
+  --ui-muted:#68756e;
+  --ui-shadow:0 5px 16px rgba(31,57,43,.055);
+  --ui-radius-card:20px;
+  --ui-radius-control:15px;
+}
+/* Consistent motion and focus without changing control behavior. */
+button,.pill,.chip,.offer,.nav,.profile-menu button,.my-listing button{
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,filter .16s ease,transform .16s ease;
+}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid rgba(49,93,80,.55);
+  outline-offset:2px;
+}
+/* Primary, secondary and listing actions share geometry while retaining their existing intent/colors. */
+.pill,.offer,.actions button,.sheet .actions button,.my-listing button{
+  border-radius:var(--ui-radius-control);
+}
+.pill{
+  font-weight:750;
+}
+.offer{
+  background:var(--ui-green);
+  color:#fff;
+  border:1px solid rgba(33,76,61,.08);
+  box-shadow:0 3px 9px rgba(31,57,43,.07);
+}
+.offer:active,.pill:active,.actions button:active,.sheet .actions button:active,.my-listing button:active{
+  transform:translateY(1px);
+}
+/* Category chips: one calm selected state across the catalogue. */
+.chip{
+  border-color:var(--ui-border);
+  border-radius:999px;
+  background:rgba(255,255,255,.92);
+  color:#52635a;
+  font-weight:650;
+}
+.chip.active{
+  background:var(--ui-lime);
+  color:var(--ui-green-deep);
+  border-color:var(--ui-lime-border);
+  box-shadow:inset 0 0 0 1px rgba(49,93,80,.025);
+}
+/* Listing cards: consistent neutral surfaces; VIP/highlight accents remain controlled by their specific classes. */
+.card{
+  border-color:var(--ui-border);
+  border-radius:var(--ui-radius-card);
+  background:var(--ui-surface);
+}
+.card .offer{
+  border-radius:12px;
+}
+.heart{
+  border:1px solid rgba(49,93,80,.10);
+  color:var(--ui-green);
+  box-shadow:0 2px 8px rgba(31,57,43,.06);
+}
+/* Forms and sheets use the same border, radius, and focus language. */
+.sheet{
+  border:1px solid rgba(49,93,80,.07);
+  box-shadow:0 18px 55px rgba(13,29,24,.16);
+}
+.field input,.field select,.field textarea,
+.sheet .field input,.sheet .field select,.sheet .field textarea{
+  border-color:var(--ui-border);
+  border-radius:var(--ui-radius-control);
+  color:var(--ink);
+  background:#fff;
+}
+.field input:focus,.field select:focus,.field textarea:focus,
+.sheet .field input:focus,.sheet .field select:focus,.sheet .field textarea:focus{
+  border-color:rgba(49,93,80,.55);
+  outline:none;
+  box-shadow:0 0 0 3px rgba(49,93,80,.09);
+}
+.sheet .actions button{
+  min-height:50px;
+}
+/* Profile and listing management controls follow the same restrained surface treatment. */
+.profile-menu button,.profile-edit{
+  border-color:var(--ui-border);
+  border-radius:var(--ui-radius-card);
+}
+.profile-menu button{
+  background:var(--ui-surface);
+}
+.my-listing button{
+  border:1px solid rgba(49,93,80,.08);
+  background:#f0f3ed;
+  color:var(--ui-green-deep);
+}
+/* Navigation: neutral inactive items and a soft green selected surface. */
+.nav.active{
+  color:var(--ui-green-deep);
+}
+.nav.active:not(.bottom-nav .nav){
+  background:rgba(228,245,199,.42);
+}
+/* Notification empty state and unread indicators share the app's green palette. */
+#notificationsList .notification-empty-state{
+  border-color:rgba(49,93,80,.10);
+  box-shadow:0 4px 16px rgba(31,57,43,.025);
+}
+#notificationsList .notification-empty-icon{
+  background:rgba(228,245,199,.62);
+  color:var(--ui-green);
+}
+.chat-unread-badge{
+  background:var(--ui-lime);
+  color:var(--ui-green-deep);
+}
+.chat-row.has-unread{
+  border-color:var(--ui-lime-border);
+}
+/* Header create-listing action: separate plus tile makes it distinct from the bell. */
+.top #addTop{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  background:var(--ui-lime)!important;
+  color:var(--ui-green-deep)!important;
+  border:1px solid var(--ui-lime-border)!important;
+  box-shadow:0 4px 12px rgba(39,88,58,.07),inset 0 1px 0 rgba(255,255,255,.8)!important;
+}
+.top #addTop .add-top-plus{
+  display:inline-grid;
+  place-items:center;
+  flex:0 0 26px;
+  width:26px;
+  height:26px;
+  border-radius:9px;
+  background:var(--ui-green);
+  color:#fff;
+  font-size:21px;
+  font-weight:500;
+  line-height:1;
+}
+.top #addTop:active{filter:brightness(.98)}
+@media(max-width:420px){
+  .card{border-radius:18px}
+  .chip{padding:9px 12px}
+  .sheet{border-radius:22px}
+}
 </style>
