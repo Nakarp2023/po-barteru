@@ -3282,7 +3282,7 @@ async function openConversation(id,title){
  if(activeConversationId!==id)return;
  if(error){$("chatMessages").innerHTML='<p class="category">Не удалось загрузить сообщения: '+esc(error.message)+'</p>';return}
  chatOldestMessage=(msgs||[]).length?msgs[msgs.length-1]:null;chatHasOlderMessages=(msgs||[]).length===200;$("loadOlderMessages").hidden=!chatHasOlderMessages;
- $("chatMessages").innerHTML=(msgs||[]).length?msgs.map(chatMessageHTML).reverse().join(""):'<p class="category">Это начало переписки. Напиши первое сообщение ниже.</p>';
+ $("chatMessages").innerHTML=(msgs||[]).length?msgs.map(chatMessageHTML).reverse().join(""):'<p class="category">Пока нет сообщений. Напиши первое сообщение.</p>';
  $("loadOlderMessages").onclick=async()=>{
   if(chatOlderLoading||!chatOldestMessage||activeConversationId!==id)return;
   chatOlderLoading=true;const btn=$("loadOlderMessages");btn.disabled=true;btn.textContent="Загружаем…";
