@@ -3206,24 +3206,23 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #profileDashboard #exchangeOutgoingReviews .my-listing,
 #profileDashboard #exchangeHistoryList .my-listing,
 #profileDashboard #myExchanges .my-listing{
-
-#profileDashboard #myExchanges .exchange-compact-card{align-items:flex-start;gap:12px;padding:15px!important}
-#profileDashboard #myExchanges .exchange-compact-card .my-emoji{width:48px;height:48px;flex:0 0 48px;border-radius:15px;font-size:23px}
+  border-radius:20px;border-color:rgba(31,57,43,.08);background:rgba(255,255,255,.88);
+  box-shadow:0 5px 18px rgba(24,42,32,.03);padding:14px;gap:12px;
+}
+#profileDashboard #myExchanges .exchange-compact-card{align-items:center;gap:9px;padding:9px 11px!important;min-height:0}
+#profileDashboard #myExchanges .exchange-compact-card .my-emoji{width:32px;height:32px;flex:0 0 32px;border-radius:10px;font-size:16px}
 #profileDashboard #myExchanges .exchange-compact-card .my-info{min-width:0;flex:1}
-#profileDashboard #myExchanges .exchange-compact-card h3{margin:1px 0 7px;font-size:16px;line-height:1.35;letter-spacing:-.2px;overflow-wrap:anywhere}
-#profileDashboard #myExchanges .exchange-compact-items{margin:0;color:#68716B;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
-#profileDashboard #myExchanges .exchange-status{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0;padding:6px 10px;border-radius:999px;background:#F0F2EF;color:#626B65;font-size:12px;line-height:1.2;font-weight:700}
-#profileDashboard #myExchanges .exchange-status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 6px}
+#profileDashboard #myExchanges .exchange-compact-card h3{margin:0 0 3px;font-size:13px;line-height:1.25;letter-spacing:-.1px;overflow-wrap:anywhere}
+#profileDashboard #myExchanges .exchange-compact-items{margin:0;color:#68716B;font-size:11px;line-height:1.3;overflow-wrap:anywhere}
+#profileDashboard #myExchanges .exchange-status{display:inline-flex;align-items:center;gap:5px;margin:0;padding:3px 7px;border-radius:999px;background:#F0F2EF;color:#626B65;font-size:10px;line-height:1.15;font-weight:700}
+#profileDashboard #myExchanges .exchange-status:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;flex:0 0 5px}
 #profileDashboard #myExchanges .exchange-status.is-pending{background:#FFF4D8;color:#8A6416}
 #profileDashboard #myExchanges .exchange-status.is-accepted{background:#E5F4D2;color:#286444}
 #profileDashboard #myExchanges .exchange-status.is-completed{background:#E4F3EA;color:#236A48}
 #profileDashboard #myExchanges .exchange-status.is-declined,#profileDashboard #myExchanges .exchange-status.is-cancelled{background:#FCEBE9;color:#A33C35}
-#profileDashboard #myExchanges .exchange-compact-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
-#profileDashboard #myExchanges .exchange-compact-actions button{margin:0!important}
-@media(max-width:480px){#profileDashboard #myExchanges .exchange-compact-card{gap:10px;padding:13px!important}#profileDashboard #myExchanges .exchange-compact-card .my-emoji{width:42px;height:42px;flex-basis:42px;font-size:20px}#profileDashboard #myExchanges .exchange-compact-card h3{font-size:15px}}
-  border-radius:20px;border-color:rgba(31,57,43,.08);background:rgba(255,255,255,.88);
-  box-shadow:0 5px 18px rgba(24,42,32,.03);padding:14px;gap:12px;
-}
+#profileDashboard #myExchanges .exchange-compact-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+#profileDashboard #myExchanges .exchange-compact-actions button{margin:0!important;min-height:30px;padding:6px 10px;font-size:11px}
+@media(max-width:480px){#profileDashboard #myExchanges .exchange-compact-card{gap:8px;padding:8px 9px!important}#profileDashboard #myExchanges .exchange-compact-card .my-emoji{width:28px;height:28px;flex-basis:28px;font-size:14px;border-radius:8px}#profileDashboard #myExchanges .exchange-compact-card h3{font-size:12px}}
 #profileDashboard .purchase-history-details{min-width:0;margin:14px 0}
 #profileDashboard .purchase-history-details>summary{
   min-height:54px;padding:14px 16px!important;border-radius:17px!important;
