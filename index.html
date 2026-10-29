@@ -181,9 +181,6 @@ body{width:100%;max-width:100%;overflow-x:hidden}
 .notification-swipe.swiped .notification-card>span{opacity:0}
 @media(max-width:600px){.notification-swipe .notification-card{min-height:104px;padding:15px 14px;gap:11px}.notification-swipe .notification-card>span{flex-basis:42px!important;width:42px!important;height:42px!important;min-width:42px!important;border-radius:13px!important;font-size:20px!important}.notification-swipe .notification-card .my-info h3{font-size:15px}.notification-swipe .notification-card .my-info p{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.notification-swipe .notification-card,.notification-swipe .notification-card>span{transition:none}}
-/* Subtle danger styling for permanent deletion only. */
-.my-listing .my-actions button[data-permanent-delete-listing]{background:#f8e9e7;color:#9b3d35;border:1px solid #f0d2ce;}
-.my-listing .my-actions button[data-permanent-delete-listing]:active{background:#f2d8d4;}
 
 .monetization-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .monetization-plan{display:flex;flex-direction:column;gap:7px;min-width:0;background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px}
@@ -370,7 +367,6 @@ button{min-height:42px}
 #profileDashboard.listings-only .my-listing{padding:12px;gap:10px}
 #profileDashboard.listings-only .my-listing .my-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #profileDashboard.listings-only .my-listing .my-actions button{min-height:46px;padding:10px 8px;font-size:13px;border-radius:11px;line-height:1.25}
-#profileDashboard.listings-only .my-listing .my-actions button[data-permanent-delete-listing]{grid-column:1 / -1}
 #profileDashboard.listings-only .my-listing .service-indicators{gap:6px}
 #profileDashboard.listings-only .my-listing .service-indicator{font-size:11px;padding:5px 8px}
 @media(max-width:380px){
@@ -1677,7 +1673,6 @@ button:active,.pill:active,.chip:active,.offer:active{
 .my-listing .my-actions button{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:42px;padding:9px 7px;border:1px solid rgba(30,70,52,.06);border-radius:13px;background:#f0f3ed;color:#17624e;font-size:12px;line-height:1.2;font-weight:700;white-space:normal;overflow-wrap:anywhere;box-shadow:inset 0 1px 0 rgba(255,255,255,.85);transition:transform .15s ease,background .15s ease}
 .my-listing .my-actions button:active{transform:scale(.98)}
 .my-listing .my-actions button.my-action-primary{background:#e8f4df;border-color:#d8ebca;color:#175541}
-.my-listing .my-actions button.my-action-delete{grid-column:1/-1;min-height:37px;background:rgba(250,238,235,.78);border-color:rgba(196,95,81,.12);color:#ad493e;font-size:12px}
 .my-listings-empty{grid-column:1/-1;text-align:center;padding:30px 18px 28px;border:1px solid rgba(30,60,45,.07);border-radius:22px;background:rgba(255,255,255,.65)}
 .my-listings-empty-icon{display:grid;place-items:center;width:54px;height:54px;margin:0 auto 13px;border-radius:18px;background:#e6f4d9;color:#246b52;font-size:29px}
 .my-listings-empty h3{margin:0 0 7px;font-size:17px;letter-spacing:-.3px}
@@ -2518,11 +2513,6 @@ if (Capacitor.isNativePlatform()) {
 #profileDashboard.listings-only #myListings .my-listing .service-indicator{font-size:10px!important;padding:4px 7px!important}
 #profileDashboard.listings-only #myListings .my-listing .my-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin-top:9px!important}
 #profileDashboard.listings-only #myListings .my-listing .my-actions>button{min-height:39px!important;padding:8px 6px!important;font-size:12px!important;border-radius:12px!important}
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu{grid-column:1/-1;position:relative;justify-self:end;width:auto;min-width:0}
-#profileDashboard.listings-only #myListings .my-actions-menu>summary{list-style:none;display:flex;align-items:center;justify-content:center;min-width:42px;min-height:34px;padding:4px 13px;border:1px solid #e2e8df;border-radius:999px;background:#f7f8f4;color:#506259;font-size:23px;font-weight:800;line-height:1;cursor:pointer}
-#profileDashboard.listings-only #myListings .my-actions-menu>summary::-webkit-details-marker{display:none}
-#profileDashboard.listings-only #myListings .my-actions-menu[open]>summary{background:#e8f4df;color:#175541}
-#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete{position:absolute;right:0;top:calc(100% + 6px);z-index:5;width:max-content;max-width:min(230px,70vw);min-height:42px;padding:10px 14px!important;background:#fff1ef!important;border:1px solid #f0d2ce!important;border-radius:12px!important;color:#a33f35!important;box-shadow:0 8px 24px rgba(30,45,35,.14);text-align:left;white-space:normal}
 #profileDashboard.listings-only #myListings .my-listing-thumb-fallback{font-size:30px!important}
 #profileDashboard.listings-only .my-listing-filter{padding:9px 13px!important;min-height:42px!important}
 #profileDashboard.listings-only .my-listing-filters{gap:7px!important}
@@ -2559,32 +2549,6 @@ if (Capacitor.isNativePlatform()) {
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   position:static!important;
 }
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
-  position:absolute!important;
-  top:12px!important;
-  right:12px!important;
-  z-index:6!important;
-  width:38px!important;
-  min-width:38px!important;
-  margin:0!important;
-  justify-self:auto!important;
-  grid-column:auto!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu>summary{
-  width:38px!important;
-  min-width:38px!important;
-  height:38px!important;
-  min-height:38px!important;
-  box-sizing:border-box!important;
-  padding:0!important;
-  border-radius:50%!important;
-  background:rgba(246,248,243,.96)!important;
-  font-size:23px!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete{
-  right:0!important;
-  top:calc(100% + 7px)!important;
-}
 @media(max-width:600px){
   #profileDashboard.listings-only #myListings>.my-listing{
     margin-inline:3px!important;
@@ -2592,10 +2556,6 @@ if (Capacitor.isNativePlatform()) {
   }
   #profileDashboard.listings-only #myListings>.my-listing>.my-info{
     padding-right:0!important;
-  }
-  #profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
-    top:10px!important;
-    right:10px!important;
   }
 }
 
@@ -2976,7 +2936,7 @@ function renderImagePreview(){
   else{selectedNewImageFiles.splice(index,1);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files}
   updatePhotoPickerState();renderImagePreview();
  }));
-}["addTop","heroAdd"].forEach(id=>{const button=$(id);if(button){button.type="button";button.addEventListener("click",event=>{event.preventDefault();openForm()})}});$("cancel").onclick=closeForm;$("modal").onclick=e=>{if(e.target===$("modal"))closeForm()};$("form").onsubmit=async e=>{e.preventDefault();const submitButton=$("listingSubmit");if(submitButton.disabled)return;submitButton.disabled=true;const originalButtonText=submitButton.textContent;submitButton.textContent="Сохраняем…";try{const f=new FormData(e.target),categoryValue=String(f.get("category")||"Другое"),files=categoryValue==="Услуги"?[]:Array.from($("listingImages").files||[]);if(files.length>5||editingImageUrls.length+files.length>5){toast("В объявлении может быть не больше 5 фотографий. Удали лишние или выбери меньше новых.");return}if(files.some(file=>!file.type.startsWith("image/"))){toast("Выбери именно фотографии в формате изображения");return}if(files.some(file=>file.size>5*1024*1024)){toast("Каждая фотография должна быть не больше 5 МБ. Уменьши размер фото и попробуй снова.");return}const newItem={id:editingListingId||Date.now(),title:capitalizeInitial(f.get("title")),category:categoryValue,subcategory:String(f.get("subcategory")||""),want:capitalizeInitial(f.get("want")),city:(cityByLabel(f.get("city"))?.name||String(f.get("city")||"").trim()),region:(cityByLabel(f.get("city"))?.region?.fullname||cityByLabel(f.get("city"))?.region?.name||""),price:Number(f.get("price"))||0,emoji:"🔄",desc:f.get("description"),image_urls:editingImageUrls.slice()};if(currentUser&&db&&files.length){const urls=[];for(let i=0;i<files.length;i++){const file=files[i],ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("listing-images").upload(path,file,{contentType:file.type,upsert:false});if(error){toast("Не удалось загрузить фото: "+error.message);return}urls.push(db.storage.from("listing-images").getPublicUrl(path).data.publicUrl)}newItem.image_urls=editingListingId?editingImageUrls.concat(urls).slice(-5):urls}else if(files.length){toast("Чтобы фотографии были видны всем, сначала войди в профиль.");return}if(editingListingId){if(!currentUser||!db){toast("Войди в аккаунт, чтобы редактировать объявление");return}const {data:updatedListing,error}=await db.from("listings").update({title:newItem.title,description:newItem.desc||"",category:newItem.category,subcategory:newItem.subcategory||null,city:newItem.city,region:newItem.region||null,want:newItem.want,estimated_value:newItem.price||null,image_urls:newItem.image_urls,status:editingListingStatus}).eq("id",editingListingId).eq("user_id",currentUser.id).select("id").maybeSingle();if(error){toast("Не удалось сохранить изменения: "+error.message);$("backendNote").textContent=error.message;return}if(!updatedListing){toast("Объявление не найдено или у вас нет прав на изменение.");return}items=items.map(x=>String(x.id)===String(editingListingId)?{...x,...newItem,remote:true}:x);persist();editingListingId=null;editingImageUrls=[];closeForm();await loadRemoteListings();profileBusy=false;await loadProfileDashboard();setPage("my-listings");toast("Изменения сохранены")}else{if(currentUser){const saved=await saveListing(newItem);if(!saved)return;closeForm()}else{items.unshift(newItem);persist();closeForm();toast("Сохранено на устройстве. Войди в профиле для публикации для всех.")};page="home";category="Все";document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page==="home"));renderFilters();render();if(currentUser)toast("Объявление опубликовано для всех");else toast("Объявление добавлено")}}catch(err){console.error("Listing save failed",err);toast("Не удалось сохранить: "+(err?.message||"неизвестная ошибка"));}finally{submitButton.disabled=false;submitButton.textContent=originalButtonText}};function updateImageField(){const isService=$("form").elements.category.value==="Услуги";$("listingImagesField").hidden=isService;if(isService){selectedNewImageFiles=[];$("listingImages").value="";$("imagePreview").innerHTML="";updatePhotoPickerState()}}$("form").addEventListener("change",event=>{if(event.target?.name==="category"){updateSubcategoryOptions();updateImageField()}});$("form").elements.category.addEventListener("input",()=>{updateSubcategoryOptions();updateImageField()});$("listingImages").addEventListener("click",event=>{if(editingImageUrls.length+selectedNewImageFiles.length>=5){event.preventDefault();toast("Уже добавлено 5 фотографий. Удали одну, чтобы выбрать другую.")}});$("listingImages").addEventListener("change",()=>{const chosen=Array.from($("listingImages").files||[])[0];if(!chosen){renderImagePreview();return}if(editingImageUrls.length+selectedNewImageFiles.length>=5){toast("Можно добавить не больше 5 фотографий");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(!chosen.type.startsWith("image/")){toast("Выбери файл изображения");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(chosen.size>5*1024*1024){toast("Каждая фотография должна быть не больше 5 МБ");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}selectedNewImageFiles.push(chosen);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview()});let searchRenderTimer=null;const runSearch=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=setTimeout(()=>{searchRenderTimer=null;render()},140)};$("searchBtn").onclick=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()};$("q").oninput=runSearch;$("q").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()}};$("advancedCity").oninput=render;$("advancedMinPrice").oninput=render;$("advancedMaxPrice").oninput=render;$("resetAdvancedSearch").onclick=()=>{filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("filterCityOnly").checked=false;$("advancedCity").value="";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";render()};$("saveMatchingSearch").onclick=async()=>{if(!currentUser||!db){toast("Войди в аккаунт, чтобы сохранять поиск.");return}if(!["pro","pro_plus","business"].includes(activePlanCode)){toast("Сохранённые поиски доступны на тарифе PRO и выше.");return}const queryText=$("q").value.trim(),city=$("advancedCity").value.trim(),minRaw=$("advancedMinPrice").value,maxRaw=$("advancedMaxPrice").value,min=minRaw===""?null:Number(minRaw),max=maxRaw===""?null:Number(maxRaw);if((min!==null&&min<0)||(max!==null&&max<0)||(min!==null&&max!==null&&min>max)){toast("Проверь диапазон цены.");return}const {error}=await db.from("saved_searches").insert({user_id:currentUser.id,name:[queryText||"Все предложения",category==="Все"?"Все категории":category,city||"Все города"].join(" · "),query_text:queryText||null,category:category==="Все"?null:category,city:city||null,min_price:min,max_price:max,is_active:true});if(error){toast("Не удалось сохранить поиск: "+error.message);return}toast("Поиск сохранён. Новые совпадения появятся в уведомлениях.");};$("backHome").onclick=()=>setPage("home");function setPage(p){if($("modal")?.classList.contains("open"))closeForm();const profileDashboard=$("profileDashboard");if(profileDashboard&&p!=="profile"){profileDashboard.classList.remove("profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history")}page=p;const tabs=navTabs();const selected=tabs.findIndex(n=>n.dataset.page===p);const bar=document.querySelector(".bottom");tabs.forEach((n,i)=>{n.classList.toggle("active",n.dataset.page===p);const proximity=selected<0?0:Math.max(0,1-Math.abs(i-selected));n.style.setProperty("--lens-scale",String(1+proximity*.16));n.style.setProperty("--lens-y",String(proximity*-1.5)+"px")});if(bar&&selected>=0){bar.style.setProperty("--active-index",String(selected));if(!navDrag)bar.style.setProperty("--drag-index",String(selected));}if(p==="chats"||p==="notifications")refreshNotificationCount();render()}const bottomNav=document.querySelector(".bottom");let navDrag=null,suppressNavClick=false;const navTabs=()=>[...document.querySelectorAll(".bottom .nav")];function navSetDrag(value,dragging=true){if(!bottomNav)return;const tabs=navTabs(),max=Math.max(0,tabs.length-1);value=Math.max(0,Math.min(max,value));bottomNav.style.setProperty("--drag-index",String(value));bottomNav.classList.toggle("nav-dragging",dragging);const nearest=Math.max(0,Math.min(tabs.length-1,Math.round(value)));tabs.forEach((tab,i)=>{const proximity=Math.max(0,1-Math.abs(i-value));tab.style.setProperty("--lens-scale",String(1+proximity*.12));tab.style.setProperty("--lens-y",String(proximity*-1.5)+"px");tab.classList.toggle("nav-following",dragging&&i===nearest)})}function navPositionFromX(clientX){const tabs=navTabs(),rect=bottomNav.getBoundingClientRect(),slot=rect.width/Math.max(1,tabs.length);return Math.max(0,Math.min(tabs.length-1,(clientX-rect.left)/slot-.5))}
+}["addTop","heroAdd"].forEach(id=>{const button=$(id);if(button){button.type="button";button.addEventListener("click",event=>{event.preventDefault();openForm()})}});$("cancel").onclick=closeForm;$("modal").onclick=e=>{if(e.target===$("modal"))closeForm()};$("form").onsubmit=async e=>{e.preventDefault();const submitButton=$("listingSubmit");if(submitButton.disabled)return;submitButton.disabled=true;const originalButtonText=submitButton.textContent;submitButton.textContent="Сохраняем…";try{const f=new FormData(e.target),categoryValue=String(f.get("category")||"Другое"),files=categoryValue==="Услуги"?[]:Array.from($("listingImages").files||[]);if(files.length>5||editingImageUrls.length+files.length>5){toast("В объявлении может быть не больше 5 фотографий. Удали лишние или выбери меньше новых.");return}if(files.some(file=>!file.type.startsWith("image/"))){toast("Выбери именно фотографии в формате изображения");return}if(files.some(file=>file.size>5*1024*1024)){toast("Каждая фотография должна быть не больше 5 МБ. Уменьши размер фото и попробуй снова.");return}const newItem={id:editingListingId||Date.now(),title:capitalizeInitial(f.get("title")),category:categoryValue,subcategory:String(f.get("subcategory")||""),want:capitalizeInitial(f.get("want")),city:(cityByLabel(f.get("city"))?.name||String(f.get("city")||"").trim()),region:(cityByLabel(f.get("city"))?.region?.fullname||cityByLabel(f.get("city"))?.region?.name||""),price:Number(f.get("price"))||0,emoji:"🔄",desc:f.get("description"),image_urls:editingImageUrls.slice()};if(currentUser&&db&&files.length){const urls=[];for(let i=0;i<files.length;i++){const file=files[i],ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("listing-images").upload(path,file,{contentType:file.type,upsert:false});if(error){toast("Не удалось загрузить фото: "+error.message);return}urls.push(db.storage.from("listing-images").getPublicUrl(path).data.publicUrl)}newItem.image_urls=editingListingId?editingImageUrls.concat(urls).slice(-5):urls}else if(files.length){toast("Чтобы фотографии были видны всем, сначала войди в профиль.");return}if(editingListingId){if(!currentUser||!db){toast("Войди в аккаунт, чтобы редактировать объявление");return}const {data:updatedListing,error}=await db.from("listings").update({title:newItem.title,description:newItem.desc||"",category:newItem.category,subcategory:newItem.subcategory||null,city:newItem.city,region:newItem.region||null,want:newItem.want,estimated_value:newItem.price||null,image_urls:newItem.image_urls,status:editingListingStatus}).eq("id",editingListingId).eq("user_id",currentUser.id).select("id").maybeSingle();if(error){toast("Не удалось сохранить изменения: "+error.message);$("backendNote").textContent=error.message;return}if(!updatedListing){toast("Объявление не найдено или у вас нет прав на изменение.");return}items=items.map(x=>String(x.id)===String(editingListingId)?{...x,...newItem,remote:true}:x);persist();editingListingId=null;editingImageUrls=[];closeForm();await loadRemoteListings();profileBusy=false;await loadProfileDashboard();setPage("my-listings");toast("Изменения сохранены")}else{if(currentUser){const saved=await saveListing(newItem);if(!saved)return;closeForm()}else{items.unshift(newItem);persist();closeForm();toast("Сохранено на устройстве. Войди в профиле для публикации для всех.")};page="home";category="Все";document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page==="home"));renderFilters();render();if(currentUser)toast("Объявление опубликовано для всех");else toast("Объявление добавлено")}}catch(err){console.error("Listing save failed",err);toast("Не удалось сохранить: "+(err?.message||"неизвестная ошибка"));}finally{submitButton.disabled=false;submitButton.textContent=originalButtonText}};function updateImageField(){const isService=$("form").elements.category.value==="Услуги";$("listingImagesField").hidden=isService;if(isService){selectedNewImageFiles=[];$("listingImages").value="";$("imagePreview").innerHTML="";updatePhotoPickerState()}}$("form").addEventListener("change",event=>{if(event.target?.name==="category"){updateSubcategoryOptions();updateImageField()}});$("form").elements.category.addEventListener("input",()=>{updateSubcategoryOptions();updateImageField()});$("listingImages").addEventListener("click",event=>{if(editingImageUrls.length+selectedNewImageFiles.length>=5){event.preventDefault();toast("Уже добавлено 5 фотографий. Удали одну, чтобы выбрать другую.")}});$("listingImages").addEventListener("change",()=>{const chosen=Array.from($("listingImages").files||[])[0];if(!chosen){renderImagePreview();return}if(editingImageUrls.length+selectedNewImageFiles.length>=5){toast("Можно добавить не больше 5 фотографий");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(!chosen.type.startsWith("image/")){toast("Выбери файл изображения");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(chosen.size>5*1024*1024){toast("Каждая фотография должна быть не больше 5 МБ");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}selectedNewImageFiles.push(chosen);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview()});let searchRenderTimer=null;const runSearch=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=setTimeout(()=>{searchRenderTimer=null;render()},140)};$("searchBtn").onclick=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()};$("q").oninput=runSearch;$("q").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()}};$("advancedCity").oninput=render;$("advancedMinPrice").oninput=render;$("advancedMaxPrice").oninput=render;$("resetAdvancedSearch").onclick=()=>{filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("filterCityOnly").checked=false;$("advancedCity").value="";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";render()};$("saveMatchingSearch").onclick=async()=>{if(!currentUser||!db){toast("Войди в аккаунт, чтобы сохранять поиск.");return}if(!["pro","pro_plus","business"].includes(activePlanCode)){toast("Сохранённые поиски доступны на тарифе PRO и выше.");return}const queryText=$("q").value.trim(),city=$("advancedCity").value.trim(),minRaw=$("advancedMinPrice").value,maxRaw=$("advancedMaxPrice").value,min=minRaw===""?null:Number(minRaw),max=maxRaw===""?null:Number(maxRaw);if((min!==null&&min<0)||(max!==null&&max<0)||(min!==null&&max!==null&&min>max)){toast("Проверь диапазон цены.");return}const {error}=await db.from("saved_searches").insert({user_id:currentUser.id,name:[queryText||"Все предложения",category==="Все"?"Все категории":category,city||"Все города"].join(" · "),query_text:queryText||null,category:category==="Все"?null:category,city:city||null,min_price:min,max_price:max,is_active:true});if(error){toast("Не удалось сохранить поиск: "+error.message);return}toast("Поиск сохранён. Новые совпадения появятся в уведомлениях.");};$("backHome").onclick=()=>setPage("home");function setPage(p){document.querySelectorAll("#profileDashboard.listings-only #myListings .my-actions-menu[open]").forEach(menu=>menu.removeAttribute("open"));if($("modal")?.classList.contains("open"))closeForm();const profileDashboard=$("profileDashboard");if(profileDashboard&&p!=="profile"){profileDashboard.classList.remove("profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history")}page=p;const tabs=navTabs();const selected=tabs.findIndex(n=>n.dataset.page===p);const bar=document.querySelector(".bottom");tabs.forEach((n,i)=>{n.classList.toggle("active",n.dataset.page===p);const proximity=selected<0?0:Math.max(0,1-Math.abs(i-selected));n.style.setProperty("--lens-scale",String(1+proximity*.16));n.style.setProperty("--lens-y",String(proximity*-1.5)+"px")});if(bar&&selected>=0){bar.style.setProperty("--active-index",String(selected));if(!navDrag)bar.style.setProperty("--drag-index",String(selected));}if(p==="chats"||p==="notifications")refreshNotificationCount();render()}const bottomNav=document.querySelector(".bottom");let navDrag=null,suppressNavClick=false;const navTabs=()=>[...document.querySelectorAll(".bottom .nav")];function navSetDrag(value,dragging=true){if(!bottomNav)return;const tabs=navTabs(),max=Math.max(0,tabs.length-1);value=Math.max(0,Math.min(max,value));bottomNav.style.setProperty("--drag-index",String(value));bottomNav.classList.toggle("nav-dragging",dragging);const nearest=Math.max(0,Math.min(tabs.length-1,Math.round(value)));tabs.forEach((tab,i)=>{const proximity=Math.max(0,1-Math.abs(i-value));tab.style.setProperty("--lens-scale",String(1+proximity*.12));tab.style.setProperty("--lens-y",String(proximity*-1.5)+"px");tab.classList.toggle("nav-following",dragging&&i===nearest)})}function navPositionFromX(clientX){const tabs=navTabs(),rect=bottomNav.getBoundingClientRect(),slot=rect.width/Math.max(1,tabs.length);return Math.max(0,Math.min(tabs.length-1,(clientX-rect.left)/slot-.5))}
 function resetNavGesture(){if(!bottomNav)return;const idx=navTabs().findIndex(n=>n.dataset.page===page);navDrag=null;bottomNav.classList.remove("nav-dragging");if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));navSetDrag(idx,false)}suppressNavClick=false}
 bottomNav?.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;const tabs=navTabs();if(!tabs.length)return;const position=navPositionFromX(e.clientX);navDrag={id:e.pointerId,startX:e.clientX,startY:e.clientY,lastPosition:position,position,moved:false};navSetDrag(position,false);},{passive:true});
 function moveNavDrag(e){if(!navDrag||e.pointerId!==navDrag.id)return;const dx=e.clientX-navDrag.startX,dy=e.clientY-navDrag.startY;if(!navDrag.moved&&Math.abs(dx)>6&&Math.abs(dx)>Math.abs(dy)*1.05){navDrag.moved=true;suppressNavClick=true;bottomNav.classList.add("nav-dragging")}if(!navDrag.moved)return;const raw=navPositionFromX(e.clientX);navDrag.position=raw;navDrag.lastPosition=raw;navSetDrag(raw,true);if(e.cancelable)e.preventDefault()}
@@ -3740,7 +3700,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 
 </script>
 
-<style id="listing-detail-stability-fix">
+<style>
 /* Final override: keep listing details at one fixed viewport-relative size while async seller data arrives. */
 #listingDetailModal.modal.open{
   display:flex!important;
@@ -3794,7 +3754,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 }
 </style>
 
-<style id="listing-detail-fixed-close">
+<style>
 /* Keep the close control anchored to the sheet while only the listing content scrolls. */
 #listingDetailModal .listing-detail-sheet{position:relative!important}
 #listingDetailModal .listing-detail-close-fixed{
@@ -4023,8 +3983,9 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   document.addEventListener("click", function(event){
     const selector = "#profileDashboard.listings-only #myListings .my-actions-menu";
     const clickedSummary = event.target.closest(selector + " > summary");
+    const clickedDelete = event.target.closest(selector + " .my-action-delete");
     document.querySelectorAll(selector + "[open]").forEach(function(menu){
-      if(clickedSummary ? menu !== clickedSummary.parentElement : !menu.contains(event.target)){
+      if(clickedDelete || (clickedSummary ? menu !== clickedSummary.parentElement : !menu.contains(event.target))){
         menu.removeAttribute("open");
       }
     });
@@ -4478,223 +4439,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   font-weight:750!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.7)!important;
 }
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu>summary{
-  min-width:38px!important;
-  min-height:34px!important;
-  padding:3px 11px!important;
-  border-color:#e1e7df!important;
-  background:#f7f9f4!important;
-  color:#52635a!important;
-  box-shadow:0 2px 7px rgba(31,57,43,.045)!important;
-}
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open]>summary{
-  background:#e4f5c7!important;
-  border-color:#d1e8ad!important;
-  color:#214c3d!important;
-}
 @media(max-width:380px){
   #profileDashboard.listings-only #myListings .my-listing{padding:9px!important;gap:8px!important}
   #profileDashboard.listings-only #myListings .my-listing .my-actions>button{font-size:11px!important}
   #profileDashboard.listings-only .profile-section:has(#myListings) .my-listings-section-head h2{font-size:21px!important}
 }
-
-/* Permanent-delete action: restrained danger styling, consistent with soft marketplace surfaces. */
-#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  gap:9px!important;
-  box-sizing:border-box!important;
-  min-height:44px!important;
-  width:max-content!important;
-  max-width:min(238px,calc(100vw - 56px))!important;
-  padding:11px 14px!important;
-  border:1px solid #eac5c0!important;
-  border-radius:15px!important;
-  background:#fff0ee!important;
-  color:#a9443d!important;
-  box-shadow:0 8px 22px rgba(105,48,41,.10),inset 0 1px 0 rgba(255,255,255,.92)!important;
-  font-size:13px!important;
-  font-weight:750!important;
-  line-height:1.25!important;
-  text-align:left!important;
-  white-space:normal!important;
-  overflow-wrap:anywhere!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete::before{
-  content:"";
-  display:block;
-  flex:0 0 16px;
-  width:16px;
-  height:16px;
-  background:currentColor;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
-  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete:hover{
-  background:#fde8e5!important;
-  border-color:#e1b3ad!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete:active{
-  background:#f9dfdc!important;
-  transform:translateY(1px);
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open]>summary{
-  background:#e4f5c7!important;
-  border-color:#d1e8ad!important;
-  color:#214c3d!important;
-}
-
-/* When opened, expand the overflow menu in document flow so the destructive action never covers listing text or action buttons. */
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open]{
-  position:static!important;
-  grid-column:1/-1!important;
-  justify-self:stretch!important;
-  width:100%!important;
-  min-width:0!important;
-  margin-top:5px!important;
-}
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open]>summary{
-  display:flex!important;
-  width:100%!important;
-  min-height:30px!important;
-  height:30px!important;
-  box-sizing:border-box!important;
-  justify-content:center!important;
-  border-radius:10px!important;
-  font-size:19px!important;
-}
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open] .my-action-delete{
-  position:static!important;
-  display:flex!important;
-  width:100%!important;
-  max-width:none!important;
-  margin-top:6px!important;
-  box-sizing:border-box!important;
-}
-
-/* Compact overflow popover for My Listings; permanent deletion then uses the existing confirmation modal. */
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
-  position:absolute!important;
-  top:10px!important;
-  right:10px!important;
-  z-index:12!important;
-  display:block!important;
-  width:38px!important;
-  min-width:38px!important;
-  margin:0!important;
-  justify-self:auto!important;
-  grid-column:auto!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu>summary{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  width:38px!important;
-  min-width:38px!important;
-  height:38px!important;
-  min-height:38px!important;
-  box-sizing:border-box!important;
-  padding:0!important;
-  border:1px solid #e1e7df!important;
-  border-radius:50%!important;
-  background:rgba(247,249,244,.97)!important;
-  color:#52635a!important;
-  box-shadow:0 2px 7px rgba(31,57,43,.045)!important;
-  font-size:22px!important;
-  line-height:1!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open]>summary{
-  background:#e4f5c7!important;
-  border-color:#d1e8ad!important;
-  color:#214c3d!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
-  position:absolute!important;
-  top:calc(100% + 7px)!important;
-  right:0!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  gap:9px!important;
-  box-sizing:border-box!important;
-  width:max-content!important;
-  min-width:190px!important;
-  max-width:min(228px,calc(100vw - 48px))!important;
-  min-height:44px!important;
-  margin:0!important;
-  padding:11px 14px!important;
-  border:1px solid #eac5c0!important;
-  border-radius:14px!important;
-  background:#fff0ee!important;
-  color:#a9443d!important;
-  box-shadow:0 8px 22px rgba(105,48,41,.12),inset 0 1px 0 rgba(255,255,255,.92)!important;
-  font-size:13px!important;
-  font-weight:750!important;
-  line-height:1.25!important;
-  text-align:left!important;
-  white-space:normal!important;
-  overflow-wrap:anywhere!important;
-  z-index:15!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete::before{
-  content:"";
-  display:block;
-  flex:0 0 16px;
-  width:16px;
-  height:16px;
-  background:currentColor;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
-  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete:active{
-  background:#f9dfdc!important;
-  transform:translateY(1px);
-}
 @media(max-width:380px){
-  #profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
-    min-width:176px!important;
-    max-width:calc(100vw - 42px)!important;
-    padding:10px 12px!important;
-  }
 }
 
 /* Final approved delete interaction: compact floating danger label + restrained confirmation sheet. */
 #profileDashboard.listings-only #myListings .my-listing{position:relative!important;overflow:visible!important}
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
-  position:absolute!important;top:10px!important;right:10px!important;z-index:30!important;
-  display:block!important;width:38px!important;min-width:38px!important;margin:0!important;
-  grid-column:auto!important;justify-self:auto!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu>summary{
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;
-  padding:0!important;box-sizing:border-box!important;border:1px solid #e1e7df!important;
-  border-radius:50%!important;background:#f7f9f4!important;color:#52635a!important;
-  box-shadow:0 2px 7px rgba(31,57,43,.045)!important;font-size:22px!important;line-height:1!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open]>summary{
-  background:#e4f5c7!important;border-color:#d1e8ad!important;color:#214c3d!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
-  position:absolute!important;top:calc(100% + 7px)!important;right:0!important;z-index:31!important;
-  display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;
-  box-sizing:border-box!important;width:max-content!important;min-width:0!important;
-  max-width:min(220px,calc(100vw - 36px))!important;min-height:40px!important;height:auto!important;
-  margin:0!important;padding:10px 13px!important;border:1px solid #ebc9c5!important;
-  border-radius:13px!important;background:rgba(255,241,239,.98)!important;color:#a9443d!important;
-  box-shadow:0 7px 20px rgba(105,48,41,.10),inset 0 1px 0 rgba(255,255,255,.9)!important;
-  font-size:13px!important;font-weight:700!important;line-height:1.25!important;text-align:left!important;
-  white-space:nowrap!important;overflow:visible!important;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete::before{
-  content:"";display:block;flex:0 0 15px;width:15px;height:15px;background:currentColor;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
-  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
-}
-#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete:active{
-  background:#fbe5e2!important;transform:scale(.985);
-}
 /* Match the confirmation modal to the agreed soft-red palette instead of a harsh alert red. */
 .delete-confirm-icon{
   background:linear-gradient(145deg,#fff2f0,#fbe5e2)!important;color:#b44740!important;
@@ -4707,31 +4461,24 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 .delete-confirm-submit:active{background:#a9443d!important}
 @media(max-width:380px){
-  #profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
-    max-width:calc(100vw - 32px)!important;padding:10px 11px!important;font-size:12.5px!important;
-  }
-}
-
-/* Corrective override: the delete action is a floating popover, never a full-width row. */
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu,
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open]{
-  position:absolute!important;top:10px!important;right:10px!important;z-index:40!important;
-  display:block!important;grid-column:auto!important;justify-self:auto!important;
-  width:38px!important;min-width:38px!important;max-width:38px!important;margin:0!important;
-}
-#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open] .my-action-delete{
-  position:absolute!important;top:calc(100% + 7px)!important;right:0!important;left:auto!important;
-  display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;
-  width:max-content!important;min-width:0!important;max-width:min(220px,calc(100vw - 32px))!important;
-  min-height:40px!important;height:auto!important;margin:0!important;padding:10px 13px!important;
-  box-sizing:border-box!important;border:1px solid #ebc9c5!important;border-radius:13px!important;
-  background:rgba(255,241,239,.98)!important;color:#a9443d!important;
-  box-shadow:0 7px 20px rgba(105,48,41,.10),inset 0 1px 0 rgba(255,255,255,.9)!important;
-  font-size:13px!important;font-weight:700!important;line-height:1.25!important;white-space:nowrap!important;z-index:41!important;
 }
 @media(max-width:380px){
-  #profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open] .my-action-delete{
-    max-width:calc(100vw - 28px)!important;padding:9px 11px!important;font-size:12px!important;
-  }
 }
+
+/* My Listings overflow menu — compact floating popover; no grid row expansion. */
+#profileDashboard.listings-only #myListings>.my-listing{position:relative;overflow:visible}
+#profileDashboard.listings-only #myListings .my-actions{position:static}
+#profileDashboard.listings-only #myListings .my-actions-menu,#profileDashboard.listings-only #myListings .my-actions-menu[open]{position:absolute;top:10px;right:10px;z-index:40;display:block;width:38px;min-width:38px;max-width:38px;margin:0;padding:0;grid-column:auto;justify-self:auto;align-self:start}
+#profileDashboard.listings-only #myListings .my-actions-menu>summary{display:flex;align-items:center;justify-content:center;width:38px;min-width:38px;height:38px;min-height:38px;box-sizing:border-box;padding:0;border:1px solid #e1e7df;border-radius:50%;background:#f7f9f4;color:#52635a;box-shadow:0 2px 7px rgba(31,57,43,.045);font-size:22px;line-height:1;list-style:none;cursor:pointer}
+#profileDashboard.listings-only #myListings .my-actions-menu>summary::-webkit-details-marker{display:none}
+#profileDashboard.listings-only #myListings .my-actions-menu[open]>summary{background:#e4f5c7;border-color:#d1e8ad;color:#214c3d}
+#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete{position:absolute;top:calc(100% + 7px);right:0;left:auto;z-index:41;display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;box-sizing:border-box;width:max-content;min-width:0;max-width:min(220px,calc(100vw - 32px));min-height:40px;height:auto;margin:0;padding:9px 12px;border:1px solid #ebc9c5;border-radius:13px;background:rgba(255,241,239,.98);color:#a9443d;box-shadow:0 7px 20px rgba(105,48,41,.10),inset 0 1px 0 rgba(255,255,255,.9);font-size:12.5px;font-weight:700;line-height:1.25;text-align:left;white-space:nowrap;overflow:visible}
+#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete::before{content:"";display:block;flex:0 0 15px;width:15px;height:15px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat}
+#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete:active{background:#fbe5e2;transform:scale(.985)}
+@media(max-width:380px){#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete{max-width:calc(100vw - 28px);padding:9px 10px;font-size:12px}}
+.delete-confirm-icon{background:linear-gradient(145deg,#fff2f0,#fbe5e2)!important;color:#b44740!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 4px 12px rgba(105,48,41,.045)!important}
+.delete-confirm-icon svg{filter:none!important}
+.delete-confirm-submit{background:#b94b43!important;color:#fff!important;box-shadow:0 3px 9px rgba(148,57,49,.16)!important}
+.delete-confirm-submit:active{background:#a9443d!important}
+
 </style>
