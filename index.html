@@ -4271,23 +4271,24 @@ async function loadMyExchanges(){
  ]);
  if(outErr||inErr||hiddenError){el.innerHTML='<p class="category">Не удалось загрузить предложения: '+esc((outErr||inErr||hiddenError).message)+'</p>';return}
  const hiddenProposalIds=new Set((hiddenRows||[]).map(x=>String(x.proposal_id)));
- const visibleOutgoing=(outgoing||[]).filter(x=>!hiddenProposalIds.has(String(x.id)));
- const visibleIncoming=(incoming||[]).filter(x=>!hiddenProposalIds.has(String(x.id)));
- const pendingIncoming=visibleIncoming.filter(x=>x.status==="pending");
- const incomingListingIds=[...new Set(pendingIncoming.map(x=>String(x.listing_id)).filter(Boolean))];
+ const activeProposalStatuses=new Set(["pending","accepted"]);
+ const visibleOutgoing=(outgoing||[]).filter(x=>!hiddenProposalIds.has(String(x.id))&&activeProposalStatuses.has(x.status));
+ const visibleIncoming=(incoming||[]).filter(x=>!hiddenProposalIds.has(String(x.id))&&activeProposalStatuses.has(x.status));
+ const activeIncoming=visibleIncoming;
+ const incomingListingIds=[...new Set(activeIncoming.map(x=>String(x.listing_id)).filter(Boolean))];
  let received=[];
  if(incomingListingIds.length){
   const {data:listingRows,error:listingRowsError}=await db.from("listings").select("id,title,user_id").in("id",incomingListingIds);
   if(!listingRowsError){
    const ownedListings=new Map((listingRows||[]).filter(listing=>String(listing.user_id)===String(currentUser.id)).map(listing=>[String(listing.id),listing]));
-   received=pendingIncoming.filter(x=>ownedListings.has(String(x.listing_id))).map(x=>({...x,listingTitle:ownedListings.get(String(x.listing_id)).title}));
+   received=activeIncoming.filter(x=>ownedListings.has(String(x.listing_id))).map(x=>({...x,listingTitle:ownedListings.get(String(x.listing_id)).title}));
   }
  }
  const summarizeProposal=(value)=>{let text=String(value||"Обмен без описания").split(/\n\s*\nТип сделки:\s*/)[0].trim();const pair=text.match(/отдаю\s*[«"“](.+?)[»"”]\s*и\s*получаю\s*[«"“](.+?)[»"”]/i);if(pair)return pair[1].trim()+" ↔ "+pair[2].trim();text=text.replace(/^Здравствуйте[.!\s,]*/i,"").replace(/^Добрый день[.!\s,]*/i,"").replace(/^Предлагаю обмен\s*:?\s*/i,"").replace(/^Рассмотрите мо[её] предложени[ея] по обмену\??\s*/i,"").split(/\n|(?=Предмет предложен текстом)|(?=Тип сделки:)/i)[0].trim().replace(/[.!?]+$/,"");return text||"Предложение обмена"};
  const statusLabel={pending:"Ожидает ответа",accepted:"Принято",declined:"Отклонено",cancelled:"Отменено",completed:"Завершено"};
  const statusChip=(status)=>'<span class="exchange-status is-'+esc(status)+'">'+esc(statusLabel[status]||status||"Статус неизвестен")+'</span>';
  const outgoingHtml=visibleOutgoing.map(x=>'<div class="my-listing swipe-row exchange-compact-card"><div class="my-emoji">🔄</div><div class="my-info"><h3>'+esc(summarizeProposal(x.message))+'</h3>'+statusChip(x.status)+'<div class="exchange-compact-actions"><button class="chip" data-proposal-hide="'+esc(x.id)+'">Убрать</button></div></div></div>').join("");
- const incomingHtml=received.map(x=>'<div class="my-listing swipe-row exchange-compact-card"><div class="my-emoji">🔄</div><div class="my-info"><h3>'+esc(x.listingTitle||summarizeProposal(x.message))+'</h3><p class="exchange-compact-items">'+esc(summarizeProposal(x.message))+'</p>'+statusChip(x.status)+'<div class="exchange-compact-actions"><button class="pill" data-proposal-respond="accepted" data-proposal-id="'+esc(x.id)+'">Принять</button><button class="chip" data-proposal-respond="declined" data-proposal-id="'+esc(x.id)+'">Отклонить</button><button class="chip" data-proposal-hide="'+esc(x.id)+'">Убрать</button></div></div></div>').join("");
+ const incomingHtml=received.map(x=>'<div class="my-listing swipe-row exchange-compact-card"><div class="my-emoji">🔄</div><div class="my-info"><h3>'+esc(x.listingTitle||summarizeProposal(x.message))+'</h3><p class="exchange-compact-items">'+esc(summarizeProposal(x.message))+'</p>'+statusChip(x.status)+(x.status==="pending"?'<div class="exchange-compact-actions"><button class="pill" data-proposal-respond="accepted" data-proposal-id="'+esc(x.id)+'">Принять</button><button class="chip" data-proposal-respond="declined" data-proposal-id="'+esc(x.id)+'">Отклонить</button><button class="chip" data-proposal-hide="'+esc(x.id)+'">Убрать</button></div>':'<div class="exchange-compact-actions"><button class="chip" data-proposal-hide="'+esc(x.id)+'">Убрать</button></div>')+'</div></div>').join("");
  el.innerHTML=(received.length?'<h3>Входящие предложения</h3>'+incomingHtml:'')+(outgoingHtml?'<h3 style="margin-top:18px">Мои предложения</h3>'+outgoingHtml:'')||'<p class="category">Пока нет предложений обмена.</p>';
  enableSwipeToReveal(el,".swipe-row");el.querySelectorAll("[data-proposal-hide]").forEach(btn=>btn.onclick=async()=>{const id=btn.dataset.proposalHide;if(!await confirmActionDialog({title:"Убрать предложение?",message:"Оно исчезнет только из твоего списка. У другого участника предложение останется.",actionLabel:"Убрать из списка",variant:"danger"}))return;btn.disabled=true;const {error}=await db.from("user_hidden_exchange_proposals").upsert({user_id:currentUser.id,proposal_id:id},{onConflict:"user_id,proposal_id"});if(error){btn.disabled=false;toast("Не удалось убрать предложение.");return}toast("Предложение убрано из твоего списка");await loadMyExchanges()});
  el.querySelectorAll("[data-proposal-respond]").forEach(btn=>btn.onclick=async()=>{
