@@ -2375,6 +2375,48 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
  #chatInbox>.chat-row>[data-chat-open]>.my-info .chat-preview{font-size:13px;line-height:1.35;max-height:2.7em}
 }
 
+
+/* Compact iOS-inspired deal summary inside the conversation */
+#chatDealPanel.deal-summary-card{
+ display:block!important;margin:10px 0 16px!important;padding:14px!important;
+ border:1px solid rgba(60,60,67,.09)!important;border-radius:18px!important;
+ background:rgba(255,255,255,.94)!important;
+ box-shadow:0 2px 10px rgba(0,0,0,.025)!important;min-width:0
+}
+.deal-summary-top{display:flex;align-items:center;gap:11px;min-width:0}
+.deal-summary-icon{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:13px;background:#edf1e7;color:#35483a;font-size:22px;font-weight:600}
+.deal-summary-heading{flex:1;min-width:0}
+.deal-summary-kicker{font-size:10px;letter-spacing:.11em;font-weight:750;color:#8a8e89;margin-bottom:3px}
+.deal-summary-heading h3{font-size:16px!important;line-height:1.25;margin:0 0 3px!important;font-weight:650;color:var(--ink)}
+.deal-summary-heading p{font-size:13px!important;line-height:1.35;margin:0!important;color:var(--muted);overflow-wrap:anywhere}
+.deal-summary-status{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 10px;border-radius:11px;background:#f5f6f3;color:#656b66;font-size:12px;line-height:1.35;font-weight:550}
+.deal-status-dot{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#a3a8a2}
+.deal-summary-status.is-agreed{background:#eff5eb;color:#3d6548}.deal-summary-status.is-agreed .deal-status-dot,.deal-summary-status.is-complete .deal-status-dot{background:#438451}
+.deal-summary-status.is-pending{background:#f7f4e9;color:#796637}.deal-summary-status.is-pending .deal-status-dot{background:#c19a3a}
+.deal-summary-status.is-complete{background:#eff5eb;color:#3d6548}
+.deal-primary-action{width:100%;margin-top:10px!important;min-height:44px}
+.deal-waiting-note{font-size:12px!important;line-height:1.4;color:var(--muted);margin:10px 0 0!important}
+.deal-details{margin-top:12px;border-top:1px solid rgba(60,60,67,.09);padding-top:10px}
+.deal-details>summary,.deal-edit-details>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;font-size:13px;font-weight:600;color:var(--ink);min-height:30px}
+.deal-details>summary::-webkit-details-marker,.deal-edit-details>summary::-webkit-details-marker{display:none}
+.deal-details>summary:after,.deal-edit-details>summary:after{content:"⌄";color:#858b86;font-size:17px}
+.deal-details>summary span{margin-left:auto;color:var(--muted);font-size:11px;font-weight:500}
+.deal-details-body{padding-top:8px}
+.deal-detail-line{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(60,60,67,.06);font-size:12px;line-height:1.35}
+.deal-detail-line span{color:var(--muted)}.deal-detail-line strong{font-weight:600;text-align:right;color:var(--ink)}
+.deal-complete-note{font-size:12px!important;color:#3d6548!important;margin:10px 0 0!important}
+.deal-edit-details{margin-top:12px;padding-top:10px;border-top:1px solid rgba(60,60,67,.08)}
+#chatMessages>.category{font-size:12px;line-height:1.45;color:var(--muted);text-align:center;padding:14px 10px;margin:0}
+#chatSendForm .field{gap:7px}
+#chatSendForm .field textarea{min-height:76px;border-radius:16px;padding:13px 14px}
+#chatSendForm>button[type=submit]{min-height:44px;padding:11px 20px}
+@media(max-width:600px){
+ #chatDealPanel.deal-summary-card{padding:12px!important;border-radius:16px!important}
+ .deal-summary-icon{width:36px;height:36px;flex-basis:36px;border-radius:12px;font-size:20px}
+ .deal-summary-heading h3{font-size:15px!important}
+ .deal-summary-status{margin-top:10px;padding:8px 9px}
+}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
@@ -3218,7 +3260,14 @@ async function loadChatDealPanel(conversationId){
  const isSender=p.sender_id===currentUser.id;const isOwner=listing.user_id===currentUser.id;if(!isSender&&!isOwner)return;
  const terms=p.deal_type==="surcharge"?"Обмен с доплатой: "+Number(p.surcharge_amount).toLocaleString("ru-RU")+" ₽. Доплачивает: "+(p.surcharge_payer==="sender"?"отправитель предложения":"владелец объявления")+".":"Чистый бартер без доплаты.";
  const agreed=p.sender_confirmed_terms&&p.owner_confirmed_terms;const done=p.sender_completed_at&&p.owner_completed_at;if(done&&dealPanelRefreshTimer){clearInterval(dealPanelRefreshTimer);dealPanelRefreshTimer=null}
- panel.hidden=false;panel.innerHTML='<h3 style="margin:0 0 8px">Условия сделки</h3><p style="margin:0 0 8px">' +esc(listing.title||"Обмен")+'</p><p style="margin:0 0 8px">' +esc(terms)+'</p><p style="margin:0 0 10px;font-size:13px;color:var(--muted)">Версия условий: '+p.terms_version+' · Ты: '+(isSender?(p.sender_confirmed_terms?"подтвердил":"не подтвердил"):(p.owner_confirmed_terms?"подтвердил":"не подтвердил"))+' · Второй участник: '+(isSender?(p.owner_confirmed_terms?"подтвердил":"не подтвердил"):(p.sender_confirmed_terms?"подтвердил":"не подтвердил"))+'</p>'+(!agreed?'<button class="pill" id="confirmDealTermsBtn" type="button">Подтвердить условия</button>':'<p style="margin:0 0 8px">✅ Условия подтверждены обоими участниками.</p>')+(agreed&&!done?((isSender?p.sender_completed_at:p.owner_completed_at)?'<p style="margin:0 0 8px">✅ Ты подтвердил завершение. Ждём второго участника.</p>':'<button class="pill" id="completeDealBtn" type="button">Подтвердить завершение обмена</button>')+'<p style="margin:0 0 8px;font-size:13px;color:var(--muted)">Второй участник: '+((isSender?p.owner_completed_at:p.sender_completed_at)?'подтвердил завершение.':'ещё не подтвердил завершение.')+'</p>':"")+(done?'<p style="margin:0">🎉 Обмен завершён обеими сторонами.</p>':"")+(!agreed&&!done&&(isSender||isOwner)?'<details style="margin-top:10px"><summary style="cursor:pointer">Изменить условия сделки</summary><label class="field">Тип сделки<select id="dealTypeEdit"><option value="barter" '+(p.deal_type==="barter"?"selected":"")+' >Чистый бартер</option><option value="surcharge" '+(p.deal_type==="surcharge"?"selected":"")+' >Обмен с доплатой</option></select></label><label class="field">Сумма доплаты, ₽<input id="dealAmountEdit" type="number" min="1" step="1" value="'+(p.deal_type==="surcharge"?p.surcharge_amount:"")+'" placeholder="Например, 9000"></label><label class="field">Кто доплачивает<select id="dealPayerEdit"><option value="sender" '+(p.surcharge_payer==="sender"?"selected":"")+' >Отправитель предложения</option><option value="owner" '+(p.surcharge_payer==="owner"?"selected":"")+' >Владелец объявления</option></select></label><button class="chip" id="saveDealTermsBtn" type="button">Предложить новые условия</button></details>':"");
+ const myTermsConfirmed=isSender?p.sender_confirmed_terms:p.owner_confirmed_terms;
+ const otherTermsConfirmed=isSender?p.owner_confirmed_terms:p.sender_confirmed_terms;
+ const myCompleted=isSender?p.sender_completed_at:p.owner_completed_at;
+ const otherCompleted=isSender?p.owner_completed_at:p.sender_completed_at;
+ const statusLabel=done?"Обмен завершён":!agreed?"Нужно согласовать условия":myCompleted?"Ты подтвердил завершение":otherCompleted?"Ждём твоего подтверждения":"Условия согласованы";
+ panel.hidden=false;
+ panel.className="deal-summary-card";
+ panel.innerHTML='<div class="deal-summary-top"><div class="deal-summary-icon" aria-hidden="true">↔</div><div class="deal-summary-heading"><div class="deal-summary-kicker">СДЕЛКА</div><h3>'+esc(listing.title||"Обмен")+'</h3><p>'+esc(terms)+'</p></div></div><div class="deal-summary-status '+(done?"is-complete":agreed?"is-agreed":"is-pending")+'"><span class="deal-status-dot"></span><span>'+esc(statusLabel)+'</span></div>'+(!agreed&&!done?'<button class="pill deal-primary-action" id="confirmDealTermsBtn" type="button">Подтвердить условия</button>':"")+(agreed&&!done&&!myCompleted?'<button class="pill deal-primary-action" id="completeDealBtn" type="button">Подтвердить завершение</button>':"")+(myCompleted&&!done?'<p class="deal-waiting-note">Ты подтвердил завершение. '+(otherCompleted?"Ожидаем обновления статуса.":"Ожидаем подтверждения второго участника.")+'</p>':"")+'<details class="deal-details"><summary>Подробности сделки <span>Версия '+esc(p.terms_version)+'</span></summary><div class="deal-details-body"><div class="deal-detail-line"><span>Твоё подтверждение условий</span><strong>'+ (myTermsConfirmed?"Подтверждено":"Ожидается")+'</strong></div><div class="deal-detail-line"><span>Подтверждение второго участника</span><strong>'+ (otherTermsConfirmed?"Подтверждено":"Ожидается")+'</strong></div>'+(agreed?'<div class="deal-detail-line"><span>Твоё завершение</span><strong>'+ (myCompleted?"Подтверждено":"Ожидается")+'</strong></div><div class="deal-detail-line"><span>Завершение второго участника</span><strong>'+ (otherCompleted?"Подтверждено":"Ожидается")+'</strong></div>':"")+(done?'<p class="deal-complete-note">Обмен подтверждён обеими сторонами.</p>':"")+(!agreed&&!done&&(isSender||isOwner)?'<details class="deal-edit-details"><summary>Изменить условия</summary><label class="field">Тип сделки<select id="dealTypeEdit"><option value="barter" '+(p.deal_type==="barter"?"selected":"")+' >Чистый бартер</option><option value="surcharge" '+(p.deal_type==="surcharge"?"selected":"")+' >Обмен с доплатой</option></select></label><label class="field">Сумма доплаты, ₽<input id="dealAmountEdit" type="number" min="1" step="1" value="'+(p.deal_type==="surcharge"?p.surcharge_amount:"")+'" placeholder="Например, 9000"></label><label class="field">Кто доплачивает<select id="dealPayerEdit"><option value="sender" '+(p.surcharge_payer==="sender"?"selected":"")+' >Отправитель предложения</option><option value="owner" '+(p.surcharge_payer==="owner"?"selected":"")+' >Владелец объявления</option></select></label><button class="chip" id="saveDealTermsBtn" type="button">Предложить новые условия</button></details>':"")+'</div></details>'
  const confirmBtn=$("confirmDealTermsBtn");if(confirmBtn)confirmBtn.onclick=async()=>{confirmBtn.disabled=true;const {data,error}=await db.rpc("confirm_exchange_terms",{p_proposal_id:p.id});if(error){toast("Не удалось подтвердить условия: "+error.message);confirmBtn.disabled=false;return}toast(data&&data.terms_agreed?"Условия подтверждены обеими сторонами":"Твоё подтверждение сохранено");await loadChatDealPanel(conversationId)};
  const completeBtn=$("completeDealBtn");if(completeBtn)completeBtn.onclick=async()=>{completeBtn.disabled=true;const {data,error}=await db.rpc("confirm_exchange_completed",{p_proposal_id:p.id});if(error){toast("Не удалось подтвердить завершение: "+error.message);completeBtn.disabled=false;return}toast(data&&data.completed?"Обмен завершён!":"Подтверждение сохранено. Ждём второго участника.");await loadChatDealPanel(conversationId)};
  const saveBtn=$("saveDealTermsBtn");if(saveBtn)saveBtn.onclick=async()=>{const type=$("dealTypeEdit").value;const amount=type==="surcharge"?Number($("dealAmountEdit").value):0;const payer=type==="surcharge"?$("dealPayerEdit").value:"none";if(type==="surcharge"&&(!Number.isFinite(amount)||amount<=0)){toast("Укажи сумму доплаты больше нуля");return}if(!window.confirm("Изменение условий сбросит подтверждения и потребует согласия обоих участников. Продолжить?"))return;saveBtn.disabled=true;const {data,error}=await db.rpc("update_exchange_terms",{p_proposal_id:p.id,p_deal_type:type,p_surcharge_amount:amount,p_surcharge_payer:payer});if(error){toast("Не удалось изменить условия: "+error.message);saveBtn.disabled=false;return}toast("Новые условия сохранены. Второй участник должен подтвердить их.");await loadChatDealPanel(conversationId)};
