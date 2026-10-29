@@ -4527,4 +4527,32 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   border-color:#d1e8ad!important;
   color:#214c3d!important;
 }
+
+/* When opened, expand the overflow menu in document flow so the destructive action never covers listing text or action buttons. */
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open]{
+  position:static!important;
+  grid-column:1/-1!important;
+  justify-self:stretch!important;
+  width:100%!important;
+  min-width:0!important;
+  margin-top:5px!important;
+}
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open]>summary{
+  display:flex!important;
+  width:100%!important;
+  min-height:30px!important;
+  height:30px!important;
+  box-sizing:border-box!important;
+  justify-content:center!important;
+  border-radius:10px!important;
+  font-size:19px!important;
+}
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open] .my-action-delete{
+  position:static!important;
+  display:flex!important;
+  width:100%!important;
+  max-width:none!important;
+  margin-top:6px!important;
+  box-sizing:border-box!important;
+}
 </style>
