@@ -4555,4 +4555,90 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   margin-top:6px!important;
   box-sizing:border-box!important;
 }
+
+/* Compact overflow popover for My Listings; permanent deletion then uses the existing confirmation modal. */
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu{
+  position:absolute!important;
+  top:10px!important;
+  right:10px!important;
+  z-index:12!important;
+  display:block!important;
+  width:38px!important;
+  min-width:38px!important;
+  margin:0!important;
+  justify-self:auto!important;
+  grid-column:auto!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu>summary{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  min-height:38px!important;
+  box-sizing:border-box!important;
+  padding:0!important;
+  border:1px solid #e1e7df!important;
+  border-radius:50%!important;
+  background:rgba(247,249,244,.97)!important;
+  color:#52635a!important;
+  box-shadow:0 2px 7px rgba(31,57,43,.045)!important;
+  font-size:22px!important;
+  line-height:1!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open]>summary{
+  background:#e4f5c7!important;
+  border-color:#d1e8ad!important;
+  color:#214c3d!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
+  position:absolute!important;
+  top:calc(100% + 7px)!important;
+  right:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:9px!important;
+  box-sizing:border-box!important;
+  width:max-content!important;
+  min-width:190px!important;
+  max-width:min(228px,calc(100vw - 48px))!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:11px 14px!important;
+  border:1px solid #eac5c0!important;
+  border-radius:14px!important;
+  background:#fff0ee!important;
+  color:#a9443d!important;
+  box-shadow:0 8px 22px rgba(105,48,41,.12),inset 0 1px 0 rgba(255,255,255,.92)!important;
+  font-size:13px!important;
+  font-weight:750!important;
+  line-height:1.25!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  z-index:15!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete::before{
+  content:"";
+  display:block;
+  flex:0 0 16px;
+  width:16px;
+  height:16px;
+  background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete:active{
+  background:#f9dfdc!important;
+  transform:translateY(1px);
+}
+@media(max-width:380px){
+  #profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
+    min-width:176px!important;
+    max-width:calc(100vw - 42px)!important;
+    padding:10px 12px!important;
+  }
+}
 </style>
