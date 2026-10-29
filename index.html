@@ -2453,6 +2453,36 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 /* Deal summary uses one CSS-drawn chevron; no nested icon is needed. */
 @media(max-width:600px){.deal-direction-list{margin-top:10px;padding:9px 10px}.deal-direction-row{gap:8px}.deal-direction-row span{font-size:11px}.deal-direction-row strong{font-size:12px}}
 
+
+.profile-support-box{margin:22px 0;padding:18px;border:1px solid var(--line);border-radius:22px;background:#fff}
+.profile-support-description{margin:0 0 14px;color:var(--muted);line-height:1.5}
+.profile-support-form .field{display:grid;gap:7px;margin:0 0 13px}
+.profile-support-form .field>span{font-size:13px;font-weight:700;color:var(--ink)}
+.profile-support-form .field input,.profile-support-form .field select,.profile-support-form .field textarea{width:100%;min-width:0;box-sizing:border-box;border:1px solid var(--line);border-radius:13px;background:#fbfcf9;padding:13px 14px;font:inherit;font-size:16px;color:var(--ink)}
+.profile-support-form .field textarea{resize:vertical;min-height:110px}
+.profile-support-submit{width:100%;min-height:50px;border-radius:15px}
+.profile-support-submit:disabled{opacity:.65;cursor:wait}
+.profile-support-status{font-size:13px;line-height:1.45;color:var(--green);margin:0 0 10px}
+.profile-support-status.is-error{color:#a63d35}
+.profile-support-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:24px 0 10px}
+.profile-support-history-head h4{margin:0;font-size:17px}
+.profile-support-refresh{border:1px solid var(--line);background:#f7f9f4;border-radius:11px;padding:9px 12px;color:var(--green);font-weight:700}
+.profile-support-tickets{display:grid;gap:10px}
+.profile-support-empty{margin:0;padding:16px;border-radius:14px;background:#f6f8f3;color:var(--muted);font-size:13px;line-height:1.5}
+.profile-support-ticket{min-width:0;padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff}
+.profile-support-ticket-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.profile-support-ticket-category{font-size:11px;font-weight:800;color:var(--muted)}
+.profile-support-ticket-state{font-size:11px;font-weight:800;border-radius:99px;padding:5px 9px;background:#edf3e8;color:#315b45}
+.profile-support-ticket-state.state-answered{background:#e0f2e7;color:#205b3e}
+.profile-support-ticket-state.state-closed{background:#f0f1ee;color:#68756e}
+.profile-support-ticket h5{font-size:15px;margin:10px 0 6px;overflow-wrap:anywhere}
+.profile-support-ticket-message,.profile-support-reply p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:13px;margin:0 0 8px}
+.profile-support-ticket time{font-size:11px;color:var(--muted)}
+.profile-support-reply{margin-top:13px;padding:13px;border-radius:12px;background:#f0f6e9;border:1px solid #dce9d0}
+.profile-support-reply b{display:block;font-size:12px;margin-bottom:7px;color:var(--green)}
+.profile-support-reply p{margin-bottom:7px}
+@media(max-width:420px){.profile-support-box{padding:14px}.profile-support-history-head h4{font-size:16px}}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
@@ -3448,7 +3478,148 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   <button type="button" class="profile-hub-row" data-profile-open="reputation"><span class="profile-hub-icon">★</span><span class="profile-hub-copy"><b>Репутация и отзывы</b><small id="profileHubReputation">Рейтинг и отзывы участников</small></span><span class="profile-hub-arrow">›</span></button>
   
   <button type="button" class="profile-hub-row" data-profile-open="settings"><span class="profile-hub-icon">⚙</span><span class="profile-hub-copy"><b>Настройки</b><small>Тарифы, продвижение и сохранённые поиски</small></span><span class="profile-hub-arrow">›</span></button>
+  <button type="button" class="profile-hub-row" data-profile-open="help"><span class="profile-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.3 1.7c-1.1 1-1.9 1.3-1.9 2.8M12 17h.01"/></svg></span><span class="profile-hub-copy"><b>Информация и помощь</b><small>Поддержка, документы и безопасность</small></span><span class="profile-hub-arrow">›</span></button>
 </div>
+
+<section id="profileInfoHelpPanel" class="profile-info-help" hidden aria-labelledby="profileInfoHelpTitle">
+  <div class="profile-info-help-head">
+    <button type="button" class="profile-info-back" id="profileInfoHelpBack" aria-label="Вернуться к разделам профиля">‹</button>
+    <div><p class="profile-info-eyebrow">ЦЕНТР ПОДДЕРЖКИ</p><h3 id="profileInfoHelpTitle">Информация и помощь</h3><p>Подскажем, как пользоваться ПО БАРТЕРУ и безопасно договариваться об обменах.</p></div>
+  </div>
+
+  <div class="profile-info-hero">
+    <div class="profile-info-hero-copy"><span class="profile-info-hero-kicker">МЫ РЯДОМ</span><h4>Чем можем помочь?</h4><p>Выберите тему или найдите ответ в коротких инструкциях.</p></div>
+    <div class="profile-info-hero-art" aria-hidden="true"><span>?</span><i></i><b></b></div>
+  </div>
+
+  <label class="profile-info-search" for="profileInfoHelpSearch">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.2 4.2"></path></svg>
+    <input id="profileInfoHelpSearch" type="search" placeholder="Поиск по темам и инструкциям" autocomplete="off">
+    <button type="button" id="profileInfoHelpSearchClear" aria-label="Очистить поиск" hidden>×</button>
+  </label>
+
+  <div class="profile-info-contact-grid" aria-label="Каналы поддержки">
+    <div class="profile-info-contact-card">
+      <span class="profile-info-contact-icon profile-info-telegram-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 3 3.8 9.7c-1.2.5-1.2 1.2-.2 1.5l4.4 1.4 1.7 5.1c.2.7.1 1 .8 1 .5 0 .8-.2 1.1-.5l2.5-2.4 4.5 3.3c.8.5 1.4.2 1.6-.8L23 4.4C23.3 3.2 22.5 2.5 21 3Z"></path><path d="m8.2 12.4 9.9-6.2-7.7 7.4-.3 3.2"></path></svg></span>
+      <b>Telegram</b><p>Для коротких вопросов и уточнений.</p>
+      <span class="profile-info-contact-state">Контакт настраивается</span>
+    </div>
+  </div>
+  <p class="profile-info-contact-note">Напишите нам прямо здесь — обращение сохранится в вашем аккаунте. Не отправляйте пароли, коды входа и полные данные банковских карт.</p>
+
+  <section class="profile-support-box" aria-labelledby="profileSupportTitle">
+    <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">СВЯЗЬ С КОМАНДОЙ</p><h4 id="profileSupportTitle">Написать в поддержку</h4></div></div>
+    <p class="profile-support-description">Опишите вопрос. Мы сохраним обращение, чтобы вы могли вернуться к нему и увидеть ответ.</p>
+    <form id="profileSupportForm" class="profile-support-form">
+      <label class="field"><span>Тема обращения</span><select id="profileSupportCategory" required><option value="account">Аккаунт и вход</option><option value="listing">Объявление</option><option value="exchange">Обмен или сделка</option><option value="payment">Оплата и услуги</option><option value="safety">Безопасность или жалоба</option><option value="technical">Техническая проблема</option><option value="other">Другой вопрос</option></select></label>
+      <label class="field"><span>Кратко о проблеме</span><input id="profileSupportSubject" maxlength="120" minlength="4" required placeholder="Например, не получается опубликовать объявление"></label>
+      <label class="field"><span>Подробности</span><textarea id="profileSupportMessage" maxlength="5000" minlength="10" required rows="4" placeholder="Опишите, что произошло и что вы уже пробовали…"></textarea></label>
+      <p class="profile-support-status" id="profileSupportStatus" role="status" aria-live="polite"></p>
+      <button class="pill profile-support-submit" type="submit" id="profileSupportSubmit">Отправить обращение</button>
+    </form>
+    <div class="profile-support-history-head"><h4>Мои обращения</h4><button type="button" id="profileSupportRefresh" class="profile-support-refresh">Обновить</button></div>
+    <div id="profileSupportTickets" class="profile-support-tickets"><p class="profile-support-empty">Войдите в аккаунт, чтобы создавать обращения и смотреть ответы.</p></div>
+  </section>
+
+  <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">БЫСТРЫЕ ОТВЕТЫ</p><h4>Помощь по темам</h4></div><span class="profile-info-count" id="profileInfoHelpCount">5 тем</span></div>
+  <div class="profile-info-topic-list" id="profileInfoHelpTopics">
+    <details class="profile-info-topic" data-help-search="обмены сделки предложение отменить завершить договориться">
+      <summary><span class="profile-info-topic-icon">⇄</span><span class="profile-info-topic-copy"><b>Обмены и сделки</b><small>Предложения, договорённости и завершение обмена</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-topic-body"><p><b>Как договориться об обмене?</b><br>Откройте подходящее объявление, свяжитесь с автором через доступный сценарий и согласуйте условия до передачи вещей.</p><p><b>Передумали обмениваться?</b><br>Сообщите второй стороне и используйте доступные действия сделки. Не отмечайте обмен завершённым, пока он фактически не состоялся.</p></div>
+    </details>
+    <details class="profile-info-topic" data-help-search="профиль аккаунт имя город пароль вход">
+      <summary><span class="profile-info-topic-icon">♙</span><span class="profile-info-topic-copy"><b>Профиль и аккаунт</b><small>Личные данные, город и доступ к аккаунту</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-topic-body"><p>Проверьте имя и город в разделе «Личные данные». Используйте уникальный пароль и не передавайте другим людям ссылки для входа или коды подтверждения.</p></div>
+    </details>
+    <details class="profile-info-topic" data-help-search="объявление фото описание категория архив">
+      <summary><span class="profile-info-topic-icon">▤</span><span class="profile-info-topic-copy"><b>Объявления</b><small>Публикация, редактирование и архив</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-topic-body"><p>Добавляйте точное описание, актуальные фотографии и указывайте состояние предмета. Не размещайте чужие персональные данные и предложения, нарушающие правила площадки.</p><p>Завершённые или неактуальные предложения лучше убрать из активной выдачи предусмотренным в интерфейсе способом.</p></div>
+    </details>
+    <details class="profile-info-topic" data-help-search="платные функции тариф pro vip выделение оплата возврат тест">
+      <summary><span class="profile-info-topic-icon">◇</span><span class="profile-info-topic-copy"><b>Платные функции</b><small>PRO, VIP и продвижение объявлений</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-topic-body"><p>Перед покупкой внимательно проверяйте стоимость, срок действия и описание услуги. Сейчас платежи на проекте находятся в тестовом режиме: реальные списания не включены.</p><p>Если возник вопрос по тестовой активации, укажите название функции и примерное время действия — не присылайте платёжные реквизиты.</p></div>
+    </details>
+    <details class="profile-info-topic" data-help-search="безопасность мошенники ссылка пароль код карта жалоба">
+      <summary><span class="profile-info-topic-icon">⌑</span><span class="profile-info-topic-copy"><b>Безопасность</b><small>Защита аккаунта и осторожность при обменах</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-topic-body"><p>Не переводите деньги под давлением, проверяйте предмет и условия обмена, не переходите по подозрительным ссылкам и не сообщайте коды подтверждения.</p><p>Если предложение кажется подозрительным, прекратите общение и сохраните сведения, необходимые для обращения в поддержку.</p></div>
+    </details>
+    <details class="profile-info-topic" data-help-search="технические вопросы ошибка не работает загрузка фото вход браузер iphone">
+      <summary><span class="profile-info-topic-icon">⚙</span><span class="profile-info-topic-copy"><b>Технические вопросы</b><small>Ошибки, загрузка и работа сайта</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-topic-body"><p>Обновите страницу и проверьте соединение. Если проблема сохраняется, запишите шаги перед ошибкой и приложите скриншот без личных данных.</p><p>Укажите модель устройства, браузер и примерное время возникновения проблемы. Не присылайте пароль, коды входа или платёжные данные.</p></div>
+    </details>
+    <details class="profile-info-topic" data-help-search="жалобы споры конфликт пользователь объявление мошенничество оспорить нарушение">
+      <summary><span class="profile-info-topic-icon">⚑</span><span class="profile-info-topic-copy"><b>Жалобы и споры</b><small>Проблемы с объявлением или участником</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-topic-body"><p>Сохраните ссылку или номер объявления, опишите ситуацию по фактам и укажите, какого решения вы ожидаете.</p><p>Не публикуйте чужие персональные данные. До появления подтверждённого канала обращайтесь через официальный способ связи, указанный на сайте.</p></div>
+    </details>
+    <p class="profile-info-empty" id="profileInfoHelpEmpty" hidden>По этому запросу пока ничего не найдено. Попробуйте другие слова.</p>
+  </div>
+
+  <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">ПРОЗРАЧНОСТЬ И ДОВЕРИЕ</p><h4>Документы и правила</h4></div></div>
+  <div class="profile-info-doc-list">
+    <details class="profile-info-doc">
+      <summary><span><b>Политика обработки персональных данных</b><small>Проект документа · требует заполнения реквизитов</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-doc-body">
+        <p><b>1. Общие положения</b><br>Настоящая Политика описывает порядок обработки и защиты персональных данных пользователей сервиса «ПО БАРТЕРУ» (далее — Сервис) в соответствии с Федеральным законом № 152-ФЗ «О персональных данных» и иными применимыми нормами законодательства Российской Федерации.</p>
+        <p><b>Оператор:</b> [ФИО или полное наименование оператора].<br><b>Адрес:</b> [адрес оператора].<br><b>Контакт по вопросам персональных данных:</b> [официальный Telegram или иной контакт].</p>
+        <p><b>2. Какие данные могут обрабатываться</b><br>В зависимости от использования Сервиса это могут быть сведения профиля (имя, город и идентификатор аккаунта), контактные данные, содержание объявлений и сообщений, сведения об обменах и обращениях в поддержку, технические журналы и данные, необходимые для безопасности и работы сайта. Окончательный перечень должен быть сверён с фактическими таблицами, логами, подключёнными сервисами и настройками.</p>
+        <p><b>3. Цели и основания</b><br>Данные используются для создания и сопровождения аккаунта, публикации объявлений, организации взаимодействия пользователей, обеспечения безопасности, ответа на обращения и исполнения требований закона. Для каждой цели оператор должен определить соответствующее правовое основание; согласие запрашивается отдельно в случаях, когда оно требуется законом.</p>
+        <p><b>4. Хранение, передача и удаление</b><br>Сроки хранения устанавливаются с учётом цели обработки и обязательных требований. Доступ к данным предоставляется только в необходимом объёме. Информация о поставщиках инфраструктуры, местах хранения баз данных, трансграничной передаче и порядке удаления должна быть заполнена после технической проверки проекта.</p>
+        <p><b>5. Права пользователя</b><br>Пользователь может направить запрос на уточнение сведений, получение информации об обработке, прекращение обработки или удаление данных в случаях и порядке, предусмотренных законом. Контакт и порядок подтверждения личности указываются оператором до публикации окончательной версии.</p>
+        <p><b>6. Защита и изменения</b><br>Оператор принимает предусмотренные законом организационные и технические меры защиты. Актуальная редакция Политики размещается на этой странице с датой вступления в силу.</p>
+        <span class="profile-info-status">Черновик для согласования — не утверждён</span>
+      </div>
+    </details>
+    <details class="profile-info-doc">
+      <summary><span><b>Пользовательское соглашение</b><small>Правила использования платформы</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-doc-body">
+        <p><b>1. Сервис</b><br>«ПО БАРТЕРУ» — онлайн-площадка, предназначенная для размещения объявлений и поиска возможностей обмена вещами и услугами между пользователями. Оператор Сервиса: [ФИО или полное наименование, статус и реквизиты].</p>
+        <p><b>2. Аккаунт</b><br>Пользователь обязуется указывать достоверные сведения в пределах запрашиваемых Сервисом данных, обеспечивать сохранность средств доступа и незамедлительно сообщать о подозрении на несанкционированный доступ. Нельзя передавать пароль и коды подтверждения третьим лицам.</p>
+        <p><b>3. Объявления и взаимодействие</b><br>Пользователь отвечает за законность размещаемого контента, точность описания и наличие прав на публикацию материалов. Размещение объявления не гарантирует заключения сделки. Условия конкретного обмена участники согласуют самостоятельно, если интерфейс явно не предусматривает иное.</p>
+        <p><b>4. Запрещённое использование</b><br>Запрещены незаконные предложения, мошенничество, угрозы, публикация чужих персональных данных без законного основания, спам, попытки нарушить работу Сервиса и обход мер безопасности.</p>
+        <p><b>5. Модерация и обращения</b><br>При нарушении закона или правил Сервис может применять соразмерные меры в пределах закона и фактически реализованных функций. Пользователь вправе направить жалобу через [официальный Telegram поддержки]. Порядок рассмотрения и сроки ответа должны быть утверждены оператором.</p>
+        <p><b>6. Платные функции</b><br>Описание, цена, срок действия и условия каждой платной функции показываются пользователю до заказа. Порядок оплаты, отказа и возврата должен соответствовать применимому законодательству и фактической платёжной схеме. На период тестирования реальные платежи не активируются настоящим документом.</p>
+        <p><b>7. Ответственность и изменения</b><br>Соглашение не ограничивает права, которые пользователь имеет по императивным нормам законодательства. Оператор указывает дату редакции и публикует изменения на Сервисе.</p>
+        <span class="profile-info-status">Черновик для согласования — не утверждён</span>
+      </div>
+    </details>
+    <details class="profile-info-doc">
+      <summary><span><b>Правила объявлений и обмена</b><small>Публикации, договорённости и споры</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-doc-body">
+        <p><b>Публикуйте честно.</b> Указывайте состояние, характеристики и ограничения предмета, добавляйте фотографии, которые соответствуют предложению. Не размещайте материалы, на публикацию которых у вас нет прав.</p>
+        <p><b>Не размещайте незаконные предложения.</b> Запрещены товары, услуги и действия, оборот которых запрещён или ограничен законом, а также объявления с обманом, угрозами, дискриминацией, спамом или чужими персональными данными.</p>
+        <p><b>Согласуйте обмен заранее.</b> До передачи предметов обсудите состояние, комплектность, место и способ передачи, а также возможную доплату. Не отмечайте обмен завершённым, если он фактически не состоялся.</p>
+        <p><b>Если возник спор.</b> Сохраните номер объявления и переписку, изложите факты без оскорблений и направьте обращение в [официальный Telegram поддержки]. Не публикуйте персональные данные другой стороны. Площадка не должна обещать разрешение спора или возврат имущества, если у неё нет соответствующего механизма и правового основания.</p>
+        <span class="profile-info-status">Проект правил — сверить с текущими функциями сайта</span>
+      </div>
+    </details>
+    <details class="profile-info-doc">
+      <summary><span><b>Платные функции и возвраты</b><small>PRO, VIP и продвижение объявлений</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-doc-body">
+        <p><b>До покупки</b><br>Пользователю должны быть доступны наименование функции, полный состав, цена, срок действия, момент начала оказания услуги и контакт для обращений. Эти сведения показываются до подтверждения заказа.</p>
+        <p><b>Оплата</b><br>Используйте только способы оплаты, которые явно доступны в действующей версии Сервиса. Не переводите деньги по реквизитам из неофициальных сообщений. Настоящий текст не включает платёжные интеграции и не изменяет статусы операций.</p>
+        <p><b>Отмена и возврат</b><br>Обращения об отмене, недостатках услуги и возврате рассматриваются индивидуально в соответствии с применимыми нормами закона и фактическими условиями услуги. Нельзя считать, что любые возвраты безусловно запрещены. Контакт для обращений: [официальный Telegram поддержки].</p>
+        <p><b>Текущая конфигурация</b><br>Перед публикацией нужно сверить цены, сроки, состав PRO/VIP/выделения, техническую активацию и платёжный сценарий. Не публикуйте обещания о реальных списаниях или возвратах, пока они не подтверждены.</p>
+        <span class="profile-info-status">Черновик — требуется сверка коммерческих условий</span>
+      </div>
+    </details>
+    <details class="profile-info-doc">
+      <summary><span><b>Реквизиты и контакты оператора</b><small>Сведения, которые нужно заполнить перед публикацией</small></span><span class="profile-info-chevron">›</span></summary>
+      <div class="profile-info-doc-body">
+        <p><b>Оператор Сервиса:</b> [ФИО или полное наименование].</p>
+        <p><b>Статус:</b> [физическое лицо / ИП / юридическое лицо — указать верно].</p>
+        <p><b>Регистрационные и налоговые сведения:</b> [заполняются при применимости].</p>
+        <p><b>Адрес для юридически значимых обращений:</b> [почтовый адрес].</p>
+        <p><b>Поддержка в Telegram:</b> [официальная ссылка].</p>
+        <p>Поля в квадратных скобках — служебные заглушки для владельца проекта. Перед публикацией их необходимо заменить достоверными сведениями либо удалить, если поле неприменимо.</p>
+        <span class="profile-info-status">Ожидает данных владельца проекта</span>
+      </div>
+    </details>
+  </div>
+
+  <div class="profile-info-about"><span class="profile-info-about-icon" aria-hidden="true">P</span><div><b>О проекте ПО БАРТЕРУ</b><p>Помогаем людям находить предложения и договариваться об обмене вещами и услугами напрямую.</p><small>Оператор: [указать ФИО или наименование и статус]. Реквизиты и официальный контакт поддержки будут добавлены после подтверждения.</small></div></div>
+  <div class="profile-info-security-note"><span aria-hidden="true">🛡</span><p><b>Берегите свой аккаунт</b><br>Никому не сообщайте пароль и коды подтверждения. Не отправляйте полные данные банковской карты.</p></div>
+  <p class="profile-info-help-foot">Документы представлены как проекты для предварительного ознакомления. Заглушки необходимо заполнить, а тексты сверить с реальной работой Сервиса и обстоятельствами оператора до публикации как действующих юридических документов.</p>
+</section>
 
 <div class="profile-edit profile-top-settings"><h3>Личные данные и настройки</h3><div class="push-settings"><div><b>Push-уведомления</b><p class="category" id="pushStatus">Уведомления на экране устройства</p></div><button type="button" class="pill" id="pushToggle">Включить</button></div><label class="field">Имя<input id="profileNameInput" maxlength="50" placeholder="Как к тебе обращаться"></label><label class="field">Город<input id="profileCityInput" maxlength="120" placeholder="Выбери город" readonly></label><button type="button" class="pill" id="profileChooseCityBtn">Выбрать город</button><button type="button" class="pill" id="profileLocateCityBtn">⌖ Определить мой город</button><p class="category">Способ входа: <span id="profileLoginMethod">E-mail</span></p><div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px"><h3>Пароль аккаунта</h3><label class="field">Новый пароль<input id="profileNewPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Не менее 8 символов"></label><label class="field">Повтори новый пароль<input id="profileConfirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Повтори пароль"></label><button type="button" class="pill" id="savePasswordBtn">Установить / изменить пароль</button><p class="category">Если ты вошёл по ссылке из письма, здесь можно задать пароль для следующих входов.</p></div><div class="profile-actions"><button class="pill" id="saveProfileBtn">Сохранить данные</button></div></div>
 <div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div><div class="profile-section"><div class="sectionhead my-listings-section-head" id="myListingsSectionHead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div class="my-listings-summary" id="myListingsSummary">Загружаем объявления…</div><div class="my-listing-filters" id="myListingFilters" role="group" aria-label="Фильтр объявлений"><button type="button" class="my-listing-filter active" data-my-listings-filter="all">Все <span id="myFilterAllCount">0</span></button><button type="button" class="my-listing-filter" data-my-listings-filter="active">Активные <span id="myFilterActiveCount">0</span></button><button type="button" class="my-listing-filter" data-my-listings-filter="archived">В архиве <span id="myFilterArchivedCount">0</span></button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div><p class="my-listings-filter-empty" id="myListingsFilterEmpty" hidden>В этой категории пока нет объявлений.</p></div><div class="profile-section" id="exchangeSection"><div class="sectionhead"><h2>Предложения обмена</h2><button class="chip" id="refreshExchanges">Обновить</button></div><div id="myExchanges" class="my-listings"><p class="category">Загружаем предложения…</p></div><div class="completed-exchanges-panel"><h3 class="completed-exchanges-title">Завершённые обмены</h3><details id="exchangeHistoryDetails" class="purchase-history-details"><summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#fff;font-weight:700"><span id="exchangeHistorySummaryLabel">Показать историю обменов</span><span class="category" style="margin:0">⌄</span></summary><div id="exchangeHistoryList" class="my-listings" style="margin-top:12px"><p class="category">Загружаем историю обменов…</p></div></details></div></div><div class="profile-section" id="exchangeReputationSection"><div class="sectionhead"><h2>Моя репутация</h2></div><div id="exchangeReputationSummary" class="profile-stats"><div><b>—</b><span>Рейтинг</span></div><div><b>—</b><span>Отзывов</span></div><div><b>—</b><span>Обменов</span></div></div><h3 style="margin:18px 0 8px">Отзывы обо мне</h3><div id="exchangePublicReviews" class="my-listings" style="margin:12px 0"><p class="category">Загружаем отзывы…</p></div></div><div class="profile-section" id="savedSearchesPanel" hidden><div class="sectionhead"><h2>Сохранённые поиски</h2></div><div id="savedSearchesList" class="my-listings"></div></div><section class="profile-section" id="monetizationSection">
@@ -4440,6 +4611,148 @@ async function togglePush(){if(!currentUser||!db)return toast("Сначала в
 $("pushToggle").addEventListener("click",togglePush);
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js?v=6",{updateViaCache:"none"}).then(()=>refreshPushUi()).catch(err=>console.warn("Service Worker registration failed",err)));}
 
+/* Information & help — premium, accessible support center using the existing project palette. */
+.profile-info-help{margin-top:14px;min-width:0;color:var(--ink,#202722)}
+.profile-info-help[hidden]{display:none!important}
+.profile-info-help-head{display:flex;align-items:center;gap:12px;margin:4px 0 16px}
+.profile-info-help-head>div{min-width:0}
+.profile-info-help-head h3{margin:0;font-size:21px;letter-spacing:-.55px;line-height:1.18}
+.profile-info-help-head p:not(.profile-info-eyebrow){margin:6px 0 0;color:var(--muted,#68756e);font-size:13px;line-height:1.45}
+.profile-info-eyebrow{margin:0 0 5px!important;color:#66816b!important;font-size:10px!important;font-weight:800!important;letter-spacing:.12em!important;line-height:1.3!important}
+.profile-info-back{flex:0 0 38px;width:38px;height:38px;border:1px solid rgba(29,50,36,.09);border-radius:14px;background:rgba(255,255,255,.88);color:var(--ink,#153f35);font-size:27px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(25,45,32,.035)}
+.profile-info-hero{position:relative;display:flex;align-items:center;min-height:132px;overflow:hidden;margin:0 0 13px;padding:20px;border:1px solid rgba(57,95,65,.08);border-radius:24px;background:linear-gradient(120deg,#f0f4e9 0%,#e7efe4 62%,#dce9dd 100%);box-sizing:border-box}
+.profile-info-hero-copy{position:relative;z-index:1;max-width:75%}
+.profile-info-hero-kicker{display:inline-block;margin-bottom:7px;color:#54765b;font-size:10px;font-weight:800;letter-spacing:.12em}
+.profile-info-hero h4{margin:0 0 6px;font-size:21px;line-height:1.12;letter-spacing:-.55px;color:#213b2a}
+.profile-info-hero p{max-width:250px;margin:0;color:#5f7062;font-size:12px;line-height:1.5}
+.profile-info-hero-art{position:absolute;right:12px;top:50%;width:96px;height:96px;transform:translateY(-50%);border:1px solid rgba(255,255,255,.82);border-radius:32px;background:rgba(255,255,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 28px rgba(46,82,54,.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:grid;place-items:center;rotate:7deg}
+.profile-info-hero-art span{display:grid;place-items:center;width:52px;height:52px;border-radius:19px;background:rgba(255,255,255,.78);color:#397149;font-size:32px;font-weight:700;box-shadow:0 4px 12px rgba(41,75,47,.08)}
+.profile-info-hero-art i,.profile-info-hero-art b{position:absolute;display:block;border-radius:50%;background:#c3d9c2}
+.profile-info-hero-art i{width:10px;height:10px;right:2px;top:8px}.profile-info-hero-art b{width:7px;height:7px;left:5px;bottom:8px;background:#91b493}
+.profile-info-search{display:flex;align-items:center;gap:9px;min-height:48px;margin:0 0 13px;padding:0 13px;border:1px solid rgba(30,55,38,.08);border-radius:17px;background:rgba(255,255,255,.9);box-shadow:0 3px 12px rgba(25,45,32,.025);box-sizing:border-box}
+.profile-info-search svg{width:19px;height:19px;flex:0 0 19px;fill:none;stroke:#7c887e;stroke-width:1.8;stroke-linecap:round}
+.profile-info-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink,#202722);font:inherit;font-size:13px;box-shadow:none!important}
+.profile-info-search input::placeholder{color:#8a938b}
+.profile-info-search button{width:25px;height:25px;border:0;border-radius:50%;background:#eef1ed;color:#59665c;font-size:20px;line-height:1}
+.profile-info-contact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.profile-info-contact-card{min-width:0;padding:14px;border:1px solid rgba(29,50,36,.065);border-radius:20px;background:rgba(255,255,255,.92);box-shadow:0 3px 12px rgba(25,45,32,.025)}
+.profile-info-contact-icon{display:grid;place-items:center;width:38px;height:38px;margin-bottom:10px;border-radius:13px;background:#edf3e9;color:#386746}
+.profile-info-contact-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.profile-info-telegram-icon{background:#e8f1f3;color:#347c91}
+.profile-info-contact-card>b{display:block;font-size:13px;line-height:1.3;letter-spacing:-.1px}
+.profile-info-contact-card>p{min-height:34px;margin:5px 0 10px;color:var(--muted,#68756e);font-size:11px;line-height:1.45}
+.profile-info-contact-state{display:inline-flex;align-items:center;max-width:100%;padding:5px 7px;border-radius:9px;background:#f4f3ea;color:#796d3e;font-size:10px;font-weight:700;line-height:1.3}
+.profile-info-contact-note{margin:10px 2px 0;color:var(--muted,#68756e);font-size:11px;line-height:1.5}
+.profile-info-section-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:23px 2px 10px}
+.profile-info-section-heading h4{margin:0;font-size:17px;letter-spacing:-.35px}
+.profile-info-count{padding:5px 8px;border-radius:9px;background:#edf2e9;color:#5b755d;font-size:10px;font-weight:700}
+.profile-info-topic-list{overflow:hidden;border:1px solid rgba(29,50,36,.07);border-radius:20px;background:rgba(255,255,255,.93);box-shadow:0 3px 12px rgba(25,45,32,.025)}
+.profile-info-topic+.profile-info-topic{border-top:1px solid rgba(29,50,36,.07)}
+.profile-info-topic summary{display:flex;align-items:center;gap:11px;min-height:70px;padding:12px;cursor:pointer;list-style:none;box-sizing:border-box}
+.profile-info-topic summary::-webkit-details-marker{display:none}
+.profile-info-topic-icon{display:grid;place-items:center;flex:0 0 39px;width:39px;height:39px;border-radius:13px;background:#f0f3ed;color:#43654a;font-size:21px}
+.profile-info-topic-copy{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0}
+.profile-info-topic-copy b{font-size:13px;line-height:1.3;font-weight:700}
+.profile-info-topic-copy small{color:var(--muted,#68756e);font-size:11px;line-height:1.4}
+.profile-info-chevron{flex:0 0 18px;font-size:23px;line-height:1;color:#89948b;transition:transform .18s ease}
+.profile-info-topic[open] .profile-info-chevron,.profile-info-doc[open] .profile-info-chevron{transform:rotate(90deg)}
+.profile-info-topic-body{padding:0 15px 15px 62px}
+.profile-info-topic-body p{margin:0 0 11px;color:var(--muted,#68756e);font-size:12px;line-height:1.55}
+.profile-info-topic-body p:last-child{margin-bottom:0}
+.profile-info-empty{padding:16px;margin:0;color:var(--muted,#68756e);font-size:12px;line-height:1.5}
+.profile-info-doc-list{overflow:hidden;border:1px solid rgba(29,50,36,.07);border-radius:18px;background:rgba(255,255,255,.93)}
+.profile-info-doc+.profile-info-doc{border-top:1px solid rgba(29,50,36,.07)}
+.profile-info-doc summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:13px;cursor:pointer;list-style:none;box-sizing:border-box}
+.profile-info-doc summary::-webkit-details-marker{display:none}
+.profile-info-doc summary>span:first-child{display:flex;flex-direction:column;gap:4px;min-width:0}
+.profile-info-doc summary b{font-size:12px;line-height:1.4}
+.profile-info-doc summary small{font-size:11px;line-height:1.4;color:var(--muted,#68756e)}
+.profile-info-doc-body{padding:0 13px 13px}
+.profile-info-doc-body p{margin:0 0 9px;color:var(--muted,#68756e);font-size:12px;line-height:1.55}
+.profile-info-status{display:inline-flex;align-items:center;padding:5px 8px;border-radius:8px;background:#f4f3e9;color:#6d6230;font-size:10px;line-height:1.35;font-weight:700}
+.profile-info-about{display:flex;align-items:flex-start;gap:12px;margin-top:14px;padding:14px;border:1px solid rgba(29,50,36,.06);border-radius:18px;background:rgba(255,255,255,.72)}
+.profile-info-about-icon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:13px;background:#e7efe4;color:#386746;font-weight:850;font-size:20px}
+.profile-info-about>div{min-width:0}.profile-info-about b{font-size:12px}.profile-info-about p{margin:5px 0;color:var(--muted,#68756e);font-size:11px;line-height:1.5}.profile-info-about small{color:#7d867e;font-size:10px;line-height:1.45}
+.profile-info-security-note{display:flex;align-items:flex-start;gap:11px;margin-top:12px;padding:13px;border:1px solid rgba(62,108,67,.08);border-radius:17px;background:#edf4eb;color:#244c3c}
+.profile-info-security-note>span{font-size:19px}.profile-info-security-note p{margin:0;font-size:11px;line-height:1.55}.profile-info-security-note b{font-size:12px}
+.profile-info-help-foot{margin:12px 2px 3px;color:var(--muted,#68756e);font-size:10px;line-height:1.5}
+.profile-info-help :focus-visible{outline:2px solid #4e875b;outline-offset:3px}
+@media(max-width:390px){.profile-info-hero{padding:17px;min-height:126px}.profile-info-hero-art{right:8px;width:78px;height:78px;border-radius:27px}.profile-info-hero-art span{width:43px;height:43px;border-radius:15px;font-size:27px}.profile-info-hero-copy{max-width:78%}.profile-info-hero h4{font-size:19px}.profile-info-contact-grid{gap:8px}.profile-info-contact-card{padding:11px;border-radius:17px}.profile-info-contact-card>p{font-size:10px}.profile-info-topic summary{gap:9px;padding:10px}.profile-info-topic-icon{flex-basis:35px;width:35px;height:35px}.profile-info-topic-copy small{font-size:10px}.profile-info-topic-body{padding-left:54px}}
+@media(prefers-reduced-motion:reduce){.profile-info-chevron{transition:none}}
+
+
+
+/* Real support ticket intake and personal ticket history. */
+(()=>{
+ const form=document.getElementById("profileSupportForm");
+ const status=document.getElementById("profileSupportStatus");
+ const submit=document.getElementById("profileSupportSubmit");
+ const list=document.getElementById("profileSupportTickets");
+ const category=document.getElementById("profileSupportCategory");
+ const subject=document.getElementById("profileSupportSubject");
+ const message=document.getElementById("profileSupportMessage");
+ const refresh=document.getElementById("profileSupportRefresh");
+ if(!form||!list)return;
+ const statusLabels={open:"Ожидает ответа",in_progress:"В работе",answered:"Есть ответ",closed:"Закрыто"};
+ const categoryLabels={account:"Аккаунт и вход",listing:"Объявление",exchange:"Обмен или сделка",payment:"Оплата и услуги",safety:"Безопасность или жалоба",technical:"Техническая проблема",other:"Другой вопрос"};
+ const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+ const setStatus=(text,isError=false)=>{if(status){status.textContent=text;status.classList.toggle("is-error",isError)}};
+ const loadTickets=async()=>{
+   if(!db||!currentUser){list.innerHTML='<p class="profile-support-empty">Войдите в аккаунт, чтобы видеть свои обращения и ответы команды.</p>';return}
+   list.innerHTML='<p class="profile-support-empty">Загружаем обращения…</p>';
+   const {data,error}=await db.from("support_tickets").select("id,category,subject,message,status,support_reply,created_at,replied_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(30);
+   if(error){console.error("Support tickets load failed",error);list.innerHTML='<p class="profile-support-empty">Не удалось загрузить обращения. Попробуйте обновить страницу чуть позже.</p>';return}
+   if(!data?.length){list.innerHTML='<p class="profile-support-empty">Пока обращений нет. Если нужна помощь, заполните форму выше.</p>';return}
+   list.innerHTML=data.map(t=>'<article class="profile-support-ticket"><div class="profile-support-ticket-top"><span class="profile-support-ticket-category">'+esc(categoryLabels[t.category]||categoryLabels.other)+'</span><span class="profile-support-ticket-state state-'+esc(t.status)+'">'+esc(statusLabels[t.status]||"На рассмотрении")+'</span></div><h5>'+esc(t.subject)+'</h5><p class="profile-support-ticket-message">'+esc(t.message)+'</p><time>'+esc(new Date(t.created_at).toLocaleString("ru-RU",{dateStyle:"medium",timeStyle:"short"}))+'</time>'+(t.support_reply?'<div class="profile-support-reply"><b>Ответ поддержки</b><p>'+esc(t.support_reply)+'</p>'+(t.replied_at?'<time>'+esc(new Date(t.replied_at).toLocaleString("ru-RU",{dateStyle:"medium",timeStyle:"short"}))+'</time>':'')+'</div>':'')+'</article>').join("");
+ };
+ form.addEventListener("submit",async event=>{
+   event.preventDefault();
+   if(!db||!currentUser){setStatus("Для отправки обращения сначала войдите в аккаунт.",true);return}
+   const title=subject.value.trim(),body=message.value.trim();
+   if(title.length<4||body.length<10){setStatus("Укажите тему (от 4 символов) и подробности (от 10 символов).",true);return}
+   submit.disabled=true;submit.textContent="Отправляем…";setStatus("");
+   try{
+     const {error}=await db.from("support_tickets").insert({user_id:currentUser.id,category:category.value,subject:title,message:body});
+     if(error)throw error;
+     form.reset();setStatus("Обращение отправлено и сохранено. Ответ появится в разделе «Мои обращения».");
+     await loadTickets();
+   }catch(error){console.error("Support ticket submit failed",error);setStatus(error?.code==="42P01"||error?.code==="PGRST205"?"Раздел поддержки ещё подключается. Попробуйте немного позже.":"Не удалось отправить обращение. Проверьте соединение и попробуйте снова.",true)}
+   finally{submit.disabled=false;submit.textContent="Отправить обращение"}
+ });
+ refresh?.addEventListener("click",loadTickets);
+ window.loadProfileSupportTickets=loadTickets;
+ if(db)db.auth.onAuthStateChange(()=>setTimeout(loadTickets,0));
+ loadTickets();
+})();
+
+/* Search/filter interactions for the support center. No data is sent or stored. */
+(()=>{
+ const input=document.getElementById("profileInfoHelpSearch");
+ const clear=document.getElementById("profileInfoHelpSearchClear");
+ const list=document.getElementById("profileInfoHelpTopics");
+ const empty=document.getElementById("profileInfoHelpEmpty");
+ const count=document.getElementById("profileInfoHelpCount");
+ if(!input||!list)return;
+ const topics=[...list.querySelectorAll(".profile-info-topic")];
+ const filter=()=>{
+  const q=input.value.trim().toLocaleLowerCase("ru");
+  let visible=0;
+  topics.forEach(topic=>{
+   const hay=(topic.innerText+" "+(topic.dataset.helpSearch||"")).toLocaleLowerCase("ru");
+   const show=!q||hay.includes(q);
+   topic.hidden=!show;
+   if(show)visible++;
+   else topic.open=false;
+  });
+  if(empty)empty.hidden=visible!==0;
+  if(count)count.textContent=q?(visible+" из "+topics.length):(topics.length+" тем");
+  if(clear)clear.hidden=!input.value;
+ };
+ input.addEventListener("input",filter);
+ clear?.addEventListener("click",()=>{input.value="";filter();input.focus()});
+})();
+
+
 /* Profile hub navigation: expose existing account panels without duplicating or deleting data. */
 (()=>{
  const dashboard=document.getElementById("profileDashboard");
@@ -4454,6 +4767,15 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
   history:{cls:"profile-show-history",target:"#exchangeHistoryDetails"}
  };
  function openPanel(key){
+  const helpPanel=document.getElementById("profileInfoHelpPanel");
+  if(key==="help"){
+   const wasOpen=!!helpPanel&&!helpPanel.hidden;
+   classes.forEach(c=>dashboard.classList.remove(c));
+   if(helpPanel)helpPanel.hidden=wasOpen;
+   if(!wasOpen&&helpPanel)requestAnimationFrame(()=>helpPanel.scrollIntoView({behavior:"smooth",block:"start"}));
+   return;
+  }
+  if(helpPanel)helpPanel.hidden=true;
   if(key==="my-listings"){if(typeof setPage==="function")setPage("my-listings");return}
   const item=openMap[key];if(!item)return;
   const wasOpen=dashboard.classList.contains(item.cls);
@@ -4464,6 +4786,7 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:"smooth",block:"start"}));
   }
  }
+ document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});});
  hub.querySelectorAll("[data-profile-open]").forEach(btn=>btn.addEventListener("click",()=>{
   const key=btn.dataset.profileOpen;
   if(key==="history"){openPanel("history");const details=document.getElementById("exchangeHistoryDetails");if(details)details.open=true;return}
