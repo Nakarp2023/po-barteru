@@ -2938,8 +2938,18 @@ async function loadProfileDashboard(){
  void loadMonetizationPlans().catch(e=>console.warn("Не удалось загрузить тарифы",e));
  void loadMonetizationOrders().catch(e=>console.warn("Не удалось загрузить историю заказов",e));
  void loadActiveSubscription().then(()=>Promise.all([loadPromotionCredits(),loadBusinessTeam(),loadSavedSearches()])).catch(e=>console.warn("Не удалось загрузить платные возможности профиля",e));
- const p=profileLocal(),name=p.name||((currentUser.email||"Участник").split("@")[0]);
- $("profileName").textContent=name;$("profileEmail").textContent=currentUser.email||currentUser.phone||"Аккаунт подтверждён";$("profileLoginMethod").textContent=currentUser.email?"Email":(currentUser.phone?"Телефон":"Аккаунт");$("profileNameInput").value=p.name||"";$("profileCityInput").value=p.city||"";
+ const {data:storedProfile,error:storedProfileError}=await db.from("profiles").select("display_name,city,show_public_name").eq("id",currentUser.id).maybeSingle();
+ if(storedProfileError)console.warn("Не удалось загрузить сохранённый профиль:",storedProfileError.message);
+ const p=profileLocal();
+ const storedName=typeof storedProfile?.display_name==="string"?storedProfile.display_name.trim():"";
+ const dbName=storedName&&storedName!=="Пользователь"?storedName:"";
+ const metadataName=String(currentUser.user_metadata?.full_name||currentUser.user_metadata?.name||"").trim();
+ const name=dbName||String(p.name||"").trim()||metadataName||"Участник";
+ const city=typeof storedProfile?.city==="string"&&storedProfile.city.trim()?storedProfile.city.trim():(p.city||"");
+ const mergedProfile={...p,name:dbName||String(p.name||"").trim(),city,showPublicReviewName:storedProfile?.show_public_name!==false};
+ if(dbName||city||storedProfile?.show_public_name!==null&&storedProfile?.show_public_name!==undefined)localStorage.setItem("po_barteru_profile_"+currentUser.id,JSON.stringify(mergedProfile));
+ $("profileName").textContent=name;$("profileEmail").textContent=currentUser.email||currentUser.phone||"Аккаунт подтверждён";$("profileLoginMethod").textContent=currentUser.email?"Email":(currentUser.phone?"Телефон":"Аккаунт");$("profileNameInput").value=name==="Участник"?"":name;$("profileCityInput").value=city;
+ $("showPublicReviewName").checked=storedProfile?.show_public_name!==false;
  $("profileAvatar").textContent=(name.trim()[0]||"Б").toUpperCase();$("myFavCount").textContent=favorites.size;
  const {data,error}=await db.from("listings").select("id,title,description,category,city,want,status,estimated_value,image_urls,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(50);
  if(error){$("myListingCount").textContent="—";$("myListings").innerHTML='<p class="category">Не удалось загрузить объявления: '+esc(error.message)+'</p>'}
