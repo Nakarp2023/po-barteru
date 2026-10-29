@@ -3513,7 +3513,7 @@ async function syncProfile(){
  if(!db){$("profileStatus").textContent="Не удалось загрузить клиент базы данных.";return}
  const {data:{session}}=await db.auth.getSession();currentUser=session?.user||null;
  $("profileStatus").textContent=currentUser?"Вы вошли: "+currentUser.email:"Войдите по email, чтобы публиковать общие объявления.";
- $("authBox").hidden=!!currentUser||page!=="profile";$("authOut").hidden=!currentUser;
+ $("authBox").hidden=!!currentUser||page!=="profile";$("authOut").hidden=!currentUser||page!=="profile";
 }
 async function syncRemoteFavorites(){
  if(!db||!currentUser)return;
@@ -4043,4 +4043,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 #chatDealPanel.deal-summary-card{margin-top:8px!important;margin-bottom:12px!important;padding:12px!important}
 #chatMessages{margin-top:12px!important}
 @media(max-width:600px){.refresh-icon-button{width:36px;height:36px;flex-basis:36px}.sectionhead-actions{gap:6px}#chatThread>.sectionhead h2{font-size:17px!important}}
+</style>
+
+<style>
+/* Keep the global sign-out control confined to the Profile screen. */
+#authOut[hidden]{display:none!important}
+main.app:not(.show-auth) #authOut{display:none!important}
 </style>
