@@ -4495,4 +4495,137 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #profileDashboard.listings-only #myListings .my-actions-menu{z-index:2!important}
 #profileDashboard.listings-only #myListings .my-actions-popover{z-index:3!important}
 .bottom{z-index:9999!important}
+
+/* Profile polish pass: consistent responsive surfaces, readable panels, and touch-safe controls. */
+#profileDashboard{min-width:0}
+#profileDashboard .profile-card{
+  gap:14px!important;
+  padding:16px!important;
+  border:1px solid rgba(255,255,255,.88)!important;
+  border-radius:24px!important;
+  background:rgba(255,255,255,.88)!important;
+  box-shadow:0 8px 26px rgba(24,42,32,.045),inset 0 1px 0 rgba(255,255,255,.96)!important;
+}
+#profileDashboard .profile-avatar{flex:0 0 56px;width:56px;height:56px;border-radius:50%;box-shadow:0 5px 14px rgba(21,63,53,.12)}
+#profileDashboard .profile-main{flex:1;min-width:0}
+#profileDashboard .profile-main h2{font-size:clamp(17px,4.4vw,22px);line-height:1.2;letter-spacing:-.45px;overflow-wrap:anywhere}
+#profileDashboard .profile-main p{font-size:11px;line-height:1.45;letter-spacing:.45px;color:#68756e}
+#profileDashboard .profile-card>.category{flex:0 0 auto;font-size:10px;font-weight:800;letter-spacing:.9px}
+#profileDashboard .profile-hub{gap:9px;margin:18px 0 26px}
+#profileDashboard .profile-hub-row{
+  min-height:74px;padding:13px 14px;gap:12px;border-radius:22px;
+  border-color:rgba(255,255,255,.9);background:rgba(255,255,255,.72);
+  box-shadow:0 7px 22px rgba(24,42,32,.035),inset 0 1px 0 rgba(255,255,255,.95);
+  -webkit-backdrop-filter:blur(22px) saturate(165%);backdrop-filter:blur(22px) saturate(165%);
+  transition:background .16s ease,box-shadow .16s ease,transform .16s ease;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+#profileDashboard .profile-hub-row:active{transform:scale(.992);background:rgba(235,245,224,.88);box-shadow:0 3px 12px rgba(24,42,32,.035)}
+#profileDashboard .profile-hub-icon{flex-basis:42px;width:42px;height:42px;border-radius:14px;font-size:21px}
+#profileDashboard .profile-hub-copy{gap:4px}
+#profileDashboard .profile-hub-copy b{font-size:14px;line-height:1.25;letter-spacing:-.22px}
+#profileDashboard .profile-hub-copy small{font-size:11.5px;line-height:1.35}
+#profileDashboard .profile-hub-arrow{flex:0 0 12px;font-size:25px;color:#87948c}
+#profileDashboard .profile-edit,
+#profileDashboard #exchangeSection,
+#profileDashboard #exchangeReputationSection,
+#profileDashboard #savedSearchesPanel,
+#profileDashboard #monetizationSection,
+#profileDashboard #purchaseHistorySection{
+  min-width:0;scroll-margin-top:18px;
+}
+#profileDashboard .profile-top-settings,
+#profileDashboard #exchangeSection,
+#profileDashboard #exchangeReputationSection,
+#profileDashboard #savedSearchesPanel,
+#profileDashboard #monetizationSection,
+#profileDashboard #purchaseHistorySection{
+  border-radius:22px;
+}
+#profileDashboard .profile-section .sectionhead{gap:10px;align-items:center;margin:0 0 14px}
+#profileDashboard .profile-section .sectionhead h2{font-size:clamp(18px,4.5vw,23px);line-height:1.2;letter-spacing:-.5px}
+#profileDashboard .profile-section .sectionhead .chip{flex:0 0 auto;min-height:42px;padding:10px 15px;border-radius:999px;background:rgba(255,255,255,.86);box-shadow:0 5px 16px rgba(24,42,32,.045)}
+#profileDashboard #exchangeReputationSummary{gap:8px}
+#profileDashboard #exchangeReputationSummary>div{padding:16px 8px;border-radius:18px;background:rgba(255,255,255,.9);border-color:rgba(31,57,43,.08);box-shadow:0 4px 16px rgba(24,42,32,.025)}
+#profileDashboard #exchangeReputationSummary b{font-size:clamp(21px,6vw,28px);line-height:1.15}
+#profileDashboard #exchangeReputationSummary span{display:block;margin-top:5px;font-size:12px;line-height:1.3}
+#profileDashboard #exchangeReputationSection>h3{font-size:17px;letter-spacing:-.3px;line-height:1.25}
+#profileDashboard #exchangePublicReviews .my-listing,
+#profileDashboard #exchangeOutgoingReviews .my-listing,
+#profileDashboard #exchangeHistoryList .my-listing,
+#profileDashboard #myExchanges .my-listing{
+  border-radius:20px;border-color:rgba(31,57,43,.08);background:rgba(255,255,255,.88);
+  box-shadow:0 5px 18px rgba(24,42,32,.03);padding:14px;gap:12px;
+}
+#profileDashboard .purchase-history-details{min-width:0;margin:14px 0}
+#profileDashboard .purchase-history-details>summary{
+  min-height:54px;padding:14px 16px!important;border-radius:17px!important;
+  border-color:rgba(31,57,43,.10)!important;background:rgba(255,255,255,.88)!important;
+  line-height:1.35;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+#profileDashboard .purchase-history-details[open]>summary{border-color:rgba(49,93,80,.20)!important;background:#fafff5!important}
+#profileDashboard #monetizationSection .monetization-disclosure{
+  padding:11px 12px;border:1px solid rgba(31,57,43,.07);border-radius:14px;background:rgba(255,255,255,.58);
+  font-size:11px!important;line-height:1.5!important;letter-spacing:.15px;
+}
+#profileDashboard #subscriptionStatus,
+#profileDashboard #promotionCreditsPanel,
+#profileDashboard #businessTeamPanel{border-radius:18px!important}
+#profileDashboard .monetization-grid{gap:10px}
+#profileDashboard .monetization-plan{
+  min-height:100%;padding:14px;border-radius:20px;border-color:rgba(31,57,43,.07);
+  box-shadow:0 7px 22px rgba(24,42,32,.04);gap:8px;
+}
+#profileDashboard .monetization-plan h3{font-size:15px;line-height:1.25}
+#profileDashboard .monetization-price{font-size:clamp(19px,5vw,23px);line-height:1.1}
+#profileDashboard .monetization-period{font-size:12px;line-height:1.35}
+#profileDashboard .monetization-features{font-size:11.5px;line-height:1.45;padding-left:15px}
+#profileDashboard .monetization-plan button{
+  min-height:44px;margin-top:auto;padding:10px 9px;border-radius:999px;
+  box-shadow:0 5px 14px rgba(21,63,53,.07);touch-action:manipulation;
+}
+#profileDashboard #purchaseHistorySection #monetizationOrders{min-width:0}
+#profileDashboard #savedSearchesList:empty:after{content:"Сохранённых поисков пока нет.";display:block;padding:18px 14px;border:1px dashed rgba(31,57,43,.16);border-radius:16px;color:var(--muted);font-size:13px;text-align:center}
+#profileDashboard button:focus-visible,
+#profileDashboard summary:focus-visible{outline:3px solid rgba(49,93,80,.3);outline-offset:3px}
+@media(max-width:430px){
+  #profileDashboard .profile-card{padding:14px!important;gap:11px!important;border-radius:21px!important;margin-bottom:16px!important}
+  #profileDashboard .profile-avatar{flex-basis:52px;width:52px;height:52px;font-size:23px}
+  #profileDashboard .profile-card>.category{font-size:9px;letter-spacing:.55px}
+  #profileDashboard .profile-hub{gap:8px;margin:16px 0 24px}
+  #profileDashboard .profile-hub-row{min-height:70px;padding:12px 13px;border-radius:20px;gap:10px}
+  #profileDashboard .profile-hub-icon{flex-basis:40px;width:40px;height:40px;border-radius:13px}
+  #profileDashboard .profile-hub-copy b{font-size:13.5px}
+  #profileDashboard .profile-hub-copy small{font-size:11px}
+  #profileDashboard .profile-section .sectionhead{margin-bottom:12px}
+  #profileDashboard #exchangeReputationSummary>div{padding:14px 5px}
+  #profileDashboard #exchangeReputationSummary span{font-size:11px}
+  #profileDashboard .monetization-grid{gap:8px}
+  #profileDashboard .monetization-plan{padding:12px;border-radius:18px;gap:7px}
+  #profileDashboard .monetization-plan h3{font-size:14px}
+  #profileDashboard .monetization-features{font-size:11px;line-height:1.4;padding-left:13px}
+  #profileDashboard .monetization-plan button{font-size:11px;min-height:44px}
+}
+@media(max-width:350px){
+  #profileDashboard .profile-card>.category{display:none}
+  #profileDashboard .profile-hub-row{padding:11px;border-radius:18px}
+  #profileDashboard .profile-hub-copy small{font-size:10.5px}
+  #profileDashboard #exchangeReputationSummary{gap:5px}
+  #profileDashboard #exchangeReputationSummary b{font-size:20px}
+  #profileDashboard .monetization-plan{padding:10px}
+}
+@media(min-width:760px){
+  #profileDashboard .profile-hub{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #profileDashboard .profile-hub-row{min-height:92px;padding:17px}
+  #profileDashboard .profile-hub-copy b{font-size:16px}
+  #profileDashboard .profile-hub-copy small{font-size:13px}
+  #profileDashboard .monetization-grid{gap:14px}
+  #profileDashboard .monetization-plan{padding:18px;border-radius:22px}
+  #profileDashboard .monetization-plan h3{font-size:17px}
+  #profileDashboard .monetization-features{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  #profileDashboard .profile-hub-row{transition:none!important}
+}
+
 </style>
