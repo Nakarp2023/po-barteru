@@ -1,7 +1,7 @@
 # Supabase production migration inventory
 
 **Project:** `qxsnjksepzmpsifpxyea`  
-**Last checked:** 2026-10-29 (UTC)  
+**Last checked:** 2026-10-29 (UTC; reconciled against 90 production records)  
 **Source:** live Supabase migration history returned by the Supabase migration-list API.
 
 This is an inventory of migration records currently present in production. It is **not** a claim that every historical migration has a corresponding SQL file in this repository, nor is it a reconstruction of missing SQL. The production history contains records for which no separate migration file was found in the prior repository audit. Keep this inventory updated when migrations are applied.
@@ -99,6 +99,7 @@ This is an inventory of migration records currently present in production. It is
 | 20261028222732 | protect_all_exchange_linked_listings_from_delete |
 | 20261028222902 | protect_listing_promotion_and_report_history |
 | 20261029020904 | run_listing_history_guard_as_definer |
+| 20261029031858 | allow_business_team_invite_notifications |
 
 ## Follow-up checks
 
