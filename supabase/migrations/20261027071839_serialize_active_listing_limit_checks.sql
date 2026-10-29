@@ -1,4 +1,3 @@
--- Serialize concurrent active-listing writes for the same owner.
 create or replace function public.enforce_active_listing_limit()
 returns trigger
 language plpgsql
