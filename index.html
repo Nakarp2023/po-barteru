@@ -4644,10 +4644,13 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    if(title.length<4||body.length<10){setStatus("Укажите тему (от 4 символов) и подробности (от 10 символов).",true);return}
    submit.disabled=true;submit.textContent="Отправляем…";setStatus("");
    try{
-     const {error}=await db.from("support_tickets").insert({user_id:currentUser.id,category:category.value,subject:title,message:body});
+     const {data:ticket,error}=await db.from("support_tickets").insert({user_id:currentUser.id,category:category.value,subject:title,message:body}).select("id").single();
      if(error)throw error;
-     form.reset();setStatus("Обращение отправлено и сохранено. Ответ появится в разделе «Мои обращения».");
+     form.reset();
      await loadTickets();
+     const {error:notifyError}=await db.functions.invoke("support-telegram-notify",{body:{ticket_id:ticket.id}});
+     if(notifyError){console.error("Support Telegram notification failed",notifyError);setStatus("Обращение №"+ticket.id.slice(0,8)+" сохранено. Уведомление команде пока не настроено; ответ появится здесь после подключения поддержки.",true)}
+     else setStatus("Обращение №"+ticket.id.slice(0,8)+" отправлено. Ответ появится в разделе «Мои обращения».");
    }catch(error){console.error("Support ticket submit failed",error);setStatus(error?.code==="42P01"||error?.code==="PGRST205"?"Раздел поддержки ещё подключается. Попробуйте немного позже.":"Не удалось отправить обращение. Проверьте соединение и попробуйте снова.",true)}
    finally{submit.disabled=false;submit.textContent="Отправить обращение"}
  });
