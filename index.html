@@ -2304,6 +2304,38 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
  #chatInbox>.chat-row>[data-chat-open]>.my-info .chat-preview{font-size:13px}
 }
 
+
+/* Minimal conversation list: participant + concise latest-message preview only. */
+#chatInbox>.chat-row{
+  padding:12px 14px;
+  border-radius:18px;
+  box-shadow:0 1px 4px rgba(22,38,30,.025);
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info{gap:3px}
+#chatInbox>.chat-row>[data-chat-open]>.my-info h3{
+  font-size:16px;line-height:1.25;font-weight:650;letter-spacing:-.02em
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info .chat-preview{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow:hidden!important;
+  text-overflow:ellipsis;
+  overflow-wrap:anywhere;
+  font-size:14px;line-height:1.35;color:#777b80;font-weight:400;
+  max-height:2.7em
+}
+/* Exchange state remains available inside the conversation, not in every list row. */
+#chatInbox>.chat-row>[data-chat-open]>.my-info p:not(.chat-preview){display:none!important}
+#chatInbox>.chat-row>[data-chat-open]>.my-emoji{
+  flex-basis:40px;width:40px;height:40px;border-radius:12px;font-size:21px
+}
+@media(max-width:480px){
+ #chatInbox>.chat-row{padding:11px 12px;border-radius:16px}
+ #chatInbox>.chat-row>[data-chat-open]>.my-info .chat-preview{font-size:13px;line-height:1.35;max-height:2.7em}
+}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
