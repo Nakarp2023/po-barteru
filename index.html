@@ -4491,3 +4491,12 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .delete-confirm-submit:active{background:#a9443d!important}
 
 </style>
+
+
+/* Fix stacking: listing overflow actions must stay behind the fixed bottom navigation. */
+#profileDashboard.listings-only #myListings .my-actions-menu{
+  z-index:2!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-popover{
+  z-index:3!important;
+}
