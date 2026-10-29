@@ -1,4 +1,3 @@
--- Enforce active listing limits from the user's currently valid subscription.
 create or replace function public.enforce_active_listing_limit()
 returns trigger
 language plpgsql
