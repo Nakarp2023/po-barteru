@@ -2195,6 +2195,17 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
   }
 }
 #loadMoreListings[hidden]{display:none!important}
+
+/* Chrome mobile fix: prevent the chat inbox card contents collapsing into narrow columns. */
+#chatInbox{display:grid;grid-template-columns:minmax(0,1fr);width:100%;min-width:0}
+#chatInbox>.chat-row{display:flex;flex-wrap:nowrap;align-items:center;width:100%;min-width:0;max-width:100%;gap:8px;box-sizing:border-box}
+#chatInbox>.chat-row>[data-chat-open]{display:flex;flex:1 1 0%;width:0;min-width:0;max-width:100%;box-sizing:border-box;align-items:center;gap:12px;overflow:hidden}
+#chatInbox>.chat-row>[data-chat-open]>.my-emoji{flex:0 0 46px;width:46px;height:46px}
+#chatInbox>.chat-row>[data-chat-open]>.my-info{display:block;flex:1 1 0%;width:0;min-width:0;max-width:100%;overflow:hidden}
+#chatInbox>.chat-row>[data-chat-open]>.my-info h3,
+#chatInbox>.chat-row>[data-chat-open]>.my-info p{display:block;width:100%;max-width:100%;min-width:0;overflow-wrap:anywhere;word-break:normal}
+#chatInbox>.chat-row>[data-chat-hide]{flex:0 0 auto}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
