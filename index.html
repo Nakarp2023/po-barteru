@@ -3952,8 +3952,12 @@ async function loadProfileDashboard(){
  const cachedProfile=profileLocal();
  const cachedMetadataName=String(currentUser.user_metadata?.full_name||currentUser.user_metadata?.name||"").trim();
  const cachedName=String(cachedProfile.name||"").trim()||cachedMetadataName||String(currentUser.email||"").split("@")[0]||"Участник";
+ const cachedCity=String(cachedProfile.city||"").trim();
  $("profileName").textContent=cachedName;
  $("profileAvatar").textContent=(cachedName.trim()[0]||"Б").toUpperCase();
+ $("profileNameInput").value=cachedName==="Участник"?"":cachedName;
+ $("profileCityInput").value=cachedCity;
+ $("profileLoginMethod").textContent=currentUser.email?("E-mail · "+currentUser.email):(currentUser.phone?("Телефон · "+currentUser.phone):"Аккаунт подтверждён");
  profileBusy=true;
  try{
  // Monetization widgets load independently so a slow payment reconciliation cannot block the whole profile.
