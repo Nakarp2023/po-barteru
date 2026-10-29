@@ -3274,6 +3274,36 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 
 </style>
+
+<style id="filters-sheet-mobile-stability">
+/* Chrome on iOS: keep the filter sheet above the fixed glass tab bar.
+   Use the stable layout viewport for sizing so browser chrome changes do not
+   repeatedly resize/reposition the sheet while it is being dragged or scrolled. */
+@media(max-width:759px){
+  .filters-sheet{
+    position:fixed!important;
+    top:auto!important;
+    bottom:calc(88px + env(safe-area-inset-bottom,0px))!important;
+    max-height:calc(100vh - 112px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
+    height:auto!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-y:contain!important;
+    scroll-padding-bottom:24px;
+  }
+  .filters-sheet-actions{
+    position:sticky!important;
+    bottom:0!important;
+    z-index:2!important;
+    padding-bottom:8px!important;
+  }
+  body:has(#advancedSearchPanel:not([hidden])){
+    overflow:hidden!important;
+    overscroll-behavior:none!important;
+  }
+}
+</style>
 </head><body><main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
