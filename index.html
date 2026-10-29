@@ -2206,6 +2206,63 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 #chatInbox>.chat-row>[data-chat-open]>.my-info p{display:block;width:100%;max-width:100%;min-width:0;overflow-wrap:anywhere;word-break:normal}
 #chatInbox>.chat-row>[data-chat-hide]{flex:0 0 auto}
 
+
+/* Unified iOS-inspired conversation rows across Safari and Chrome.
+   The preview is text inside the row, not a second nested card. */
+#chatInbox{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:stretch}
+#chatInbox>.chat-row{
+  display:flex;flex-wrap:nowrap;align-items:center;gap:12px;
+  width:100%;min-width:0;max-width:100%;padding:14px;
+  border:1px solid rgba(29,29,31,.08);border-radius:24px;
+  background:rgba(255,255,255,.88);
+  box-shadow:0 8px 26px rgba(22,38,30,.055);
+  box-sizing:border-box;overflow:hidden
+}
+#chatInbox>.chat-row>[data-chat-open]{
+  display:flex;flex:1 1 0%;width:0;min-width:0;max-width:100%;
+  align-items:center;gap:12px;padding:0!important;margin:0;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;color:var(--ink);text-align:left;
+  box-sizing:border-box;overflow:hidden;appearance:none;-webkit-appearance:none;
+  transform:none!important
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-emoji{
+  display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;
+  border-radius:16px;background:#edf1e7;font-size:25px
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info{
+  display:flex;flex:1 1 0%;flex-direction:column;gap:4px;
+  width:0;min-width:0;max-width:100%;overflow:hidden
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info h3{
+  margin:0;font-size:16px;line-height:1.25;font-weight:700;
+  color:var(--ink);overflow-wrap:anywhere;word-break:normal
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info .chat-preview{
+  display:block;width:100%;min-width:0;max-width:100%;margin:0;padding:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;color:var(--muted);font-size:14px;line-height:1.35;
+  font-weight:500;overflow-wrap:anywhere;word-break:normal
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info p:not(.chat-preview){
+  display:block;width:100%;min-width:0;max-width:100%;margin:0;
+  padding:0;color:var(--muted);font-size:12px;line-height:1.3;
+  overflow-wrap:anywhere;word-break:normal
+}
+#chatInbox>.chat-row>[data-chat-hide]{
+  flex:0 0 auto;width:auto;min-width:0;padding:8px 10px;
+  border-radius:12px;white-space:nowrap
+}
+@media(max-width:480px){
+ #chatInbox{gap:10px}
+ #chatInbox>.chat-row{padding:12px;gap:10px;border-radius:22px}
+ #chatInbox>.chat-row>[data-chat-open]{gap:10px}
+ #chatInbox>.chat-row>[data-chat-open]>.my-emoji{flex-basis:44px;width:44px;height:44px;font-size:23px;border-radius:14px}
+ #chatInbox>.chat-row>[data-chat-open]>.my-info h3{font-size:16px}
+ #chatInbox>.chat-row>[data-chat-open]>.my-info .chat-preview{font-size:13px;line-height:1.35}
+ #chatInbox>.chat-row>[data-chat-hide]{font-size:12px;padding:8px}
+}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
