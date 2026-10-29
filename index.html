@@ -3182,7 +3182,8 @@ async function loadExchangeReputation(){
   if(ratingRaw===null)return;
   const rating=Number(ratingRaw);
   if(!Number.isInteger(rating)||rating<1||rating>5){toast("Укажи оценку от 1 до 5.");return}
-  const comment=(await appPromptDialog({title:"Комментарий к обмену",message:"Поделись впечатлением об обмене.",placeholder:"Комментарий (необязательно)",multiline:true,maxLength:1000,optional:true}))||"";
+  const comment=await appPromptDialog({title:"Комментарий к обмену",message:"Поделись впечатлением об обмене.",placeholder:"Комментарий (необязательно)",multiline:true,maxLength:1000,optional:true});
+  if(comment===null)return;
   if(comment.length>1000){toast("Комментарий слишком длинный — максимум 1000 символов.");return}
   btn.disabled=true;
   const proposalId=btn.dataset.reviewProposal,reviewedUserId=btn.dataset.reviewUser;
