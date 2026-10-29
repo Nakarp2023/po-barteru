@@ -4480,4 +4480,51 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   #profileDashboard.listings-only #myListings .my-listing .my-actions>button{font-size:11px!important}
   #profileDashboard.listings-only .profile-section:has(#myListings) .my-listings-section-head h2{font-size:21px!important}
 }
+
+/* Permanent-delete action: restrained danger styling, consistent with soft marketplace surfaces. */
+#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:9px!important;
+  box-sizing:border-box!important;
+  min-height:44px!important;
+  width:max-content!important;
+  max-width:min(238px,calc(100vw - 56px))!important;
+  padding:11px 14px!important;
+  border:1px solid #eac5c0!important;
+  border-radius:15px!important;
+  background:#fff0ee!important;
+  color:#a9443d!important;
+  box-shadow:0 8px 22px rgba(105,48,41,.10),inset 0 1px 0 rgba(255,255,255,.92)!important;
+  font-size:13px!important;
+  font-weight:750!important;
+  line-height:1.25!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete::before{
+  content:"";
+  display:block;
+  flex:0 0 16px;
+  width:16px;
+  height:16px;
+  background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete:hover{
+  background:#fde8e5!important;
+  border-color:#e1b3ad!important;
+}
+#profileDashboard.listings-only #myListings .my-actions-menu .my-action-delete:active{
+  background:#f9dfdc!important;
+  transform:translateY(1px);
+}
+#profileDashboard.listings-only #myListings .my-actions-menu[open]>summary{
+  background:#e4f5c7!important;
+  border-color:#d1e8ad!important;
+  color:#214c3d!important;
+}
 </style>
