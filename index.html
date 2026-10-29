@@ -3313,19 +3313,7 @@ $("savePasswordBtn").onclick=async()=>{if(!currentUser||!db)return toast("Сна
 $("phoneSend").onclick=async()=>{const phone=$("authPhone").value.trim();if(!/^\+[1-9]\d{7,14}$/.test(phone)){toast("Введи номер в формате +79991234567");return}const {error}=await db.auth.signInWithOtp({phone,options:{channel:"sms"}});if(error){toast("Не удалось отправить SMS: "+error.message);return}pendingPhone=phone;$("phoneCodeField").hidden=false;$("phoneVerify").hidden=false;toast("SMS-код отправлен. Введи его ниже.");};
 $("phoneVerify").onclick=async()=>{const token=$("phoneCode").value.trim();if(!pendingPhone||!token){toast("Введи код из SMS");return}const {error}=await db.auth.verifyOtp({phone:pendingPhone,token,type:"sms"});if(error){toast("Не удалось подтвердить код: "+error.message);return}await syncProfile();await loadRemoteListings();toast("Номер подтверждён, вход выполнен.");};
 $("authOut").onclick=async()=>{await db.auth.signOut();await syncProfile();toast("Вы вышли из аккаунта")};
-if(db){db.auth.onAuthStateChange(()=>{setTimeout(async()=>{await syncProfile();await loadActiveSubscription();await loadRemoteListings();await syncRemoteFavorites();await refreshNotificationCount();await refreshPushUi();watchPushNotifications();render()},0)});syncProfile().then(async()=>{await loadActiveSubscription();await loadRemoteListings();await syncRemoteFavorites();await refreshNotificationCount();await refreshPushUi();watchPushNotifications();render()})}else{$("profileStatus").textContent="Клиент базы данных не загрузился. Проверь интернет-соединение."}
-let pushNotificationChannel=null;
-function watchPushNotifications(){
- if(!db||!currentUser)return;
- if(pushNotificationChannel){db.removeChannel(pushNotificationChannel);pushNotificationChannel=null}
- pushNotificationChannel=db.channel("push-notifications-"+currentUser.id)
-  .on("postgres_changes",{event:"INSERT",schema:"public",table:"notifications",filter:"user_id=eq."+currentUser.id},async payload=>{
-   const notificationId=payload.new&&payload.new.id;
-   if(!notificationId)return;
-   const {error}=await db.functions.invoke("send-push",{body:{notification_id:notificationId}});
-   if(error)console.warn("Push delivery request failed:",error.message);
-  }).subscribe();
-}
+if(db){db.auth.onAuthStateChange(()=>{setTimeout(async()=>{await syncProfile();await loadActiveSubscription();await loadRemoteListings();await syncRemoteFavorites();await refreshNotificationCount();await refreshPushUi();render()},0)});syncProfile().then(async()=>{await loadActiveSubscription();await loadRemoteListings();await syncRemoteFavorites();await refreshNotificationCount();await refreshPushUi();render()})}else{$("profileStatus").textContent="Клиент базы данных не загрузился. Проверь интернет-соединение."}
 const PUSH_VAPID_PUBLIC_KEY="BKPX-36M1jvwRsm0w7ROdePZXHSc4wXMiWpvw1iEobE8jtXHmc2pwtp5IqMptyVzZZ509WQjXvbhlAyAFlROWuA";
 function pushKeyBytes(value){const pad="=".repeat((4-value.length%4)%4);return Uint8Array.from(atob((value+pad).replace(/-/g,"+").replace(/_/g,"/")),ch=>ch.charCodeAt(0))}
 async function refreshPushUi(){const btn=$("pushToggle"),status=$("pushStatus");if(!btn||!status)return;const supported=("serviceWorker" in navigator)&&("PushManager" in window)&&("Notification" in window);if(!currentUser){btn.disabled=true;btn.textContent="Войти";status.textContent="Войди в аккаунт, чтобы настроить уведомления.";return}btn.disabled=!supported;if(!supported){btn.textContent="Недоступно";status.textContent="Браузер не поддерживает Web Push. На iPhone добавь сайт на экран «Домой» и открой его оттуда.";return}const reg=await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();btn.textContent=sub?"Выключить":"Включить";status.textContent=sub?"Push-уведомления включены на этом устройстве.":"Получай уведомления о сообщениях и предложениях обмена."}
