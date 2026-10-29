@@ -3440,7 +3440,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </div>
 <button class="pill" id="authOut" hidden>Выйти</button>
 <section id="profileDashboard" hidden>
-<div class="profile-card"><div class="profile-avatar" id="profileAvatar">Б</div><div class="profile-main"><h2 id="profileName">Мой профиль</h2></div><button type="button" class="profile-logout-button" id="profileLogoutBtn" aria-label="Выйти из аккаунта"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg><span>Выйти</span></button></div>
+<div class="profile-card"><div class="profile-avatar" id="profileAvatar">Б</div><div class="profile-main"><h2 id="profileName"></h2></div><button type="button" class="profile-logout-button" id="profileLogoutBtn" aria-label="Выйти из аккаунта"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg><span>Выйти</span></button></div>
 <div class="profile-hub" id="profileHub">
   <button type="button" class="profile-hub-row" data-profile-open="account"><span class="profile-hub-icon">👤</span><span class="profile-hub-copy"><b>Личные данные</b><small>Имя, город, уведомления и пароль</small></span><span class="profile-hub-arrow">›</span></button>
   <button type="button" class="profile-hub-row" data-profile-open="my-listings"><span class="profile-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="14" rx="2"/><path d="M8 7h4M8 10h4M8 13h4"/><path d="M8 20h12V8"/></svg></span><span class="profile-hub-copy"><b>Мои объявления</b><small>Публикации, статусы и архив</small></span><span class="profile-hub-arrow">›</span></button>
@@ -3947,6 +3947,13 @@ document.addEventListener("visibilitychange",()=>{
 });
 async function loadProfileDashboard(){
  if(profileBusy||!currentUser||!db)return;
+ // Fill the profile header synchronously from local/session data before any network request,
+ // so the generic placeholder never flashes over the actual account name.
+ const cachedProfile=profileLocal();
+ const cachedMetadataName=String(currentUser.user_metadata?.full_name||currentUser.user_metadata?.name||"").trim();
+ const cachedName=String(cachedProfile.name||"").trim()||cachedMetadataName||String(currentUser.email||"").split("@")[0]||"Участник";
+ $("profileName").textContent=cachedName;
+ $("profileAvatar").textContent=(cachedName.trim()[0]||"Б").toUpperCase();
  profileBusy=true;
  try{
  // Monetization widgets load independently so a slow payment reconciliation cannot block the whole profile.
