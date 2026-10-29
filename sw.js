@@ -1,4 +1,4 @@
-const CACHE_NAME = "po-barteru-shell-v7";
+const CACHE_NAME = "po-barteru-shell-v8";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg", "/logo.webp?v=3"];
 
 self.addEventListener("install", event => {
@@ -35,7 +35,7 @@ self.addEventListener("fetch", event => {
   if (request.mode === "navigate") {
     event.respondWith((async () => {
       try {
-        const response = await fetch(request);
+        const response = await fetch(request, { cache: "no-store" });
         if (response && response.ok) {
           const cache = await caches.open(CACHE_NAME);
           await cache.put("/", response.clone());
