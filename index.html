@@ -2263,6 +2263,47 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
  #chatInbox>.chat-row>[data-chat-hide]{font-size:12px;padding:8px}
 }
 
+
+/* Simplify the inbox: quiet iOS-style rows, less glass and visual weight. */
+#chatInbox{gap:8px}
+#chatInbox>.chat-row{
+  padding:12px 14px;
+  border:1px solid rgba(29,29,31,.055);
+  border-radius:18px;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 2px 8px rgba(22,38,30,.025);
+}
+#chatInbox>.chat-row>[data-chat-open]{gap:11px}
+#chatInbox>.chat-row>[data-chat-open]>.my-emoji{
+  flex-basis:42px;width:42px;height:42px;
+  border-radius:13px;background:#f0f2eb;font-size:22px;
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info{gap:3px}
+#chatInbox>.chat-row>[data-chat-open]>.my-info h3{
+  font-size:15px;line-height:1.25;font-weight:650;letter-spacing:-.015em
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info .chat-preview{
+  font-size:13px;line-height:1.35;color:#777b80;font-weight:400
+}
+#chatInbox>.chat-row>[data-chat-open]>.my-info p:not(.chat-preview){
+  font-size:11px;line-height:1.25;color:#8b8e91;font-weight:500
+}
+#chatInbox>.chat-row>[data-chat-open]>span:last-child{color:#8b8e91;font-size:19px}
+#refreshChats{
+  min-height:42px;padding:10px 14px!important;
+  border-radius:14px!important;font-size:14px;font-weight:550;
+  box-shadow:none!important;background:rgba(255,255,255,.78)!important;
+  border:1px solid rgba(29,29,31,.06)!important;
+}
+@media(max-width:480px){
+ #chatInbox{gap:8px}
+ #chatInbox>.chat-row{padding:11px 12px;border-radius:17px}
+ #chatInbox>.chat-row>[data-chat-open]{gap:10px}
+ #chatInbox>.chat-row>[data-chat-open]>.my-emoji{flex-basis:40px;width:40px;height:40px;font-size:21px;border-radius:12px}
+ #chatInbox>.chat-row>[data-chat-open]>.my-info h3{font-size:15px}
+ #chatInbox>.chat-row>[data-chat-open]>.my-info .chat-preview{font-size:13px}
+}
+
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
