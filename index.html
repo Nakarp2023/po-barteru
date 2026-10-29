@@ -3532,7 +3532,7 @@ async function loadMyExchanges(){
  enableSwipeToReveal(el,".swipe-row");el.querySelectorAll("[data-proposal-hide]").forEach(btn=>btn.onclick=async()=>{const id=btn.dataset.proposalHide;if(!await confirmActionDialog({title:"Убрать предложение?",message:"Оно исчезнет только из твоего списка. У другого участника предложение останется.",actionLabel:"Убрать из списка",variant:"danger"}))return;btn.disabled=true;const {error}=await db.from("user_hidden_exchange_proposals").upsert({user_id:currentUser.id,proposal_id:id},{onConflict:"user_id,proposal_id"});if(error){btn.disabled=false;toast("Не удалось убрать предложение.");return}toast("Предложение убрано из твоего списка");await loadMyExchanges()});
  el.querySelectorAll("[data-proposal-respond]").forEach(btn=>btn.onclick=async()=>{
   const decision=btn.dataset.proposalRespond;
-  if(decision==="declined"&&!confirm("Отклонить это предложение обмена?"))return;
+  if(decision==="declined"&&!await confirmActionDialog({title:"Отклонить предложение?",message:"Предложение обмена будет отклонено.",actionLabel:"Отклонить",variant:"danger"}))return;
   btn.disabled=true;
   const {data,error}=await db.rpc("respond_to_exchange_proposal",{p_proposal_id:btn.dataset.proposalId,p_decision:decision});
   if(error){const conflict=error.code==="23505"||/exchange_proposals_one_accepted_per_(target|offered_listing)_idx|duplicate key/i.test(error.message||"");toast(conflict?"Это объявление уже участвует в другом принятом обмене. Обнови список предложений и выбери другое.":"Не удалось обработать предложение: "+(error.message||"ошибка"));btn.disabled=false;await loadMyExchanges();return}
