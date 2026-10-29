@@ -3303,6 +3303,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     overscroll-behavior:none!important;
   }
 }
+
+.filters-sheet{touch-action:pan-y;transition:transform .22s cubic-bezier(.2,.75,.25,1)!important}
+.filters-sheet.filters-sheet-dragging{transition:none!important;will-change:transform}
 </style>
 </head><body><main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
@@ -4365,6 +4368,48 @@ $("filterCityButton")?.addEventListener("click",()=>openCityPicker("filters"));
 $("filterCityOnly")?.addEventListener("change",event=>{filterCityOnly=event.target.checked});
 $("filterSort")?.addEventListener("change",event=>{filterSortMode=event.target.value});
 $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;render()});
+
+/* Native-like swipe-down dismissal for the mobile filters bottom sheet. */
+(()=>{
+  const panel=$("advancedSearchPanel");
+  if(!panel)return;
+  let startY=0,lastY=0,lastAt=0,dragging=false,startedOnHandle=false;
+  const close=()=>{panel.classList.remove("filters-sheet-dragging");panel.style.transform="";advancedSearchExpanded=false;render();};
+  panel.addEventListener("touchstart",e=>{
+    if(!advancedSearchExpanded||e.touches.length!==1)return;
+    const t=e.target;
+    startedOnHandle=!!(t.closest(".filters-sheet-grabber")||t.closest(".advanced-search-head"));
+    if(!startedOnHandle&&panel.scrollTop>0)return;
+    if(!startedOnHandle&&t.closest("input,select,textarea,button,a"))return;
+    startY=lastY=e.touches[0].clientY;lastAt=performance.now();dragging=false;
+  },{passive:true});
+  panel.addEventListener("touchmove",e=>{
+    if(!advancedSearchExpanded||e.touches.length!==1)return;
+    const y=e.touches[0].clientY,dy=y-startY;
+    if(dy<=0)return;
+    if(!startedOnHandle&&panel.scrollTop>0)return;
+    if(dy>7){dragging=true;panel.classList.add("filters-sheet-dragging");}
+    if(dragging){
+      e.preventDefault();
+      panel.style.transform="translateY("+Math.min(dy,window.innerHeight*0.85)+"px)";
+    }
+    lastY=y;lastAt=performance.now();
+  },{passive:false});
+  const finish=()=>{
+    if(!dragging){startedOnHandle=false;return;}
+    const dy=lastY-startY,elapsed=Math.max(1,performance.now()-lastAt);
+    const fastDown=dy>35&&elapsed<180;
+    if(dy>105||fastDown)close();
+    else{
+      panel.classList.remove("filters-sheet-dragging");
+      panel.style.transform="";
+    }
+    dragging=false;startedOnHandle=false;
+  };
+  panel.addEventListener("touchend",finish,{passive:true});
+  panel.addEventListener("touchcancel",finish,{passive:true});
+})();
+
 
 </script>
 
