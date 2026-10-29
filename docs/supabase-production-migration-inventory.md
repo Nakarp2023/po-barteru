@@ -189,6 +189,14 @@ The missing files below are source-recovery work items only. **Do not recreate S
 | 20261028173006 | add_listing_region |
 | 20261029031858 | allow_business_team_invite_notifications |
 
+## Bootstrap schema warning
+
+The repository also contains `supabase/schema.sql`, a small initial/bootstrap schema. It is **not a canonical production restore script** and must not be run against the live database as a shortcut for recovering missing migrations.
+
+The current file defines only the early core tables and contains older behavior that differs from the hardened production state, including cascading deletion from users/listings into exchange-related records and direct client mutation policies for exchange proposals. It does not represent the full current application schema (for example, the later monetization, notification, review, and business-team features are absent).
+
+For recovery, use a trusted production schema snapshot or a verified sequence of original migrations. Compare against the live database before applying any DDL. Never use this bootstrap file to overwrite production policies or constraints.
+
 ## Follow-up checks
 
 - Compare each production version above with the SQL files in `supabase/migrations/` by exact version prefix.
