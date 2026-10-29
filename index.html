@@ -4014,6 +4014,23 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  #chatInbox>.chat-row>[data-chat-open],#chatInbox>.chat-row>[data-chat-hide]{transition:none!important}
 }
 </style>
+
+<script>
+/* Keep only one My Listings overflow menu open and close it when the user taps elsewhere. */
+(function(){
+  if(window.__myListingsDeletePopoverBehavior) return;
+  window.__myListingsDeletePopoverBehavior = true;
+  document.addEventListener("click", function(event){
+    const selector = "#profileDashboard.listings-only #myListings .my-actions-menu";
+    const clickedSummary = event.target.closest(selector + " > summary");
+    document.querySelectorAll(selector + "[open]").forEach(function(menu){
+      if(clickedSummary ? menu !== clickedSummary.parentElement : !menu.contains(event.target)){
+        menu.removeAttribute("open");
+      }
+    });
+  }, true);
+})();
+</script>
 </body></html>
 
 <style>
@@ -4692,6 +4709,29 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:380px){
   #profileDashboard.listings-only #myListings .my-actions-menu[open] .my-action-delete{
     max-width:calc(100vw - 32px)!important;padding:10px 11px!important;font-size:12.5px!important;
+  }
+}
+
+/* Corrective override: the delete action is a floating popover, never a full-width row. */
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu,
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open]{
+  position:absolute!important;top:10px!important;right:10px!important;z-index:40!important;
+  display:block!important;grid-column:auto!important;justify-self:auto!important;
+  width:38px!important;min-width:38px!important;max-width:38px!important;margin:0!important;
+}
+#profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open] .my-action-delete{
+  position:absolute!important;top:calc(100% + 7px)!important;right:0!important;left:auto!important;
+  display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;
+  width:max-content!important;min-width:0!important;max-width:min(220px,calc(100vw - 32px))!important;
+  min-height:40px!important;height:auto!important;margin:0!important;padding:10px 13px!important;
+  box-sizing:border-box!important;border:1px solid #ebc9c5!important;border-radius:13px!important;
+  background:rgba(255,241,239,.98)!important;color:#a9443d!important;
+  box-shadow:0 7px 20px rgba(105,48,41,.10),inset 0 1px 0 rgba(255,255,255,.9)!important;
+  font-size:13px!important;font-weight:700!important;line-height:1.25!important;white-space:nowrap!important;z-index:41!important;
+}
+@media(max-width:380px){
+  #profileDashboard.listings-only #myListings .my-actions .my-actions-menu[open] .my-action-delete{
+    max-width:calc(100vw - 28px)!important;padding:9px 11px!important;font-size:12px!important;
   }
 }
 </style>
