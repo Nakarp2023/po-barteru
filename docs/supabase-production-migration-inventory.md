@@ -79,7 +79,7 @@ This is an inventory of migration records currently present in production. It is
 | 20261027114255 | enforce_server_message_delivery_timestamp |
 | 20261027123030 | exchange_reviews_and_ratings |
 | 20261027123053 | fix_exchange_review_policy_scope |
-| 20261027123518 | allow_exchange_review_notifications |
+| 20261027123530 | allow_exchange_review_notifications |
 | 20261027124849 | add_public_review_name_preference |
 | 20261027131019 | blind_exchange_reviews_with_24h_release |
 | 20261027131748 | secure_blind_review_visibility_function |
