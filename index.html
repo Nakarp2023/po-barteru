@@ -4373,7 +4373,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 (()=>{
   const panel=$("advancedSearchPanel");
   if(!panel)return;
-  let startY=0,lastY=0,lastAt=0,dragging=false,startedOnHandle=false;
+  let startY=0,lastY=0,startAt=0,lastAt=0,dragging=false,startedOnHandle=false;
   const close=()=>{panel.classList.remove("filters-sheet-dragging");panel.style.transform="";advancedSearchExpanded=false;render();};
   panel.addEventListener("touchstart",e=>{
     if(!advancedSearchExpanded||e.touches.length!==1)return;
@@ -4381,7 +4381,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     startedOnHandle=!!(t.closest(".filters-sheet-grabber")||t.closest(".advanced-search-head"));
     if(!startedOnHandle&&panel.scrollTop>0)return;
     if(!startedOnHandle&&t.closest("input,select,textarea,button,a"))return;
-    startY=lastY=e.touches[0].clientY;lastAt=performance.now();dragging=false;
+    startY=lastY=e.touches[0].clientY;startAt=lastAt=performance.now();dragging=false;
   },{passive:true});
   panel.addEventListener("touchmove",e=>{
     if(!advancedSearchExpanded||e.touches.length!==1)return;
@@ -4397,8 +4397,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   },{passive:false});
   const finish=()=>{
     if(!dragging){startedOnHandle=false;return;}
-    const dy=lastY-startY,elapsed=Math.max(1,performance.now()-lastAt);
-    const fastDown=dy>35&&elapsed<180;
+    const dy=lastY-startY,elapsed=Math.max(1,performance.now()-startAt);
+    const fastDown=dy>35&&dy/elapsed>0.65;
     if(dy>105||fastDown)close();
     else{
       panel.classList.remove("filters-sheet-dragging");
