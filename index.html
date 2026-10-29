@@ -3781,5 +3781,34 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  #notificationsList .notification-card .my-info p{font-size:12px!important}
 }
 
+
+/* iOS-style destructive actions: soft system red, centered labels, consistent sizing. */
+.chat-row [data-chat-hide]{
+ display:none!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;min-width:84px!important;width:84px!important;
+ min-height:52px!important;padding:10px 12px!important;margin:0!important;
+ border:1px solid rgba(255,59,48,.16)!important;border-radius:18px!important;
+ background:#fff0ef!important;color:#d92d20!important;
+ font-size:14px!important;font-weight:650!important;line-height:1.15!important;
+ text-align:center!important;white-space:normal!important;overflow-wrap:normal!important;
+ box-shadow:0 2px 8px rgba(255,59,48,.06)!important;
+}
+.chat-row.swipe-revealed [data-chat-hide]{display:flex!important}
+.chat-row [data-chat-hide]:active{background:#ffe3e1!important}
+#notificationsList .notification-delete{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ box-sizing:border-box!important;width:66px!important;padding:8px 5px!important;
+ border:1px solid rgba(255,59,48,.18)!important;border-radius:18px!important;
+ background:#fff0ef!important;color:#d92d20!important;
+ font-size:12px!important;font-weight:650!important;line-height:1.15!important;
+ text-align:center!important;white-space:normal!important;
+ box-shadow:0 2px 8px rgba(255,59,48,.06)!important;
+}
+#notificationsList .notification-delete:active{background:#ffe3e1!important}
+@media(max-width:480px){
+ .chat-row [data-chat-hide]{min-width:76px!important;width:76px!important;padding:9px 8px!important;font-size:13px!important;border-radius:16px!important}
+ #notificationsList .notification-delete{width:62px!important;border-radius:16px!important}
+}
+
 </style>
 </body></html>
