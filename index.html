@@ -3448,7 +3448,32 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   <button type="button" class="profile-hub-row" data-profile-open="reputation"><span class="profile-hub-icon">★</span><span class="profile-hub-copy"><b>Репутация и отзывы</b><small id="profileHubReputation">Рейтинг и отзывы участников</small></span><span class="profile-hub-arrow">›</span></button>
   
   <button type="button" class="profile-hub-row" data-profile-open="settings"><span class="profile-hub-icon">⚙</span><span class="profile-hub-copy"><b>Настройки</b><small>Тарифы, продвижение и сохранённые поиски</small></span><span class="profile-hub-arrow">›</span></button>
+  <button type="button" class="profile-hub-row" data-profile-open="help"><span class="profile-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.3 1.7c-1.1 1-1.9 1.3-1.9 2.8M12 17h.01"/></svg></span><span class="profile-hub-copy"><b>Информация и помощь</b><small>Поддержка, документы и безопасность</small></span><span class="profile-hub-arrow">›</span></button>
 </div>
+
+<section id="profileInfoHelpPanel" class="profile-info-help" hidden aria-labelledby="profileInfoHelpTitle">
+  <div class="profile-info-help-head">
+    <button type="button" class="profile-info-back" id="profileInfoHelpBack" aria-label="Вернуться к разделам профиля">‹</button>
+    <div><h3 id="profileInfoHelpTitle">Информация и помощь</h3><p>Всё важное о работе площадки «ПО БАРТЕРУ».</p></div>
+  </div>
+  <div class="profile-info-help-card profile-info-support-card">
+    <div class="profile-info-help-icon" aria-hidden="true">✉</div>
+    <div class="profile-info-help-copy"><h4>Обратная связь и поддержка</h4><p>Можно будет обратиться по вопросам сделок, объявлений, аккаунта, платных функций или безопасности.</p><span class="profile-info-status">Канал отправки обращений требует подключения</span></div>
+  </div>
+  <div class="profile-info-help-card">
+    <div class="profile-info-help-icon" aria-hidden="true">⌂</div>
+    <div class="profile-info-help-copy"><h4>О проекте</h4><p>«ПО БАРТЕРУ» — площадка, которая помогает находить предложения и договариваться об обмене вещами и услугами напрямую с другими участниками.</p><p class="profile-info-muted">Сведения об операторе и реквизиты будут добавлены после оформления юридического статуса.</p></div>
+  </div>
+  <h4 class="profile-info-section-title">Документы и правила</h4>
+  <div class="profile-info-doc-list">
+    <details class="profile-info-doc"><summary><span><b>Политика обработки персональных данных</b><small>Какие данные обрабатываются и для чего</small></span><span class="profile-info-chevron">›</span></summary><div class="profile-info-doc-body"><p>Документ готовится. Перед публикацией необходимо сверить фактические данные, инфраструктуру Supabase/Render, сроки хранения и правовые основания обработки.</p><span class="profile-info-status">Готовится к публикации</span></div></details>
+    <details class="profile-info-doc"><summary><span><b>Пользовательское соглашение</b><small>Условия использования площадки</small></span><span class="profile-info-chevron">›</span></summary><div class="profile-info-doc-body"><p>В документе будут описаны правила аккаунта, объявлений, обменов, отзывов, модерации и платных функций. Текст должен соответствовать фактической работе сервиса.</p><span class="profile-info-status">Готовится к публикации</span></div></details>
+    <details class="profile-info-doc"><summary><span><b>Правила объявлений и обмена</b><small>Безопасность, жалобы и запрещённые предложения</small></span><span class="profile-info-chevron">›</span></summary><div class="profile-info-doc-body"><p>Правила будут опубликованы после согласования перечня ограничений и процедур рассмотрения жалоб.</p><span class="profile-info-status">Готовится к публикации</span></div></details>
+    <details class="profile-info-doc"><summary><span><b>Платные функции и возвраты</b><small>Стоимость, срок действия и условия оплаты</small></span><span class="profile-info-chevron">›</span></summary><div class="profile-info-doc-body"><p>Перед оплатой пользователю должны быть доступны актуальные условия конкретной услуги. Этот документ будет связан с действующими правилами оплаты после их проверки.</p><span class="profile-info-status">Требует согласования</span></div></details>
+  </div>
+  <div class="profile-info-security-note"><span aria-hidden="true">🛡</span><p><b>Береги свой аккаунт</b><br>Не передавай другим людям пароли и коды подтверждения. Не отправляй в чат полные данные банковской карты и не переходи по подозрительным ссылкам.</p></div>
+  <p class="profile-info-help-foot">Юридические документы и контакты будут опубликованы после проверки и заполнения достоверных сведений.</p>
+</section>
 
 <div class="profile-edit profile-top-settings"><h3>Личные данные и настройки</h3><div class="push-settings"><div><b>Push-уведомления</b><p class="category" id="pushStatus">Уведомления на экране устройства</p></div><button type="button" class="pill" id="pushToggle">Включить</button></div><label class="field">Имя<input id="profileNameInput" maxlength="50" placeholder="Как к тебе обращаться"></label><label class="field">Город<input id="profileCityInput" maxlength="120" placeholder="Выбери город" readonly></label><button type="button" class="pill" id="profileChooseCityBtn">Выбрать город</button><button type="button" class="pill" id="profileLocateCityBtn">⌖ Определить мой город</button><p class="category">Способ входа: <span id="profileLoginMethod">E-mail</span></p><div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px"><h3>Пароль аккаунта</h3><label class="field">Новый пароль<input id="profileNewPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Не менее 8 символов"></label><label class="field">Повтори новый пароль<input id="profileConfirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Повтори пароль"></label><button type="button" class="pill" id="savePasswordBtn">Установить / изменить пароль</button><p class="category">Если ты вошёл по ссылке из письма, здесь можно задать пароль для следующих входов.</p></div><div class="profile-actions"><button class="pill" id="saveProfileBtn">Сохранить данные</button></div></div>
 <div class="profile-stats"><div><b id="myListingCount">—</b><span>Объявления</span></div><div><b id="myProposalCount">—</b><span>Предложения</span></div><div><b id="myFavCount">0</b><span>Избранное</span></div></div><div class="profile-section"><div class="sectionhead my-listings-section-head" id="myListingsSectionHead"><h2>Мои объявления</h2><button class="chip" id="profileAddListing">＋ Добавить</button></div><div class="my-listings-summary" id="myListingsSummary">Загружаем объявления…</div><div class="my-listing-filters" id="myListingFilters" role="group" aria-label="Фильтр объявлений"><button type="button" class="my-listing-filter active" data-my-listings-filter="all">Все <span id="myFilterAllCount">0</span></button><button type="button" class="my-listing-filter" data-my-listings-filter="active">Активные <span id="myFilterActiveCount">0</span></button><button type="button" class="my-listing-filter" data-my-listings-filter="archived">В архиве <span id="myFilterArchivedCount">0</span></button></div><div id="myListings" class="my-listings"><p class="category">Загружаем объявления…</p></div><p class="my-listings-filter-empty" id="myListingsFilterEmpty" hidden>В этой категории пока нет объявлений.</p></div><div class="profile-section" id="exchangeSection"><div class="sectionhead"><h2>Предложения обмена</h2><button class="chip" id="refreshExchanges">Обновить</button></div><div id="myExchanges" class="my-listings"><p class="category">Загружаем предложения…</p></div><div class="completed-exchanges-panel"><h3 class="completed-exchanges-title">Завершённые обмены</h3><details id="exchangeHistoryDetails" class="purchase-history-details"><summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#fff;font-weight:700"><span id="exchangeHistorySummaryLabel">Показать историю обменов</span><span class="category" style="margin:0">⌄</span></summary><div id="exchangeHistoryList" class="my-listings" style="margin-top:12px"><p class="category">Загружаем историю обменов…</p></div></details></div></div><div class="profile-section" id="exchangeReputationSection"><div class="sectionhead"><h2>Моя репутация</h2></div><div id="exchangeReputationSummary" class="profile-stats"><div><b>—</b><span>Рейтинг</span></div><div><b>—</b><span>Отзывов</span></div><div><b>—</b><span>Обменов</span></div></div><h3 style="margin:18px 0 8px">Отзывы обо мне</h3><div id="exchangePublicReviews" class="my-listings" style="margin:12px 0"><p class="category">Загружаем отзывы…</p></div></div><div class="profile-section" id="savedSearchesPanel" hidden><div class="sectionhead"><h2>Сохранённые поиски</h2></div><div id="savedSearchesList" class="my-listings"></div></div><section class="profile-section" id="monetizationSection">
@@ -4440,6 +4465,39 @@ async function togglePush(){if(!currentUser||!db)return toast("Сначала в
 $("pushToggle").addEventListener("click",togglePush);
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js?v=6",{updateViaCache:"none"}).then(()=>refreshPushUi()).catch(err=>console.warn("Service Worker registration failed",err)));}
 
+/* Information & help — consistent with the existing profile hub */
+.profile-info-help{margin-top:16px;min-width:0}
+.profile-info-help[hidden]{display:none!important}
+.profile-info-help-head{display:flex;align-items:center;gap:12px;margin:4px 0 18px}
+.profile-info-help-head h3{margin:0;font-size:20px;letter-spacing:-.35px}
+.profile-info-help-head p{margin:5px 0 0;color:var(--muted,#68756e);font-size:13px;line-height:1.45}
+.profile-info-back{flex:0 0 38px;width:38px;height:38px;border:1px solid var(--line,#e2e8e2);border-radius:13px;background:var(--surface,#fff);color:var(--ink,#153f35);font-size:27px;line-height:1;cursor:pointer}
+.profile-info-help-card{display:flex;gap:13px;padding:15px;margin:10px 0;border:1px solid var(--line,#e2e8e2);border-radius:18px;background:var(--surface,#fff);box-shadow:0 3px 12px rgba(21,63,53,.035)}
+.profile-info-help-icon{display:flex;align-items:center;justify-content:center;flex:0 0 42px;width:42px;height:42px;border-radius:14px;background:#edf4eb;color:#153f35;font-size:22px}
+.profile-info-help-copy{min-width:0;flex:1}
+.profile-info-help-copy h4{margin:1px 0 6px;font-size:15px;line-height:1.3}
+.profile-info-help-copy p{margin:0 0 8px;color:var(--muted,#68756e);font-size:13px;line-height:1.5}
+.profile-info-help-copy p:last-child{margin-bottom:0}
+.profile-info-status{display:inline-flex;align-items:center;padding:5px 8px;border-radius:8px;background:#f4f3e9;color:#6d6230;font-size:11px;line-height:1.35;font-weight:650}
+.profile-info-muted{font-size:12px!important}
+.profile-info-section-title{margin:22px 2px 10px;font-size:16px}
+.profile-info-doc-list{overflow:hidden;border:1px solid var(--line,#e2e8e2);border-radius:17px;background:var(--surface,#fff)}
+.profile-info-doc+.profile-info-doc{border-top:1px solid var(--line,#e2e8e2)}
+.profile-info-doc summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px;cursor:pointer;list-style:none}
+.profile-info-doc summary::-webkit-details-marker{display:none}
+.profile-info-doc summary>span:first-child{display:flex;flex-direction:column;gap:5px;min-width:0}
+.profile-info-doc summary b{font-size:13px;line-height:1.4}
+.profile-info-doc summary small{font-size:12px;line-height:1.4;color:var(--muted,#68756e)}
+.profile-info-chevron{font-size:23px;color:#87928b;transition:transform .18s ease}
+.profile-info-doc[open] .profile-info-chevron{transform:rotate(90deg)}
+.profile-info-doc-body{padding:0 15px 15px}
+.profile-info-doc-body p{margin:0 0 10px;color:var(--muted,#68756e);font-size:13px;line-height:1.55}
+.profile-info-security-note{display:flex;gap:11px;margin-top:16px;padding:14px;border-radius:16px;background:#edf4eb;color:#244c3c;font-size:20px}
+.profile-info-security-note p{margin:0;font-size:12px;line-height:1.55}
+.profile-info-security-note b{font-size:13px}
+.profile-info-help-foot{margin:13px 2px 3px;color:var(--muted,#68756e);font-size:11px;line-height:1.5}
+@media(prefers-reduced-motion:reduce){.profile-info-chevron{transition:none}}
+
 /* Profile hub navigation: expose existing account panels without duplicating or deleting data. */
 (()=>{
  const dashboard=document.getElementById("profileDashboard");
@@ -4454,6 +4512,15 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
   history:{cls:"profile-show-history",target:"#exchangeHistoryDetails"}
  };
  function openPanel(key){
+  const helpPanel=document.getElementById("profileInfoHelpPanel");
+  if(key==="help"){
+   const wasOpen=!!helpPanel&&!helpPanel.hidden;
+   classes.forEach(c=>dashboard.classList.remove(c));
+   if(helpPanel)helpPanel.hidden=wasOpen;
+   if(!wasOpen&&helpPanel)requestAnimationFrame(()=>helpPanel.scrollIntoView({behavior:"smooth",block:"start"}));
+   return;
+  }
+  if(helpPanel)helpPanel.hidden=true;
   if(key==="my-listings"){if(typeof setPage==="function")setPage("my-listings");return}
   const item=openMap[key];if(!item)return;
   const wasOpen=dashboard.classList.contains(item.cls);
@@ -4464,6 +4531,7 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:"smooth",block:"start"}));
   }
  }
+ document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});});
  hub.querySelectorAll("[data-profile-open]").forEach(btn=>btn.addEventListener("click",()=>{
   const key=btn.dataset.profileOpen;
   if(key==="history"){openPanel("history");const details=document.getElementById("exchangeHistoryDetails");if(details)details.open=true;return}
