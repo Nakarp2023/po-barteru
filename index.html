@@ -3206,6 +3206,21 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #profileDashboard #exchangeOutgoingReviews .my-listing,
 #profileDashboard #exchangeHistoryList .my-listing,
 #profileDashboard #myExchanges .my-listing{
+
+#profileDashboard #myExchanges .exchange-compact-card{align-items:flex-start;gap:12px;padding:15px!important}
+#profileDashboard #myExchanges .exchange-compact-card .my-emoji{width:48px;height:48px;flex:0 0 48px;border-radius:15px;font-size:23px}
+#profileDashboard #myExchanges .exchange-compact-card .my-info{min-width:0;flex:1}
+#profileDashboard #myExchanges .exchange-compact-card h3{margin:1px 0 7px;font-size:16px;line-height:1.35;letter-spacing:-.2px;overflow-wrap:anywhere}
+#profileDashboard #myExchanges .exchange-compact-items{margin:0;color:#68716B;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+#profileDashboard #myExchanges .exchange-status{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0;padding:6px 10px;border-radius:999px;background:#F0F2EF;color:#626B65;font-size:12px;line-height:1.2;font-weight:700}
+#profileDashboard #myExchanges .exchange-status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 6px}
+#profileDashboard #myExchanges .exchange-status.is-pending{background:#FFF4D8;color:#8A6416}
+#profileDashboard #myExchanges .exchange-status.is-accepted{background:#E5F4D2;color:#286444}
+#profileDashboard #myExchanges .exchange-status.is-completed{background:#E4F3EA;color:#236A48}
+#profileDashboard #myExchanges .exchange-status.is-declined,#profileDashboard #myExchanges .exchange-status.is-cancelled{background:#FCEBE9;color:#A33C35}
+#profileDashboard #myExchanges .exchange-compact-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+#profileDashboard #myExchanges .exchange-compact-actions button{margin:0!important}
+@media(max-width:480px){#profileDashboard #myExchanges .exchange-compact-card{gap:10px;padding:13px!important}#profileDashboard #myExchanges .exchange-compact-card .my-emoji{width:42px;height:42px;flex-basis:42px;font-size:20px}#profileDashboard #myExchanges .exchange-compact-card h3{font-size:15px}}
   border-radius:20px;border-color:rgba(31,57,43,.08);background:rgba(255,255,255,.88);
   box-shadow:0 5px 18px rgba(24,42,32,.03);padding:14px;gap:12px;
 }
@@ -4269,10 +4284,11 @@ async function loadMyExchanges(){
    received=pendingIncoming.filter(x=>ownedListings.has(String(x.listing_id))).map(x=>({...x,listingTitle:ownedListings.get(String(x.listing_id)).title}));
   }
  }
- const splitProposalMessage=(value)=>{const parts=String(value||"Пользователь предлагает обмен").split(/\n\s*\nТип сделки:\s*/);return {offer:(parts[0]||"Пользователь предлагает обмен").trim(),terms:parts.length>1?("Тип сделки: "+parts.slice(1).join("\n\nТип сделки:")).trim():""}};
- const proposalText=(value)=>{const p=splitProposalMessage(value);return '<p>'+esc(p.offer)+'</p>'+(p.terms?'<div style="margin-top:8px;padding:10px 12px;border-radius:12px;background:#f0f3ec;color:#29483d;font-size:13px;line-height:1.45"><strong>Условия сделки</strong><br>'+esc(p.terms)+'</div>':"")};
- const outgoingHtml=visibleOutgoing.map(x=>'<div class="my-listing swipe-row"><div class="my-emoji">🔄</div><div class="my-info"><h3>Предложение обмена</h3>'+proposalText(x.message)+'<p>Статус: '+esc(({pending:"Ожидает ответа",accepted:"Принято",declined:"Отклонено",cancelled:"Отменено",completed:"Завершено"})[x.status]||x.status)+'</p><button class="chip" data-proposal-hide="'+esc(x.id)+'">Удалить из списка</button></div></div>').join("");
- const incomingHtml=received.map(x=>'<div class="my-listing swipe-row"><div class="my-emoji">📩</div><div class="my-info"><h3>Обмен: '+esc(x.listingTitle)+'</h3>'+proposalText(x.message)+'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="pill" data-proposal-respond="accepted" data-proposal-id="'+esc(x.id)+'">Принять</button><button class="chip" data-proposal-respond="declined" data-proposal-id="'+esc(x.id)+'">Отклонить</button><button class="chip" data-proposal-hide="'+esc(x.id)+'">Удалить из списка</button></div></div></div>').join("");
+ const summarizeProposal=(value)=>{let text=String(value||"Обмен без описания").split(/\n\s*\nТип сделки:\s*/)[0].trim();const pair=text.match(/отдаю\s*[«"“](.+?)[»"”]\s*и\s*получаю\s*[«"“](.+?)[»"”]/i);if(pair)return pair[1].trim()+" ↔ "+pair[2].trim();text=text.replace(/^Здравствуйте[.!\s,]*/i,"").replace(/^Добрый день[.!\s,]*/i,"").replace(/^Предлагаю обмен\s*:?\s*/i,"").replace(/^Рассмотрите мо[её] предложени[ея] по обмену\??\s*/i,"").split(/\n|(?=Предмет предложен текстом)|(?=Тип сделки:)/i)[0].trim().replace(/[.!?]+$/,"");return text||"Предложение обмена"};
+ const statusLabel={pending:"Ожидает ответа",accepted:"Принято",declined:"Отклонено",cancelled:"Отменено",completed:"Завершено"};
+ const statusChip=(status)=>'<span class="exchange-status is-'+esc(status)+'">'+esc(statusLabel[status]||status||"Статус неизвестен")+'</span>';
+ const outgoingHtml=visibleOutgoing.map(x=>'<div class="my-listing swipe-row exchange-compact-card"><div class="my-emoji">🔄</div><div class="my-info"><h3>'+esc(summarizeProposal(x.message))+'</h3>'+statusChip(x.status)+'<div class="exchange-compact-actions"><button class="chip" data-proposal-hide="'+esc(x.id)+'">Убрать</button></div></div></div>').join("");
+ const incomingHtml=received.map(x=>'<div class="my-listing swipe-row exchange-compact-card"><div class="my-emoji">🔄</div><div class="my-info"><h3>'+esc(x.listingTitle||summarizeProposal(x.message))+'</h3><p class="exchange-compact-items">'+esc(summarizeProposal(x.message))+'</p>'+statusChip(x.status)+'<div class="exchange-compact-actions"><button class="pill" data-proposal-respond="accepted" data-proposal-id="'+esc(x.id)+'">Принять</button><button class="chip" data-proposal-respond="declined" data-proposal-id="'+esc(x.id)+'">Отклонить</button><button class="chip" data-proposal-hide="'+esc(x.id)+'">Убрать</button></div></div></div>').join("");
  el.innerHTML=(received.length?'<h3>Входящие предложения</h3>'+incomingHtml:'')+(outgoingHtml?'<h3 style="margin-top:18px">Мои предложения</h3>'+outgoingHtml:'')||'<p class="category">Пока нет предложений обмена.</p>';
  enableSwipeToReveal(el,".swipe-row");el.querySelectorAll("[data-proposal-hide]").forEach(btn=>btn.onclick=async()=>{const id=btn.dataset.proposalHide;if(!await confirmActionDialog({title:"Убрать предложение?",message:"Оно исчезнет только из твоего списка. У другого участника предложение останется.",actionLabel:"Убрать из списка",variant:"danger"}))return;btn.disabled=true;const {error}=await db.from("user_hidden_exchange_proposals").upsert({user_id:currentUser.id,proposal_id:id},{onConflict:"user_id,proposal_id"});if(error){btn.disabled=false;toast("Не удалось убрать предложение.");return}toast("Предложение убрано из твоего списка");await loadMyExchanges()});
  el.querySelectorAll("[data-proposal-respond]").forEach(btn=>btn.onclick=async()=>{
