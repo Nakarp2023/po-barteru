@@ -2399,9 +2399,10 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 .deal-waiting-note{font-size:12px!important;line-height:1.4;color:var(--muted);margin:10px 0 0!important}
 .deal-details{margin-top:12px;border-top:1px solid rgba(60,60,67,.09);padding-top:10px}
 .deal-details>summary,.deal-edit-details>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;font-size:13px;font-weight:600;color:var(--ink);min-height:30px}
-.deal-details>summary::-webkit-details-marker,.deal-edit-details>summary::-webkit-details-marker{display:none}
-.deal-details>summary:after,.deal-edit-details>summary:after{content:"⌄";color:#858b86;font-size:17px}
-.deal-details>summary span{margin-left:auto;color:var(--muted);font-size:11px;font-weight:500}
+.deal-details>summary::-webkit-details-marker,.deal-edit-details>summary::-webkit-details-marker{display:none!important}
+.deal-details>summary::marker,.deal-edit-details>summary::marker{content:""}
+.deal-details>summary:after,.deal-edit-details>summary:after{content:"⌄";display:inline-block;flex:0 0 auto;color:#858b86;font-size:17px;line-height:1}
+.deal-details>summary span,.deal-edit-details>summary span{display:none!important}
 .deal-details-body{padding-top:8px}
 .deal-detail-line{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(60,60,67,.06);font-size:12px;line-height:1.35}
 .deal-detail-line span{color:var(--muted)}.deal-detail-line strong{font-weight:600;text-align:right;color:var(--ink)}
