@@ -2454,8 +2454,7 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
 .deal-direction-row span{flex:0 0 auto;color:#858a84;font-size:12px;line-height:1.35}
 .deal-direction-row strong{min-width:0;text-align:right;color:#242a25;font-size:13px;line-height:1.35;font-weight:650;overflow-wrap:anywhere}
 .deal-direction-arrow{padding-left:2px;color:#7e897e;font-size:13px;line-height:1}
-.deal-details>summary>span{font-size:0!important;letter-spacing:0!important}
-.deal-details>summary>span::after{content:"⌄";font-size:16px;color:#8a8e89}
+/* Deal summary uses one CSS-drawn chevron; no nested icon is needed. */
 @media(max-width:600px){.deal-direction-list{margin-top:10px;padding:9px 10px}.deal-direction-row{gap:8px}.deal-direction-row span{font-size:11px}.deal-direction-row strong{font-size:12px}}
 
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
