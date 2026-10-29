@@ -2950,7 +2950,7 @@ async function loadNotifications(){
  if(error){el.innerHTML='<p class="category">Не удалось загрузить уведомления: '+esc(error.message)+'</p>';return}
  const rows=data||[];await refreshNotificationCount();
  if(!rows.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🔔</div><h3>Пока нет уведомлений</h3><p>Здесь появятся новые предложения обмена, сообщения и отзывы участников.</p></div>';return}
- el.innerHTML=rows.map(n=>'<div class="notification-swipe" data-swipe-row="'+esc(n.id)+'"><button type="button" class="notification-delete" data-notification-delete="'+esc(n.id)+'" aria-label="Удалить уведомление">Удалить</button><button type="button" class="notification-card" style="width:100%;text-align:left;color:var(--ink);' +(!n.read_at?'border-color:#d6e6b2;background:#fbfff6;':'')+'" data-notification="'+esc(n.id)+'" data-type="'+esc(n.type)+'" data-conversation="'+esc(n.conversation_id||'')+'"><div class="my-emoji">'+(n.type==='message'?'💬':n.type==='exchange_proposal'?'🔄':n.type==='exchange_review'?'⭐':'🔔')+'</div><div class="my-info"><h3>'+esc(n.title)+(n.read_at?'':' · новое')+'</h3><p>'+esc(n.body)+'</p><p>'+new Date(n.created_at).toLocaleString("ru-RU",{dateStyle:"short",timeStyle:"short"})+'</p></div><span>›</span></button></div>').join("");
+ el.innerHTML=rows.map(n=>'<div class="notification-swipe" data-swipe-row="'+esc(n.id)+'"><button type="button" class="notification-delete" data-notification-delete="'+esc(n.id)+'" aria-label="Удалить уведомление">Удалить</button><button type="button" class="notification-card" style="width:100%;text-align:left;color:var(--ink);' +(!n.read_at?'border-color:#d6e6b2;background:#fbfff6;':'')+'" data-notification="'+esc(n.id)+'" data-type="'+esc(n.type)+'" data-conversation="'+esc(n.conversation_id||'')+'"><div class="my-emoji">'+(n.type==='message'?'💬':n.type==='exchange_proposal'?'🔄':n.type==='exchange_review'?'⭐':'🔔')+'</div><div class="my-info"><h3>'+esc(n.title)+(n.read_at?'':' <span class="notification-unread-dot" aria-label="Новое"></span>')+'</h3><p>'+esc(n.body)+'</p><p>'+new Date(n.created_at).toLocaleString("ru-RU",{dateStyle:"short",timeStyle:"short"})+'</p></div><span>›</span></button></div>').join("");
  el.querySelectorAll("[data-notification]").forEach(btn=>btn.onclick=async()=>{if(btn.dataset.swiping==="1")return;const id=btn.dataset.notification;await db.from("notifications").update({read_at:new Date().toISOString()}).eq("id",id).eq("user_id",currentUser.id);await refreshNotificationCount();if(btn.dataset.type==="message"&&btn.dataset.conversation){setPage("chats");openConversation(btn.dataset.conversation);return}if(btn.dataset.type==="exchange_proposal"){setPage("profile");await loadProfileDashboard();const target=$("myExchanges");if(target){target.scrollIntoView({behavior:"smooth",block:"center"});target.style.outline="2px solid var(--lime)";setTimeout(()=>target.style.outline="",1800)}return}if(btn.dataset.type==="exchange_review"){setPage("profile");await loadProfileDashboard();const target=$("exchangeReputationSection");if(target){target.scrollIntoView({behavior:"smooth",block:"center"});target.style.outline="2px solid var(--lime)";setTimeout(()=>target.style.outline="",1800)}return}await loadNotifications();toast("Уведомление отмечено прочитанным")});
  el.querySelectorAll("[data-notification-delete]").forEach(btn=>btn.onclick=async()=>{const id=btn.dataset.notificationDelete;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("id",id).eq("user_id",currentUser.id).select("id");if(error||!deletedRows||deletedRows.length===0){btn.disabled=false;toast("Не удалось удалить уведомление. Проверь права доступа и попробуй ещё раз.");return}const row=el.querySelector('[data-swipe-row="'+id+'"]');if(row)row.remove();await refreshNotificationCount();if(!el.querySelector("[data-swipe-row]"))el.innerHTML='<div class="empty-state"><div class="empty-icon">🔔</div><h3>Пока нет уведомлений</h3><p>Здесь появятся новые предложения обмена и сообщения от участников.</p></div>';toast("Уведомление удалено")});
  el.querySelectorAll("[data-swipe-row]").forEach(row=>{const card=row.querySelector(".notification-card");let startX=0,startY=0,dx=0,tracking=false,moved=false,wasOpen=false;const closeOthers=()=>el.querySelectorAll("[data-swipe-row].swiped").forEach(other=>{if(other!==row){other.classList.remove("swiped");const c=other.querySelector(".notification-card");if(c){c.dataset.swiping="0";c.style.transform=""}}});card.addEventListener("touchstart",e=>{const t=e.touches[0];startX=t.clientX;startY=t.clientY;dx=0;tracking=true;moved=false;wasOpen=row.classList.contains("swiped");card.style.transition="none"},{passive:true});card.addEventListener("touchmove",e=>{if(!tracking)return;const t=e.touches[0],x=t.clientX-startX,y=t.clientY-startY;if(Math.abs(y)>Math.abs(x)+8){tracking=false;card.style.transform="";return}if(Math.abs(x)>8){moved=true;e.preventDefault();const base=wasOpen?-88:0;dx=Math.max(-76,Math.min(0,base+x));card.style.transform="translateX("+dx+"px)"}},{passive:false});card.addEventListener("touchend",()=>{if(!tracking)return;tracking=false;card.style.transition="";if(moved){card.dataset.swiping="1";if(dx<=-38){closeOthers();row.classList.add("swiped")}else{row.classList.remove("swiped")}card.style.transform="";setTimeout(()=>{card.dataset.swiping="0"},280)}else{card.dataset.swiping="0";card.style.transform=""}}, {passive:true});card.addEventListener("click",e=>{if(row.classList.contains("swiped")){e.preventDefault();e.stopImmediatePropagation();row.classList.remove("swiped");card.dataset.swiping="0"}},true);});
@@ -3808,6 +3808,68 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 @media(max-width:480px){
  .chat-row [data-chat-hide]{min-width:76px!important;width:76px!important;padding:9px 8px!important;font-size:13px!important;border-radius:16px!important}
  #notificationsList .notification-delete{width:62px!important;border-radius:16px!important}
+}
+
+
+/* Minimal notification rows: quiet iOS grouped-list treatment. */
+#notificationsList{display:grid!important;gap:8px!important;align-content:start}
+#notificationsList .notification-swipe{margin:0!important;border-radius:20px!important;overflow:hidden!important}
+#notificationsList .notification-card{
+ display:flex!important;align-items:center!important;gap:11px!important;
+ min-height:76px!important;padding:11px 12px!important;margin:0!important;
+ border:1px solid rgba(29,29,31,.055)!important;border-radius:20px!important;
+ background:rgba(255,255,255,.92)!important;box-shadow:0 2px 8px rgba(20,35,29,.025)!important;
+ color:var(--ink)!important;box-sizing:border-box!important;
+}
+#notificationsList .notification-card[style*="border-color:#d6e6b2"]{
+ background:#fbfcf7!important;border-color:rgba(29,29,31,.055)!important
+}
+#notificationsList .notification-card .my-emoji{
+ display:grid!important;place-items:center!important;flex:0 0 36px!important;
+ width:36px!important;height:36px!important;min-width:36px!important;
+ border-radius:12px!important;background:#f0f2ed!important;font-size:18px!important;
+}
+#notificationsList .notification-card .my-info{flex:1 1 0!important;min-width:0!important;max-width:100%;overflow:hidden}
+#notificationsList .notification-card .my-info h3{
+ display:block!important;font-size:14px!important;line-height:1.3!important;
+ font-weight:650!important;letter-spacing:-.018em!important;margin:0 0 3px!important;
+ overflow-wrap:anywhere;word-break:normal
+}
+#notificationsList .notification-unread-dot{
+ display:inline-block!important;vertical-align:middle!important;width:6px!important;height:6px!important;
+ margin:0 0 2px 5px!important;border-radius:50%!important;background:#7da35a!important;
+}
+#notificationsList .notification-card .my-info p{
+ display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;
+ overflow:hidden!important;font-size:12px!important;line-height:1.35!important;
+ color:var(--muted)!important;margin:0!important;overflow-wrap:anywhere;word-break:normal
+}
+#notificationsList .notification-card .my-info p:last-child{
+ display:block!important;font-size:10px!important;line-height:1.25!important;
+ color:#858a85!important;letter-spacing:.01em;margin:4px 0 0!important
+}
+#notificationsList .notification-card>span:last-child{
+ flex:0 0 12px!important;width:12px!important;height:20px!important;min-width:12px!important;
+ border-radius:0!important;background:transparent!important;color:#929792!important;
+ font-size:21px!important;font-weight:400!important;opacity:1!important;
+ display:grid!important;place-items:center!important
+}
+#notificationsList .notification-delete{
+ top:5px!important;right:5px!important;bottom:5px!important;width:62px!important;
+ border-radius:15px!important;background:#fff0ef!important;color:#d92d20!important;
+ border:1px solid rgba(255,59,48,.14)!important;box-shadow:none!important;
+ font-size:12px!important;font-weight:650!important;line-height:1.15!important
+}
+#notificationsList .notification-delete:active{background:#ffe3e1!important}
+#notificationsList .notification-swipe.swiped .notification-card{transform:translateX(-68px)!important}
+@media(max-width:600px){
+ #notificationsList{gap:7px!important}
+ #notificationsList .notification-card{min-height:72px!important;padding:10px 11px!important;gap:10px!important;border-radius:19px!important}
+ #notificationsList .notification-card .my-emoji{flex-basis:34px!important;width:34px!important;height:34px!important;min-width:34px!important;border-radius:11px!important;font-size:17px!important}
+ #notificationsList .notification-card .my-info h3{font-size:13px!important}
+ #notificationsList .notification-card .my-info p{font-size:11px!important}
+ #notificationsList .notification-card .my-info p:last-child{font-size:10px!important}
+ #notificationsList .notification-delete{width:60px!important;border-radius:14px!important}
 }
 
 </style>
