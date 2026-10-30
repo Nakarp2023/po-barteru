@@ -5460,7 +5460,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function hasOverlay(){return !!document.querySelector(".modal.open")}
  function excluded(target){
   if(!(target instanceof Element))return true;
-  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,.profile-info-topic-list,.profile-info-doc-list,#advancedSearchPanel,#filtersBackdrop'))return true;
+  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,.profile-info-topic-list,.profile-info-doc-list,#advancedSearchPanel,#filtersBackdrop'))return true;
   const dashboard=$("profileDashboard");
   if(currentPage()==="profile"&&(dashboard&&(nestedProfileClasses.some(c=>dashboard.classList.contains(c))||dashboard.classList.contains("listings-only"))))return true;
   if(currentPage()==="chats"&&$("chatThread")&&!$("chatThread").hidden)return true;
