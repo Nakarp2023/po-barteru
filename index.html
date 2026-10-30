@@ -5349,6 +5349,30 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   }
   return true;
  }
+ // A nested back gesture is a true interactive preview: render the previous
+ // hierarchy level underneath the outgoing snapshot while the finger is moving.
+ let backPreview=null;
+ window.poBeginBackPreview=function(){
+  if(backPreview)return false;
+  const current=snapshot(),prior=stack[stack.length-1];
+  if(!prior)return false;
+  backPreview={current,prior};
+  if(!restore(prior)){backPreview=null;return false}
+  return true;
+ };
+ window.poFinishBackPreview=function(commit){
+  if(!backPreview)return false;
+  const preview=backPreview;backPreview=null;
+  if(commit){
+   if(stack.length&&key(stack[stack.length-1])===key(preview.prior))stack.pop();
+   lastSnapshot=snapshot();
+  }else{
+   restore(preview.current);
+   lastSnapshot=snapshot();
+  }
+  return true;
+ };
+
  function back(){
   // Close the topmost overlay first; never navigate the screen underneath it.
   const overlays=["modal","cityPickerModal","promotionPickerModal","listingDetailModal"];
@@ -5550,13 +5574,21 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     if(g.kind==="tabs"){
      const target=pages[g.index+(dir<0?1:-1)];
      setPageDirect(target);
+    }else{
+     // Prepare the destination before moving: both screens remain visible
+     // throughout the drag, not only after the finger is released.
+     g.backPreview=!!window.poBeginBackPreview?.();
+     if(g.backPreview)app.style.transform="translate3d("+(-dir*innerWidth+dx)+"px,0,0)";
     }
    }
   }
   if(e.cancelable)e.preventDefault();
   g.dx=dx;g.dy=dy;
   if(g.kind==="back"){
-   app.style.transform="translate3d("+dx+"px,0,0)";
+   if(g.backPreview&&g.snapshot){
+    g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
+    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
+   }else app.style.transform="translate3d("+dx+"px,0,0)";
   }else if(g.snapshot){
    g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
@@ -5575,14 +5607,17 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    return;
   }
   if(g.kind==="back"){
-   if(commit){
-    // Capture the current screen only once the edge gesture is accepted.
-    app.style.transform="";
-    const s=snapshot();activeSnapshot=s;
-    s.clone.style.transform="translate3d("+dx+"px,0,0)";
+   if(g.backPreview&&g.snapshot){
+    if(commit){
+     window.poFinishBackPreview?.(true);
+     animatePair(g.snapshot,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,260);
+    }else{
+     window.poFinishBackPreview?.(false);
+     animatePair(g.snapshot,dx,0,-g.direction*innerWidth+dx,-g.direction*innerWidth,210);
+    }
+   }else if(commit){
     window.poNavigateBack?.();
-    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-    animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
+    app.style.transform="";
    }else{
     app.classList.add("po-nav-moving");
     const a=app.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
@@ -5593,7 +5628,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(!g.snapshot)return;
   settleGesture(g,commit);
  }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;try{if(app.hasPointerCapture(e.pointerId))app.releasePointerCapture(e.pointerId)}catch(_){}if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}
+ function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;try{if(app.hasPointerCapture(e.pointerId))app.releasePointerCapture(e.pointerId)}catch(_){}if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){if(g.backPreview&&g.snapshot){window.poFinishBackPreview?.(false);animatePair(g.snapshot,g.dx,0,-g.direction*innerWidth+g.dx,-g.direction*innerWidth,210)}else{app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}}
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
