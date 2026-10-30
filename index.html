@@ -3901,7 +3901,7 @@ document.addEventListener("pointermove",moveNavDrag,{passive:false});
 document.addEventListener("pointerup",finishNavDrag);
 document.addEventListener("pointercancel",cancelNavDrag);
 bottomNav?.addEventListener("lostpointercapture",cancelNavDrag);
-bottomNav?.addEventListener("click",e=>{const tab=e.target.closest(".bottom .nav");if(suppressNavClick){e.preventDefault();e.stopImmediatePropagation();suppressNavClick=false;return}if(tab){e.preventDefault();e.stopImmediatePropagation();const target=tab.dataset.page;if(target==="profile"){const dashboard=$("profileDashboard");dashboard?.classList.remove("listings-only","profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history");const helpPanel=$("profileInfoHelpPanel");if(helpPanel)helpPanel.hidden=true;const hub=$("profileHub");if(hub)hub.hidden=false;}if(target&&target!==page)setPage(target);if(target&&target!==page){window.scrollTo({top:0,left:0,behavior:"instant"});setPage(target);}else if(target==="profile"){window.scrollTo({top:0,left:0,behavior:"instant"});}const idx=navTabs().findIndex(n=>n.dataset.page===target);if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));navSetDrag(idx,false);bottomNav.style.setProperty("--drag-index",String(idx))}}},true);$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
+bottomNav?.addEventListener("click",e=>{const tab=e.target.closest(".bottom .nav");if(suppressNavClick){e.preventDefault();e.stopImmediatePropagation();suppressNavClick=false;return}if(tab){e.preventDefault();e.stopImmediatePropagation();const target=tab.dataset.page;if(target==="profile"){const dashboard=$("profileDashboard");dashboard?.classList.remove("listings-only","profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history");const helpPanel=$("profileInfoHelpPanel");if(helpPanel)helpPanel.hidden=true;const hub=$("profileHub");if(hub)hub.hidden=false;}const changed=!!target&&target!==page;if(changed)setPage(target);else if(target==="profile")window.scrollTo({top:0,left:0,behavior:"instant"});const idx=navTabs().findIndex(n=>n.dataset.page===target);if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));navSetDrag(idx,false);bottomNav.style.setProperty("--drag-index",String(idx))}}},true);$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
 
 
 
@@ -5274,12 +5274,14 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    if(animated){
     stack.length=0;
     lastSnapshot=snapshot();
+    if(!restoring&&before.page!==nextPage)window.scrollTo({top:0,left:0,behavior:"instant"});
     return;
    }
    // If another transition is still settling, never drop the user's tab change.
   }
   const result=originalSetPage(nextPage);
   const after=snapshot();
+  if(!restoring&&before.page!==after.page)window.scrollTo({top:0,left:0,behavior:"instant"});
   if(!restoring&&before.page!==after.page){
    // Main tabs are peer destinations, not entries in the hierarchical back stack.
    stack.length=0;
@@ -5372,7 +5374,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    while(stack.length&&stack[stack.length-1].page===current.page)stack.pop();
    closeChatToInbox();lastSnapshot=snapshot();return true;
   }
-  if(current.helpOpen||current.profile.length||current.listingsOnly){
+  if(current.helpOpen||current.profile.length){
    const prior=stack.pop();
    if(prior){restore(prior);return true}
    const dashboard=$("profileDashboard");
@@ -5428,7 +5430,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
  function nested(){
   const d=$("profileDashboard"),thread=$("chatThread");
-  return !!(d&&(d.classList.contains("listings-only")||nestedClasses.some(c=>d.classList.contains(c))))||
+  return !!(d&&nestedClasses.some(c=>d.classList.contains(c)))||
    !!($("profileInfoHelpPanel")&&!$("profileInfoHelpPanel").hidden)||
    !!(thread&&!thread.hidden);
  }
