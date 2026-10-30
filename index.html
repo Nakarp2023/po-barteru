@@ -5519,8 +5519,24 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
  function finishTransition(s,animationA,animationB){
-  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");if(s)clearSnapshot(s);transitioning=false};
-  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
+  let settled=false;
+  let watchdog;
+  const finish=()=>{
+   if(settled)return;
+   settled=true;
+   if(watchdog)clearTimeout(watchdog);
+   try{animationA?.cancel()}catch(_){}
+   try{animationB?.cancel()}catch(_){}
+   app.style.transform="";
+   app.classList.remove("po-nav-moving");
+   if(s)clearSnapshot(s);
+   transitioning=false;
+  };
+  // Safari can occasionally leave a Web Animation unsettled after an
+  // interrupted gesture or page lifecycle change. Never let that lock
+  // navigation indefinitely; all current transitions are <= 280ms.
+  watchdog=setTimeout(finish,650);
+  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish,finish);
  }
  function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
   app.classList.add("po-nav-moving");
