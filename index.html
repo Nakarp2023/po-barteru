@@ -5456,9 +5456,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 <style id="poTabSwipeStyles">
-.app.po-nav-moving{will-change:transform}
-.po-nav-snapshot-viewport{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5;background:var(--bg,#f5f6f2)}
-.po-nav-snapshot-viewport>.app{position:absolute!important;margin:0!important;max-width:none!important;pointer-events:none!important;will-change:transform!important}
+.app.po-nav-moving{will-change:transform,opacity}
 @media(prefers-reduced-motion:reduce){.app.po-nav-moving{will-change:auto}}
 </style>
 <script id="poPrimaryTabSwipeNavigation">
@@ -5471,8 +5469,9 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  if(pages.length<2)return;
  const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
  const $=id=>document.getElementById(id);
- let gesture=null,transitioning=false,activeSnapshot=null;
+ let gesture=null,transitioning=false;
  const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
+ const easing="cubic-bezier(.22,.72,.22,1)";
  function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
  function nested(){
   const d=$("profileDashboard"),thread=$("chatThread");
@@ -5484,7 +5483,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function excluded(target){
   if(!(target instanceof Element))return true;
   if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
-  for(let n=target;n&&n!==app;n=n.parentElement){const s=getComputedStyle(n);if((s.overflowX==="auto"||s.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
+  for(let n=target;n&&n!==app;n=n.parentElement){const style=getComputedStyle(n);if((style.overflowX==="auto"||style.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
   return false;
  }
  function setPageDirect(value){
@@ -5492,58 +5491,34 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   window.__poNavTransitionMutating=true;
   try{window.setPage(value)}finally{window.__poNavTransitionMutating=previous||false}
  }
- function snapshot(){
-  const rect=app.getBoundingClientRect(),viewport=document.createElement("div"),clone=app.cloneNode(true);
-  const sourceNodes=[app,...app.querySelectorAll("*")],cloneNodes=[clone,...clone.querySelectorAll("*")];
-  // cloneNode copies markup, not live form state or nested scroll positions.
-  // Mirror those properties so the outgoing screen is a faithful visual snapshot.
-  for(let i=0;i<Math.min(sourceNodes.length,cloneNodes.length);i++){
-   const source=sourceNodes[i],copy=cloneNodes[i];
-   if(source instanceof HTMLInputElement){if(source.type!=="file")copy.value=source.value;copy.checked=source.checked;copy.indeterminate=source.indeterminate}
-   else if(source instanceof HTMLTextAreaElement)copy.value=source.value;
-   else if(source instanceof HTMLSelectElement)copy.selectedIndex=source.selectedIndex;
-   else if(source instanceof HTMLDetailsElement)copy.open=source.open;
-   if(source.scrollTop||source.scrollLeft){copy.scrollTop=source.scrollTop;copy.scrollLeft=source.scrollLeft}
-   if(source instanceof HTMLCanvasElement){try{copy.width=source.width;copy.height=source.height;copy.getContext("2d")?.drawImage(source,0,0)}catch(_){}}
-  }
-  viewport.className="po-nav-snapshot-viewport";
-  viewport.setAttribute("aria-hidden","true");
-  clone.inert=true;
-  clone.style.setProperty("top",rect.top+"px","important");
-  clone.style.setProperty("left",rect.left+"px","important");
-  clone.style.setProperty("width",rect.width+"px","important");
-  clone.style.setProperty("height","auto","important");
-  clone.style.setProperty("transform","translate3d(0,0,0)","important");
-  viewport.appendChild(clone);document.body.appendChild(viewport);
-  return {viewport,clone};
- }
- function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
- function finishTransition(s,animationA,animationB){
-  let settled=false;
-  let watchdog;
+ function finishTransition(animation){
+  let settled=false,watchdog;
   const finish=()=>{
    if(settled)return;
    settled=true;
    if(watchdog)clearTimeout(watchdog);
-   try{animationA?.cancel()}catch(_){}
-   try{animationB?.cancel()}catch(_){}
+   try{animation?.cancel()}catch(_){}
    app.style.transform="";
+   app.style.opacity="";
    app.classList.remove("po-nav-moving");
-   if(s)clearSnapshot(s);
    transitioning=false;
   };
-  // Safari can occasionally leave a Web Animation unsettled after an
-  // interrupted gesture or page lifecycle change. Never let that lock
-  // navigation indefinitely; all current transitions are <= 280ms.
-  watchdog=setTimeout(finish,650);
-  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish,finish);
+  watchdog=setTimeout(finish,500);
+  if(animation)animation.finished.then(finish,finish);
+  else finish();
  }
- function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
+ function animateCurrentScreen(fromX,duration=220){
   app.classList.add("po-nav-moving");
-  const easing="cubic-bezier(.22,.72,.22,1)";
-  const a=s.clone.animate([{transform:"translate3d("+oldFrom+"px,0,0)"},{transform:"translate3d("+oldTo+"px,0,0)"}],{duration,easing,fill:"both"});
-  const b=app.animate([{transform:"translate3d("+newFrom+"px,0,0)"},{transform:"translate3d("+newTo+"px,0,0)"}],{duration,easing,fill:"both"});
-  finishTransition(s,a,b);
+  let animation;
+  try{
+   animation=app.animate(
+    [{transform:"translate3d("+fromX+"px,0,0)",opacity:.94},{transform:"translate3d(0,0,0)",opacity:1}],
+    {duration,easing,fill:"both"}
+   );
+  }catch(error){
+   console.warn("Lightweight navigation animation unavailable:",error);
+  }
+  finishTransition(animation);
  }
  function animateMutation(mutator,direction){
   if(transitioning)return false;
@@ -5552,37 +5527,47 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    catch(error){console.error("Navigation transition mutation failed:",error);return false}
   }
   transitioning=true;
-  let s;
   try{
-   s=snapshot();activeSnapshot=s;
+   app.style.transform="";
+   app.style.opacity="";
    mutator();
-   const width=Math.max(1,window.innerWidth);
-   app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
-   animatePair(s,0,direction*width,-direction*width,0,280);
+   animateCurrentScreen(-direction*18,220);
    return true;
   }catch(error){
-   app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
+   app.style.transform="";
+   app.style.opacity="";
+   app.classList.remove("po-nav-moving");
+   transitioning=false;
    console.error("Navigation transition failed:",error);
    return false;
   }
  }
  function settleGesture(g,commit){
-  const s=g.snapshot;if(!s)return;
-  const width=Math.max(1,window.innerWidth),dx=g.dx,dir=g.direction;
+  if(!g.claimed)return;
   if(commit){
-   if(g.kind==="tabs")window.poCommitNavigationHistory?.();
-   const oldEnd=dir*width,newEnd=0;
-   const oldStart=dx,newStart=-dir*width+dx;
-   animatePair(s,oldStart,oldEnd,newStart,newEnd,Math.max(150,Math.min(280,280*(1-Math.min(.45,Math.abs(dx)/width)))));
-  }else{
-   // Restore the original route behind the outgoing snapshot, then return it
-   // to its exact origin. This makes a cancelled gesture reversible.
-   if(g.kind==="tabs")setPageDirect(g.page);
+   if(g.kind==="tabs"){
+    const target=pages[g.index+(g.direction<0?1:-1)];
+    setPageDirect(target);
+    window.poCommitNavigationHistory?.();
+   }else{
+    window.poNavigateBack?.();
+   }
    app.style.transform="";
-   app.classList.add("po-nav-moving");
-   const a=s.clone.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
-   finishTransition(s,a,null);
+   app.style.opacity="";
+   transitioning=true;
+   animateCurrentScreen(g.kind==="tabs"?-g.direction*20:-20,220);
+   return;
   }
+  app.classList.add("po-nav-moving");
+  transitioning=true;
+  let animation;
+  try{
+   animation=app.animate(
+    [{transform:"translate3d("+g.dx+"px,0,0)",opacity:.94},{transform:"translate3d(0,0,0)",opacity:1}],
+    {duration:190,easing,fill:"both"}
+   );
+  }catch(error){console.warn("Gesture cancellation animation unavailable:",error)}
+  finishTransition(animation);
  }
  function onDown(e){
   if(gesture||transitioning||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false||!app.contains(e.target)||overlay()||excluded(e.target))return;
@@ -5591,7 +5576,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const isNested=nested(),isEdge=x>=24&&x<=58;
   if(isNested&&!isEdge)return;
   if(!isNested&&x<58)return;
-  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:isNested?"back":"tabs",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
+  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:isNested?"back":"tabs",page:currentPage(),index:idx,started:performance.now(),direction:0};
  }
  function onMove(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;
@@ -5604,54 +5589,34 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))<0){gesture=null;return}
    if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))>=pages.length){gesture=null;return}
    g.claimed=true;g.direction=dir;
-   if(!reduced()){
-    g.snapshot=snapshot();activeSnapshot=g.snapshot;
-    if(g.kind==="tabs"){
-     const target=pages[g.index+(dir<0?1:-1)];
-     setPageDirect(target);
-    }
-   }
   }
   if(e.cancelable)e.preventDefault();
   g.dx=dx;g.dy=dy;
-  if(g.kind==="back"){
-   app.style.transform="translate3d("+dx+"px,0,0)";
-  }else if(g.snapshot){
-   g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
-   app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-  }
+  const bounded= g.kind==="back" ? Math.max(0,dx) : dx;
+  app.style.transform="translate3d("+bounded+"px,0,0)";
+  app.style.opacity=String(Math.max(.94,1-Math.abs(bounded)/Math.max(1,innerWidth)*.06));
  }
  function onUp(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
   if(!g.claimed)return;
-  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
+  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),velocity=Math.abs(dx)/elapsed;
   const threshold=Math.max(64,innerWidth*.16);
   g.dx=dx;
-  const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
+  const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&velocity>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&velocity>.42));
   if(reduced()){
    if(commit){if(g.kind==="back")window.poNavigateBack?.();else{setPageDirect(pages[g.index+(g.direction<0?1:-1)]);window.poCommitNavigationHistory?.()}}
+   app.style.transform="";app.style.opacity="";
    return;
   }
-  if(g.kind==="back"){
-   if(commit){
-    // Capture the current screen only once the edge gesture is accepted.
-    app.style.transform="";
-    const s=snapshot();activeSnapshot=s;
-    s.clone.style.transform="translate3d("+dx+"px,0,0)";
-    window.poNavigateBack?.();
-    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-    animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
-   }else{
-    app.classList.add("po-nav-moving");
-    const a=app.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
-    finishTransition(null,a,null);
-   }
-   return;
-  }
-  if(!g.snapshot)return;
   settleGesture(g,commit);
  }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}
+ function onCancel(e){
+  if(!gesture||e.pointerId!==gesture.id)return;
+  const g=gesture;gesture=null;
+  if(!g.claimed)return;
+  if(reduced()){app.style.transform="";app.style.opacity="";return}
+  settleGesture(g,false);
+ }
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
