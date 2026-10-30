@@ -5272,7 +5272,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const before=snapshot();
   const result=originalSetPage(nextPage);
   const after=snapshot();
-  if(!restoring&&key(before)!==key(after))pushSnapshot(before);
+  if(!restoring&&before.page!==after.page){
+   // Main tabs are peer destinations, not entries in the hierarchical back stack.
+   stack.length=0;
+  }else if(!restoring&&key(before)!==key(after))pushSnapshot(before);
   lastSnapshot=after;
   return result;
  };
