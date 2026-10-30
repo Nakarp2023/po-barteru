@@ -5530,7 +5530,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function animateMutation(mutator,direction){
   if(transitioning)return false;
-  if(reduced()){mutator();return true}
+  if(reduced()){
+   try{mutator();return true}
+   catch(error){console.error("Navigation transition mutation failed:",error);return false}
+  }
   transitioning=true;
   let s;
   try{
@@ -5539,11 +5542,12 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    const width=Math.max(1,window.innerWidth);
    app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
    animatePair(s,0,direction*width,-direction*width,0,280);
-  }catch(e){
+   return true;
+  }catch(error){
    app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
-   console.error("Navigation transition failed:",e);
+   console.error("Navigation transition failed:",error);
+   return false;
   }
-  return true;
  }
  function settleGesture(g,commit){
   const s=g.snapshot;if(!s)return;
