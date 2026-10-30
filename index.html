@@ -5396,13 +5396,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 <style id="poTabSwipeStyles">
-.app{view-transition-name:po-app}
-::view-transition-old(po-app){animation:po-nav-old 260ms cubic-bezier(.2,.72,.22,1) both}
-::view-transition-new(po-app){animation:po-nav-new 260ms cubic-bezier(.2,.72,.22,1) both}
-@keyframes po-nav-old{to{transform:translate3d(var(--po-nav-exit, -100%),0,0)}}
-@keyframes po-nav-new{from{transform:translate3d(var(--po-nav-enter, 100%),0,0)}}
-.app.po-nav-dragging{transition:none!important}
-@media(prefers-reduced-motion:reduce){::view-transition-old(po-app),::view-transition-new(po-app){animation:none!important}}
+.app.po-nav-moving{will-change:transform}
+.po-nav-snapshot-viewport{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5;background:var(--bg,#f5f6f2)}
+.po-nav-snapshot-viewport>.app{position:absolute!important;margin:0!important;max-width:none!important;pointer-events:none!important;will-change:transform!important}
+@media(prefers-reduced-motion:reduce){.app.po-nav-moving{will-change:auto}}
 </style>
 <script id="poPrimaryTabSwipeNavigation">
 (function(){
@@ -5414,7 +5411,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  if(pages.length<2)return;
  const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
  const $=id=>document.getElementById(id);
- let gesture=null,settleTimer=0,transitioning=false;
+ let gesture=null,transitioning=false,activeSnapshot=null;
  const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
  function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
  function nested(){
@@ -5427,42 +5424,71 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function excluded(target){
   if(!(target instanceof Element))return true;
   if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
-  for(let n=target;n&&n!==app;n=n.parentElement){const c=getComputedStyle(n);if((c.overflowX==="auto"||c.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
+  for(let n=target;n&&n!==app;n=n.parentElement){const s=getComputedStyle(n);if((s.overflowX==="auto"||s.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
   return false;
  }
- function clear(){app.style.transform="";app.classList.remove("po-nav-dragging","po-nav-settling");}
- function settleBack(){clearTimeout(settleTimer);clear()}
- function animateMutation(mutator,direction,fromDrag){
+ function setPageDirect(value){
+  const previous=window.__poNavTransitionMutating;
+  window.__poNavTransitionMutating=true;
+  try{window.setPage(value)}finally{window.__poNavTransitionMutating=previous||false}
+ }
+ function snapshot(){
+  const rect=app.getBoundingClientRect(),viewport=document.createElement("div"),clone=app.cloneNode(true);
+  viewport.className="po-nav-snapshot-viewport";
+  clone.style.setProperty("top",rect.top+"px","important");
+  clone.style.setProperty("left",rect.left+"px","important");
+  clone.style.setProperty("width",rect.width+"px","important");
+  clone.style.setProperty("height","auto","important");
+  clone.style.setProperty("transform","translate3d(0,0,0)","important");
+  clone.querySelectorAll("video,audio").forEach(el=>{try{el.pause?.()}catch(_){}});
+  viewport.appendChild(clone);document.body.appendChild(viewport);
+  return {viewport,clone};
+ }
+ function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
+ function finishTransition(s,animationA,animationB){
+  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");clearSnapshot(s);transitioning=false};
+  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
+ }
+ function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
+  app.classList.add("po-nav-moving");
+  const easing="cubic-bezier(.22,.72,.22,1)";
+  const a=s.clone.animate([{transform:"translate3d("+oldFrom+"px,0,0)"},{transform:"translate3d("+oldTo+"px,0,0)"}],{duration,easing,fill:"both"});
+  const b=app.animate([{transform:"translate3d("+newFrom+"px,0,0)"},{transform:"translate3d("+newTo+"px,0,0)"}],{duration,easing,fill:"both"});
+  finishTransition(s,a,b);
+ }
+ function animateMutation(mutator,direction){
   if(transitioning)return false;
+  if(reduced()){mutator();return true}
   transitioning=true;
-  clearTimeout(settleTimer);
-  clear();
-  const run=()=>{
-   const previous=window.__poNavTransitionMutating;
-   window.__poNavTransitionMutating=true;
-   try{mutator()}finally{window.__poNavTransitionMutating=previous||false}
-  };
-  const finish=()=>{
-   transitioning=false;
-   clear();
-   document.documentElement.style.removeProperty("--po-nav-exit");
-   document.documentElement.style.removeProperty("--po-nav-enter");
-  };
-  // Reduced-motion and older browsers must never use a delayed fake slide:
-  // this app renders its pages in-place, so that fallback produced a blank gap.
-  if(reduced()||!document.startViewTransition){
-   try{run()}finally{finish()}
-   return true;
-  }
+  let s;
   try{
-   document.documentElement.style.setProperty("--po-nav-exit",direction>0?"100%":"-100%");
-   document.documentElement.style.setProperty("--po-nav-enter",direction>0?"-100%":"100%");
-   const vt=document.startViewTransition(run);
-   vt.finished.catch(()=>{}).finally(finish);
+   s=snapshot();activeSnapshot=s;
+   mutator();
+   const width=Math.max(1,window.innerWidth);
+   app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
+   animatePair(s,0,direction*width,-direction*width,0,280);
   }catch(e){
-   try{run()}finally{finish()}
+   try{mutator()}catch(_){}
+   app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
   }
   return true;
+ }
+ function settleGesture(g,commit){
+  const s=g.snapshot;if(!s)return;
+  const width=Math.max(1,window.innerWidth),dx=g.dx,dir=g.direction;
+  if(commit){
+   const oldEnd=dir*width,newEnd=0;
+   const oldStart=dx,newStart=-dir*width+dx;
+   animatePair(s,oldStart,oldEnd,newStart,newEnd,Math.max(150,Math.min(280,280*(1-Math.min(.45,Math.abs(dx)/width)))));
+  }else{
+   // Restore the original route behind the outgoing snapshot, then return it
+   // to its exact origin. This makes a cancelled gesture reversible.
+   if(g.kind==="tabs")setPageDirect(g.page);
+   app.style.transform="";
+   app.classList.add("po-nav-moving");
+   const a=s.clone.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
+   finishTransition(s,a,null);
+  }
  }
  function onDown(e){
   if(gesture||transitioning||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false||!app.contains(e.target)||overlay()||excluded(e.target))return;
@@ -5471,7 +5497,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const isNested=nested(),isEdge=x>=24&&x<=58;
   if(isNested&&!isEdge)return;
   if(!isNested&&x<58)return;
-  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:isNested?"back":"tabs",page:currentPage(),index:idx,started:performance.now(),blocked:false};
+  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:isNested?"back":"tabs",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
  }
  function onMove(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;
@@ -5480,35 +5506,47 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
    if(Math.abs(dy)>Math.abs(dx)*1.08){gesture=null;return}
    if(g.kind==="back"&&dx<=0){gesture=null;return}
-   g.claimed=true;app.classList.add("po-nav-dragging");
+   const dir=dx<0?-1:1;
+   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))<0){gesture=null;return}
+   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))>=pages.length){gesture=null;return}
+   g.claimed=true;g.direction=dir;
+   if(!reduced()){
+    g.snapshot=snapshot();activeSnapshot=g.snapshot;
+    if(g.kind==="tabs"){
+     const target=pages[g.index+(dir<0?1:-1)];
+     setPageDirect(target);
+    }
+   }
   }
   if(e.cancelable)e.preventDefault();
-  // Track intent only. Moving the live, full-height app and then taking a
-  // View Transition snapshot caused a second translation and expensive
-  // compositing on iOS. Keep both snapshots at the same stable origin.
   g.dx=dx;g.dy=dy;
-  if(g.kind==="tabs"){
-   const dir=dx<0?1:-1;
-   g.blocked=(g.index+dir)<0||(g.index+dir)>=pages.length;
+  if(g.snapshot){
+   g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
+   if(g.kind==="tabs")app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
   }
  }
  function onUp(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
   if(!g.claimed)return;
   const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
-  if(g.kind==="back"){
-   const ok=dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42);
-   if(ok&&typeof window.poNavigateBack==="function"){
-    animateMutation(()=>window.poNavigateBack(),1,true);
-   }else settleBack();
+  const threshold=Math.max(64,innerWidth*.16);
+  const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
+  if(reduced()){
+   if(commit){if(g.kind==="back")window.poNavigateBack?.();else setPageDirect(pages[g.index+(g.direction<0?1:-1)])}
    return;
   }
-  const dir=dx<0?1:-1,targetIndex=g.index+dir,target=pages[targetIndex];
-  const ok=!g.blocked&&currentPage()===g.page&&targetIndex>=0&&targetIndex<pages.length&&!overlay()&&(Math.abs(dx)>Math.max(64,innerWidth*.16)||(Math.abs(dx)>34&&v>.42));
-  if(ok)animateMutation(()=>window.setPage(target),dx<0?-1:1,true);
-  else settleBack();
+  if(!g.snapshot)return;
+  if(commit&&g.kind==="back"){
+   // Back mutates the hierarchy only after the gesture has committed.
+   const oldPage=g.page;
+   const s=g.snapshot;
+   app.style.transform="";
+   window.poNavigateBack?.();
+   app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
+   animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
+  }else settleGesture(g,commit);
  }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id){gesture=null;settleBack()}}
+ function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;if(g.claimed&&g.snapshot)settleGesture(g,false)}}
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
