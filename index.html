@@ -5521,7 +5521,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function settle(g,commit){
   if(raf){cancelAnimationFrame(raf);raf=0}
   if(!commit){
-   animateIn(0,190);
+   // Return from the finger's actual release point; never snap to origin.
+   animateIn(g.dx,190);
    return;
   }
   const width=Math.max(1,window.innerWidth);
@@ -5531,7 +5532,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    setPageDirect(target);
   }else{
    const handled=!!window.poNavigateBack?.();
-   if(!handled){animateIn(0,190);return}
+   if(!handled){animateIn(g.dx,190);return}
   }
   // The old screen is no longer in the critical path. Bring the destination
   // in from the side on the compositor, without cloning or walking the DOM.
