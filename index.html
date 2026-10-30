@@ -5273,6 +5273,13 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  // are tracked separately and never inferred from tab-bar position.
  window.setPage=function(nextPage){
   const before=snapshot();
+  if(!restoring&&before.page!==nextPage&&typeof window.poRunNavigationTransition==="function"&&!window.__poNavTransitionMutating){
+   const from=pagesForMotion(before.page),to=pagesForMotion(nextPage),direction=to>=from?-1:1;
+   window.poRunNavigationTransition(()=>{window.__poNavTransitionMutating=true;try{originalSetPage(nextPage)}finally{window.__poNavTransitionMutating=false}},direction,false);
+   stack.length=0;
+   lastSnapshot=snapshot();
+   return;
+  }
   const result=originalSetPage(nextPage);
   const after=snapshot();
   if(!restoring&&before.page!==after.page){
@@ -5282,6 +5289,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   lastSnapshot=after;
   return result;
  };
+ function pagesForMotion(value){
+  const tabs=[...nav.querySelectorAll(".nav[data-page]")];
+  return tabs.findIndex(t=>t.dataset.page===value);
+ }
 
  // Capture nested profile/chat transitions even when their existing handlers
  // are local to an IIFE and cannot be wrapped safely from here.
@@ -5416,7 +5427,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function overlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open")}
  function excluded(target){
   if(!(target instanceof Element))return true;
-  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,.profile-info-topic-list,.profile-info-doc-list,#advancedSearchPanel,#filtersBackdrop'))return true;
+  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
   for(let n=target;n&&n!==app;n=n.parentElement){const c=getComputedStyle(n);if((c.overflowX==="auto"||c.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
   return false;
  }
@@ -5431,15 +5442,17 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    mutator();
   };
   try{
+   document.documentElement.style.setProperty("--po-nav-exit",direction>0?"100%":"-100%");
+   document.documentElement.style.setProperty("--po-nav-enter",direction>0?"-100%":"100%");
    if(!reduced()&&document.startViewTransition){
     const vt=document.startViewTransition(run);
-    vt.finished.catch(()=>{}).finally(()=>{transitioning=false;clear()});
+    vt.finished.catch(()=>{}).finally(()=>{transitioning=false;clear();document.documentElement.style.removeProperty("--po-nav-exit");document.documentElement.style.removeProperty("--po-nav-enter")});
    }else{
     app.classList.add("po-nav-settling");
     app.style.transform="translate3d("+direction*innerWidth+"px,0,0)";
     setTimeout(()=>{run();app.style.transform="translate3d("+(-direction*innerWidth)+"px,0,0)";void app.offsetWidth;requestAnimationFrame(()=>{app.style.transform="";setTimeout(()=>{transitioning=false;clear()},280)})},90);
    }
-  }catch(e){run();transitioning=false;clear()}
+  }catch(e){run();transitioning=false;clear();document.documentElement.style.removeProperty("--po-nav-exit");document.documentElement.style.removeProperty("--po-nav-enter")}
   return true;
  }
  function onDown(e){
