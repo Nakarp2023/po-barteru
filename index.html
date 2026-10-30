@@ -5541,8 +5541,9 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(g.kind==="back"){
    if(commit){
     // Capture the current screen only once the edge gesture is accepted.
-    const s=snapshot();activeSnapshot=s;
     app.style.transform="";
+    const s=snapshot();activeSnapshot=s;
+    s.clone.style.transform="translate3d("+dx+"px,0,0)";
     window.poNavigateBack?.();
     app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
     animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
