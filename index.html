@@ -5377,80 +5377,22 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  window.poNavigateBack=back;
 
- function excluded(target){
-  if(!(target instanceof Element))return true;
-  if(target.closest('input,textarea,select,button,a,[contenteditable="true"],.chat-composer,#chatMessages,.listing-detail-gallery,[data-no-page-swipe],.profile-info-topic-list,.profile-info-doc-list,.bottom'))return true;
-  for(let node=target;node&&node!==app;node=node.parentElement){
-   const style=getComputedStyle(node);
-   if((style.overflowX==="auto"||style.overflowX==="scroll")&&node.scrollWidth>node.clientWidth+8)return true;
-  }
-  return false;
- }
- function setOffset(value){
-  const px=Math.max(0,value);
-  app.style.transform="translate3d("+px+"px,0,0)";
-  nav.style.transform="translate3d("+px+"px,0,0)";
-  app.style.setProperty("--po-back-progress",String(Math.min(1,px/Math.max(1,innerWidth*.72))));
- }
- function clearOffset(){
-  app.style.transform="";nav.style.transform="";
-  app.style.removeProperty("--po-back-progress");
-  app.classList.remove("po-back-dragging","po-back-settling");
-  nav.classList.remove("po-back-dragging","po-back-settling");
- }
- function finishGesture(commit){
-  if(!gesture)return;
-  const g=gesture;gesture=null;
-  app.classList.remove("po-back-dragging");nav.classList.remove("po-back-dragging");
-  app.classList.add("po-back-settling");nav.classList.add("po-back-settling");
-  if(commit){
-   setOffset(innerWidth);
-   settleTimer=window.setTimeout(()=>{clearOffset();back()},265);
-  }else{
-   setOffset(0);
-   settleTimer=window.setTimeout(clearOffset,275);
-  }
- }
- function onDown(e){
-  if(gesture||e.pointerType==="mouse"||e.pointerType==="pen"||e.isPrimary===false)return;
-  if(e.clientX<24||e.clientX>48||excluded(e.target))return;
-  gesture={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,claimed:false,started:performance.now()};
- }
- function onMove(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;
-  const dx=e.clientX-g.x,dy=e.clientY-g.y;
-  if(!g.claimed){
-   if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
-   if(Math.abs(dy)>Math.abs(dx)*1.1){gesture=null;return}
-   if(dx<=0){gesture=null;return}
-   g.claimed=true;app.classList.add("po-back-dragging");nav.classList.add("po-back-dragging");
-  }
-  if(e.cancelable)e.preventDefault();
-  g.dx=Math.max(0,dx);
-  setOffset(g.dx);
- }
- function onUp(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;
-  if(!g.claimed){gesture=null;return}
-  const dx=Math.max(0,e.clientX-g.x);
-  const elapsed=Math.max(1,performance.now()-(g.started||performance.now()));
-  const velocity=dx/elapsed;
-  finishGesture(dx>Math.min(112,innerWidth*.28)||velocity>.45);
- }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id)finishGesture(false)}
- document.addEventListener("pointerdown",onDown,{passive:true});
- document.addEventListener("pointermove",onMove,{passive:false});
- document.addEventListener("pointerup",onUp,{passive:true});
- document.addEventListener("pointercancel",onCancel,{passive:true});
+
+ // Pointer gestures are coordinated by poPrimaryTabSwipeNavigation.
  window.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.defaultPrevented){if(back())e.preventDefault()}});
  window.addEventListener("popstate",()=>{back()});
 })();
 </script>
 
 <style id="poTabSwipeStyles">
-.app.po-tab-dragging,.bottom.po-tab-dragging{transition:none!important;will-change:transform}
-.app.po-tab-settling{transition:transform 260ms cubic-bezier(.22,.61,.36,1)!important;will-change:transform}
-@media(prefers-reduced-motion:reduce){.app.po-tab-settling{transition:none!important}}
+.app{view-transition-name:po-app}
+::view-transition-old(po-app){animation:po-nav-old 300ms cubic-bezier(.22,.61,.36,1) both}
+::view-transition-new(po-app){animation:po-nav-new 300ms cubic-bezier(.22,.61,.36,1) both}
+@keyframes po-nav-old{to{transform:translate3d(var(--po-nav-exit, -100%),0,0);opacity:.96}}
+@keyframes po-nav-new{from{transform:translate3d(var(--po-nav-enter, 100%),0,0);opacity:.98}}
+.app.po-nav-dragging{transition:none!important;will-change:transform}
+.app.po-nav-settling{transition:transform 280ms cubic-bezier(.22,.61,.36,1)!important}
+@media(prefers-reduced-motion:reduce){::view-transition-old(po-app),::view-transition-new(po-app){animation:none!important}.app.po-nav-settling{transition:none!important}}
 </style>
 <script id="poPrimaryTabSwipeNavigation">
 (function(){
@@ -5458,99 +5400,100 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  window.__poPrimaryTabSwipeNavigationInstalled=true;
  const app=document.querySelector(".app"),nav=document.querySelector(".bottom");
  if(!app||!nav||typeof window.setPage!=="function")return;
- const tabs=[...nav.querySelectorAll(".nav[data-page]")];
- if(tabs.length<2)return;
- const pages=tabs.map(tab=>tab.dataset.page);
+ const tabs=[...nav.querySelectorAll(".nav[data-page]")],pages=tabs.map(t=>t.dataset.page);
+ if(pages.length<2)return;
  const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
  const $=id=>document.getElementById(id);
- let gesture=null,settleTimer=0;
- const nestedProfileClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
+ let gesture=null,settleTimer=0,transitioning=false;
+ const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
  function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
- function hasOverlay(){return !!document.querySelector(".modal.open")}
+ function nested(){
+  const d=$("profileDashboard"),thread=$("chatThread");
+  return !!(d&&(d.classList.contains("listings-only")||nestedClasses.some(c=>d.classList.contains(c))))||
+   !!($("profileInfoHelpPanel")&&!$("profileInfoHelpPanel").hidden)||
+   !!(thread&&!thread.hidden);
+ }
+ function overlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open")}
  function excluded(target){
   if(!(target instanceof Element))return true;
   if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,.profile-info-topic-list,.profile-info-doc-list,#advancedSearchPanel,#filtersBackdrop'))return true;
-  const dashboard=$("profileDashboard");
-  if(currentPage()==="profile"&&(dashboard&&(nestedProfileClasses.some(c=>dashboard.classList.contains(c))||dashboard.classList.contains("listings-only"))))return true;
-  if(currentPage()==="chats"&&$("chatThread")&&!$("chatThread").hidden)return true;
-  if($("profileInfoHelpPanel")&&!$("profileInfoHelpPanel").hidden)return true;
-  for(let node=target;node&&node!==app;node=node.parentElement){
-   const cs=getComputedStyle(node);
-   if((cs.overflowX==="auto"||cs.overflowX==="scroll")&&node.scrollWidth>node.clientWidth+8)return true;
-  }
+  for(let n=target;n&&n!==app;n=n.parentElement){const c=getComputedStyle(n);if((c.overflowX==="auto"||c.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
   return false;
  }
- function clearStyles(){
-  app.style.transform="";nav.style.transform="";
-  app.classList.remove("po-tab-dragging","po-tab-settling");
-  nav.classList.remove("po-tab-dragging","po-tab-settling");
- }
- function setDragOffset(dx){app.style.transform="translate3d("+dx+"px,0,0)";}
- function settle(commit,dx,target){
-  if(!gesture)return;
-  gesture=null;
-  if(settleTimer)clearTimeout(settleTimer);
-  app.classList.remove("po-tab-dragging");nav.classList.remove("po-tab-dragging");
-  if(!commit||!target||reduced()){
-   if(commit&&target)window.setPage(target);
-   app.classList.add("po-tab-settling");nav.classList.add("po-tab-settling");
-   setDragOffset(0);
-   settleTimer=window.setTimeout(clearStyles,250);
-   return;
-  }
-  const direction=dx<0?-1:1;
-  app.classList.add("po-tab-settling");nav.classList.add("po-tab-settling");
-  setDragOffset(direction*window.innerWidth);
-  settleTimer=window.setTimeout(()=>{
-   window.setPage(target);
-   app.classList.remove("po-tab-settling");nav.classList.remove("po-tab-settling");
-   const incoming=-direction*window.innerWidth;
-   setDragOffset(incoming);
-   void app.offsetWidth;
-   app.classList.add("po-tab-settling");nav.classList.add("po-tab-settling");
-   requestAnimationFrame(()=>{
-    setDragOffset(0);
-    settleTimer=window.setTimeout(clearStyles,280);
-   });
-  },195);
+ function clear(){app.style.transform="";app.classList.remove("po-nav-dragging","po-nav-settling");}
+ function settleBack(){app.classList.add("po-nav-settling");app.style.transform="translate3d(0,0,0)";settleTimer=setTimeout(clear,300)}
+ function animateMutation(mutator,direction,fromDrag){
+  if(transitioning)return false;
+  transitioning=true;
+  app.classList.remove("po-nav-dragging");
+  const run=()=>{
+   app.style.transform="";
+   mutator();
+  };
+  try{
+   if(!reduced()&&document.startViewTransition){
+    const vt=document.startViewTransition(run);
+    vt.finished.catch(()=>{}).finally(()=>{transitioning=false;clear()});
+   }else{
+    app.classList.add("po-nav-settling");
+    app.style.transform="translate3d("+direction*innerWidth+"px,0,0)";
+    setTimeout(()=>{run();app.style.transform="translate3d("+(-direction*innerWidth)+"px,0,0)";void app.offsetWidth;requestAnimationFrame(()=>{app.style.transform="";setTimeout(()=>{transitioning=false;clear()},280)})},90);
+   }
+  }catch(e){run();transitioning=false;clear()}
+  return true;
  }
  function onDown(e){
-  if(gesture||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false)return;
-  const x=e.clientX;
-  if(x<=48||x>=window.innerWidth-24||!app.contains(e.target)||excluded(e.target)||hasOverlay())return;
-  const page=currentPage(),index=pages.indexOf(page);
-  if(index<0)return;
-  gesture={id:e.pointerId,page,index,x,y:e.clientY,dx:0,claimed:false,started:performance.now()};
+  if(gesture||transitioning||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false||!app.contains(e.target)||overlay()||excluded(e.target))return;
+  const x=e.clientX,w=innerWidth,idx=pages.indexOf(currentPage());
+  if(idx<0||x>=w-24)return;
+  const isNested=nested(),isEdge=x>=24&&x<=58;
+  if(isNested&&!isEdge)return;
+  if(!isNested&&x<58)return;
+  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:isNested?"back":"tabs",page:currentPage(),index:idx,started:performance.now(),blocked:false};
  }
  function onMove(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;
   const dx=e.clientX-g.x,dy=e.clientY-g.y;
   if(!g.claimed){
-   if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
-   if(Math.abs(dy)>Math.abs(dx)*1.12){gesture=null;return}
-   g.claimed=true;app.classList.add("po-tab-dragging");nav.classList.add("po-tab-dragging");
+   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
+   if(Math.abs(dy)>Math.abs(dx)*1.08){gesture=null;return}
+   if(g.kind==="back"&&dx<=0){gesture=null;return}
+   g.claimed=true;app.classList.add("po-nav-dragging");
   }
   if(e.cancelable)e.preventDefault();
-  const direction=dx<0?1:-1;
-  const atBoundary=(g.index+direction)<0||(g.index+direction)>=pages.length;
-  g.blocked=atBoundary;
-  g.dx=atBoundary?Math.sign(dx)*Math.min(18,Math.abs(dx)*.12):dx;
-  setDragOffset(g.dx);
+  g.dx=dx;g.dy=dy;
+  if(g.kind==="back"){
+   const p=Math.max(0,dx);
+   app.style.transform="translate3d("+p+"px,0,0)";
+  }else{
+   const dir=dx<0?1:-1,at=(g.index+dir)<0||(g.index+dir)>=pages.length;
+   g.blocked=at;
+   const p=at?Math.sign(dx)*Math.min(22,Math.abs(dx)*.13):dx;
+   app.style.transform="translate3d("+p+"px,0,0)";
+  }
  }
  function onUp(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;
-  if(!g.claimed){gesture=null;return}
-  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),velocity=Math.abs(dx)/elapsed;
-  const threshold=Math.max(72,window.innerWidth*.18),direction=dx<0?1:-1,targetIndex=g.index+direction,target=pages[targetIndex];
-  const valid=currentPage()===g.page&&targetIndex>=0&&targetIndex<pages.length&&!hasOverlay();
-  const commit=!g.blocked&&valid&&(Math.abs(dx)>=threshold||(Math.abs(dx)>36&&velocity>.48));
-  settle(commit,dx,commit?target:null);
+  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
+  if(!g.claimed)return;
+  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
+  if(g.kind==="back"){
+   const ok=dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42);
+   if(ok&&typeof window.poNavigateBack==="function"){
+    animateMutation(()=>window.poNavigateBack(),1,true);
+   }else settleBack();
+   return;
+  }
+  const dir=dx<0?1:-1,targetIndex=g.index+dir,target=pages[targetIndex];
+  const ok=!g.blocked&&currentPage()===g.page&&targetIndex>=0&&targetIndex<pages.length&&!overlay()&&(Math.abs(dx)>Math.max(64,innerWidth*.16)||(Math.abs(dx)>34&&v>.42));
+  if(ok)animateMutation(()=>window.setPage(target),dx<0?-1:1,true);
+  else settleBack();
  }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id)settle(false,0,null)}
+ function onCancel(e){if(gesture&&e.pointerId===gesture.id){gesture=null;settleBack()}}
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
  document.addEventListener("pointercancel",onCancel,{passive:true});
+ window.poRunNavigationTransition=animateMutation;
 })();
 </script>
 
