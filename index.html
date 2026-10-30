@@ -5461,7 +5461,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 (function(){
  if(window.__poPrimaryTabSwipeNavigationInstalled)return;
  window.__poPrimaryTabSwipeNavigationInstalled=true;
- const app=document.querySelector("#poScreenStage"),nav=document.querySelector(".bottom");
+ const app=document.querySelector("#poNavigationViewport")||document.querySelector("#poScreenStage"),nav=document.querySelector(".bottom");
  if(!app||!nav||typeof window.setPage!=="function")return;
  const tabs=[...nav.querySelectorAll(".nav[data-page]")],pages=tabs.map(t=>t.dataset.page);
  if(pages.length<2)return;
