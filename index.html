@@ -5212,6 +5212,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 <style id="poHierarchicalSwipeStyles">
 .app,.bottom{transition:transform 0s;will-change:transform}
+.app{touch-action:pan-y;overscroll-behavior-x:contain}
 .app.po-back-dragging,.bottom.po-back-dragging{transition:none!important}
 .app.po-back-settling,.bottom.po-back-settling{transition:transform 260ms cubic-bezier(.2,.75,.25,1)!important}
 .app.po-back-dragging{box-shadow: -18px 0 34px rgba(20,35,28,.13)}
@@ -5404,7 +5405,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function onDown(e){
   if(gesture||e.pointerType==="mouse"||e.pointerType==="pen"||e.isPrimary===false)return;
-  if(e.clientX>28||excluded(e.target))return;
+  if(e.clientX<24||e.clientX>48||excluded(e.target))return;
   gesture={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,claimed:false,started:performance.now()};
  }
  function onMove(e){
@@ -5511,7 +5512,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function onDown(e){
   if(gesture||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false)return;
   const x=e.clientX;
-  if(x<=32||x>=window.innerWidth-12||!app.contains(e.target)||excluded(e.target)||hasOverlay())return;
+  if(x<=48||x>=window.innerWidth-24||!app.contains(e.target)||excluded(e.target)||hasOverlay())return;
   const page=currentPage(),index=pages.indexOf(page);
   if(index<0)return;
   gesture={id:e.pointerId,page,index,x,y:e.clientY,dx:0,claimed:false,started:performance.now()};
@@ -5525,7 +5526,11 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    g.claimed=true;app.classList.add("po-tab-dragging");nav.classList.add("po-tab-dragging");
   }
   if(e.cancelable)e.preventDefault();
-  g.dx=dx;setDragOffset(dx);
+  const direction=dx<0?1:-1;
+  const atBoundary=(g.index+direction)<0||(g.index+direction)>=pages.length;
+  g.blocked=atBoundary;
+  g.dx=atBoundary?Math.sign(dx)*Math.min(18,Math.abs(dx)*.12):dx;
+  setDragOffset(g.dx);
  }
  function onUp(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;
@@ -5533,7 +5538,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),velocity=Math.abs(dx)/elapsed;
   const threshold=Math.max(72,window.innerWidth*.18),direction=dx<0?1:-1,targetIndex=g.index+direction,target=pages[targetIndex];
   const valid=currentPage()===g.page&&targetIndex>=0&&targetIndex<pages.length&&!hasOverlay();
-  const commit=valid&&(Math.abs(dx)>=threshold||(Math.abs(dx)>36&&velocity>.48));
+  const commit=!g.blocked&&valid&&(Math.abs(dx)>=threshold||(Math.abs(dx)>36&&velocity>.48));
   settle(commit,dx,commit?target:null);
  }
  function onCancel(e){if(gesture&&e.pointerId===gesture.id)settle(false,0,null)}
