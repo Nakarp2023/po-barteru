@@ -4731,7 +4731,11 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    requestAnimationFrame(()=>window.poAnimateSurface?.(hub));
   }
  }
- document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});});
+ document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{
+  if(window.poNavigateBack?.())return;
+  const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;
+  document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});
+ });
  hub.querySelectorAll("[data-profile-open]").forEach(btn=>btn.addEventListener("click",()=>{
   const key=btn.dataset.profileOpen;
   if(key==="history"){openPanel("history");const details=document.getElementById("exchangeHistoryDetails");if(details)details.open=true;return}
@@ -5430,6 +5434,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   return handled;
  }
  window.poNavigateBack=navigateBack;
+ window.poCommitNavigationHistory=()=>writeHistorySnapshot(snapshot());
 
  // Browser Back/Forward restores the exact route snapshot associated with
  // the activated session-history entry instead of guessing from the current UI.
@@ -5544,6 +5549,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const s=g.snapshot;if(!s)return;
   const width=Math.max(1,window.innerWidth),dx=g.dx,dir=g.direction;
   if(commit){
+   if(g.kind==="tabs")window.poCommitNavigationHistory?.();
    const oldEnd=dir*width,newEnd=0;
    const oldStart=dx,newStart=-dir*width+dx;
    animatePair(s,oldStart,oldEnd,newStart,newEnd,Math.max(150,Math.min(280,280*(1-Math.min(.45,Math.abs(dx)/width)))));
@@ -5602,7 +5608,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   g.dx=dx;
   const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
   if(reduced()){
-   if(commit){if(g.kind==="back")window.poNavigateBack?.();else setPageDirect(pages[g.index+(g.direction<0?1:-1)])}
+   if(commit){if(g.kind==="back")window.poNavigateBack?.();else{setPageDirect(pages[g.index+(g.direction<0?1:-1)]);window.poCommitNavigationHistory?.()}}
    return;
   }
   if(g.kind==="back"){
