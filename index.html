@@ -5208,7 +5208,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     document.addEventListener("pointerover",event=>{
       const tab=event.target.closest('.bottom .nav[data-page="profile"]');
       if(!tab||tab.contains(event.relatedTarget))return;
-      if(tab.classList.contains("active"))resetProfileRoot();
+      tab.click();
     });
   }
 })();
