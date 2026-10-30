@@ -5439,7 +5439,9 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   app.classList.remove("po-nav-dragging");
   const run=()=>{
    app.style.transform="";
-   mutator();
+   const previous=window.__poNavTransitionMutating;
+   window.__poNavTransitionMutating=true;
+   try{mutator()}finally{window.__poNavTransitionMutating=previous||false}
   };
   try{
    document.documentElement.style.setProperty("--po-nav-exit",direction>0?"100%":"-100%");
