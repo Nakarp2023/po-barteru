@@ -5218,8 +5218,31 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  if(window.__poHierarchicalSwipeNavigationInstalled)return;
  window.__poHierarchicalSwipeNavigationInstalled=true;
 
- const app=document.querySelector("#poScreenStage"),nav=document.querySelector(".bottom");
- if(!app||!nav||typeof window.setPage!=="function")return;
+ const stage=document.querySelector("#poScreenStage"),nav=document.querySelector(".bottom");
+ if(!stage||!nav||typeof window.setPage!=="function")return;
+ // The previous controller translated only #poScreenStage. Several tab views
+ // (profile, chats, listings) are siblings of that node, so they stayed still
+ // while the home stage moved, producing the split/overlapping screens visible
+ // in the iPhone recording. Build one shared viewport for every tab's content.
+ let app=document.querySelector("#poNavigationViewport");
+ if(!app){
+  const shell=stage.closest(".app");
+  if(!shell)return;
+  app=document.createElement("div");
+  app.id="poNavigationViewport";
+  app.className="po-navigation-viewport";
+  shell.insertBefore(app,stage);
+  let node=stage;
+  while(node){
+   const next=node.nextSibling;
+   if(node.nodeType===1&&node.classList?.contains("modal")){
+    shell.appendChild(node);
+   }else{
+    app.appendChild(node);
+   }
+   node=next;
+  }
+ }
 
  const originalSetPage=window.setPage;
  const stack=[];
@@ -5433,7 +5456,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 })();
 </script>
 
-<style id="poTabSwipeStyles">.po-screen-stage{touch-action:pan-y;overscroll-behavior-x:contain;-webkit-user-select:none;user-select:none}.po-screen-stage.po-nav-moving{will-change:transform;backface-visibility:hidden}@media(prefers-reduced-motion:reduce){.po-screen-stage.po-nav-moving{will-change:auto}}</style>
+<style id="poTabSwipeStyles">.po-navigation-viewport{position:relative;display:flow-root;width:100%;min-width:0;box-sizing:border-box;overflow-x:clip;touch-action:pan-y;overscroll-behavior-x:contain;-webkit-user-select:none;user-select:none}.po-navigation-viewport.po-nav-moving{will-change:transform;backface-visibility:hidden}.po-screen-stage{touch-action:pan-y;overscroll-behavior-x:contain;-webkit-user-select:none;user-select:none}@media(prefers-reduced-motion:reduce){.po-navigation-viewport.po-nav-moving{will-change:auto}}</style>
 <script id="poPrimaryTabSwipeNavigation">
 (function(){
  if(window.__poPrimaryTabSwipeNavigationInstalled)return;
