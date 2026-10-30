@@ -5433,12 +5433,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 })();
 </script>
 
-<style id="poTabSwipeStyles">
-.po-screen-stage{touch-action:pan-y;overscroll-behavior-x:contain;-webkit-user-select:none;user-select:none}.po-screen-stage.po-nav-moving{will-change:transform}
-.po-nav-snapshot-viewport{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5;background:var(--bg,#f5f6f2)}
-.po-nav-snapshot-viewport>.po-screen-stage{position:absolute!important;margin:0!important;max-width:none!important;pointer-events:none!important;will-change:transform!important}
-@media(prefers-reduced-motion:reduce){.po-screen-stage.po-nav-moving{will-change:auto}}
-</style>
+<style id="poTabSwipeStyles">.po-screen-stage{touch-action:pan-y;overscroll-behavior-x:contain;-webkit-user-select:none;user-select:none}.po-screen-stage.po-nav-moving{will-change:transform;backface-visibility:hidden}@media(prefers-reduced-motion:reduce){.po-screen-stage.po-nav-moving{will-change:auto}}</style>
 <script id="poPrimaryTabSwipeNavigation">
 (function(){
  if(window.__poPrimaryTabSwipeNavigationInstalled)return;
@@ -5449,8 +5444,9 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  if(pages.length<2)return;
  const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
  const $=id=>document.getElementById(id);
- let gesture=null,transitioning=false,activeSnapshot=null;
  const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
+ let gesture=null,transitioning=false,raf=0,queuedX=0;
+ const easing="cubic-bezier(.22,.75,.25,1)";
  function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
  function nested(){
   const d=$("profileDashboard"),thread=$("chatThread");
@@ -5461,8 +5457,12 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function overlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open")}
  function excluded(target){
   if(!(target instanceof Element))return true;
-  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
-  for(let n=target;n&&n!==app;n=n.parentElement){const s=getComputedStyle(n);if((s.overflowX==="auto"||s.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
+  if(target.closest('.top,.bottom,input,textarea,select,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop,button,a'))return true;
+  for(let n=target;n&&n!==app;n=n.parentElement){
+   if(n.matches?.('[data-horizontal-scroll],.horizontal-scroll,.listing-gallery-track'))return true;
+   const style=getComputedStyle(n);
+   if((style.overflowX==="auto"||style.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true;
+  }
   return false;
  }
  function setPageDirect(value){
@@ -5470,165 +5470,126 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   window.__poNavTransitionMutating=true;
   try{window.setPage(value)}finally{window.__poNavTransitionMutating=previous||false}
  }
- function snapshot(){
-  const rect=app.getBoundingClientRect(),viewport=document.createElement("div"),clone=app.cloneNode(true);
-  const sourceNodes=[app,...app.querySelectorAll("*")],cloneNodes=[clone,...clone.querySelectorAll("*")];
-  // cloneNode copies markup, not live form state or nested scroll positions.
-  // Mirror those properties so the outgoing screen is a faithful visual snapshot.
-  for(let i=0;i<Math.min(sourceNodes.length,cloneNodes.length);i++){
-   const source=sourceNodes[i],copy=cloneNodes[i];
-   if(source instanceof HTMLInputElement){if(source.type!=="file")copy.value=source.value;copy.checked=source.checked;copy.indeterminate=source.indeterminate}
-   else if(source instanceof HTMLTextAreaElement)copy.value=source.value;
-   else if(source instanceof HTMLSelectElement)copy.selectedIndex=source.selectedIndex;
-   else if(source instanceof HTMLDetailsElement)copy.open=source.open;
-   if(source.scrollTop||source.scrollLeft){copy.scrollTop=source.scrollTop;copy.scrollLeft=source.scrollLeft}
-   if(source instanceof HTMLCanvasElement){try{copy.width=source.width;copy.height=source.height;copy.getContext("2d")?.drawImage(source,0,0)}catch(_){}}
-  }
-  viewport.className="po-nav-snapshot-viewport";
-  viewport.setAttribute("aria-hidden","true");
-  clone.inert=true;
-  clone.style.setProperty("top",rect.top+"px","important");
-  clone.style.setProperty("left",rect.left+"px","important");
-  clone.style.setProperty("width",rect.width+"px","important");
-  clone.style.setProperty("height","auto","important");
-  clone.style.setProperty("transform","translate3d(0,0,0)","important");
-  viewport.appendChild(clone);document.body.appendChild(viewport);
-  return {viewport,clone};
+ function clearMotion(){
+  if(raf){cancelAnimationFrame(raf);raf=0}
+  app.style.transition="";
+  app.style.transform="";
+  app.classList.remove("po-nav-moving");
  }
- function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
- function finishTransition(s,animationA,animationB){
-  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");if(s)clearSnapshot(s);transitioning=false};
-  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
- }
- function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=320){
-  // Every paired transition owns the navigation lock, including gesture-driven
-  // transitions. Without this lock a second pointer sequence can start while
-  // the first pair is still animating and leave the stage/snapshot out of sync.
-  transitioning=true;
+ function animateIn(fromX,duration=245){
+  if(reduced()){clearMotion();transitioning=false;return}
   app.classList.add("po-nav-moving");
-  const easing="cubic-bezier(.16,1,.3,1)";
-  const a=s.clone.animate([{transform:"translate3d("+oldFrom+"px,0,0)"},{transform:"translate3d("+oldTo+"px,0,0)"}],{duration,easing,fill:"both"});
-  const b=app.animate([{transform:"translate3d("+newFrom+"px,0,0)"},{transform:"translate3d("+newTo+"px,0,0)"}],{duration,easing,fill:"both"});
-  finishTransition(s,a,b);
+  app.style.transform="translate3d("+fromX+"px,0,0)";
+  // Force the starting transform to be committed before the compositor animation.
+  app.getBoundingClientRect();
+  let animation;
+  try{
+   animation=app.animate(
+    [{transform:"translate3d("+fromX+"px,0,0)"},{transform:"translate3d(0,0,0)"}],
+    {duration,easing,fill:"both"}
+   );
+  }catch(error){clearMotion();transitioning=false;return}
+  let done=false;
+  const finish=()=>{if(done)return;done=true;try{animation.cancel()}catch(_){}clearMotion();transitioning=false};
+  animation.onfinish=finish;
+  animation.oncancel=finish;
+  // Defensive release in case Safari drops an animation lifecycle event.
+  window.setTimeout(finish,duration+120);
  }
  function animateMutation(mutator,direction){
   if(transitioning)return false;
   if(reduced()){mutator();return true}
   transitioning=true;
-  let s;
   try{
-   s=snapshot();activeSnapshot=s;
    mutator();
-   const width=Math.max(1,window.innerWidth);
-   app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
-   animatePair(s,0,direction*width,-direction*width,0,320);
-  }catch(e){
-   app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
-   console.error("Navigation transition failed:",e);
+   animateIn(-direction*Math.max(1,window.innerWidth),245);
+  }catch(error){
+   clearMotion();transitioning=false;
+   console.error("Navigation transition failed:",error);
   }
   return true;
  }
- function settleGesture(g,commit){
-  const s=g.snapshot;if(!s)return;
-  const width=Math.max(1,window.innerWidth),dx=g.dx,dir=g.direction;
-  if(commit){
-   const oldEnd=dir*width,newEnd=0;
-   const oldStart=dx,newStart=-dir*width+dx;
-   animatePair(s,oldStart,oldEnd,newStart,newEnd,Math.max(150,Math.min(280,280*(1-Math.min(.45,Math.abs(dx)/width)))));
-  }else{
-   // Restore the original route behind the outgoing snapshot, then return it
-   // to its exact origin. This makes a cancelled gesture reversible.
-   if(g.kind==="tabs")setPageDirect(g.page);
-   app.style.transform="";
-   app.classList.add("po-nav-moving");
-   const a=s.clone.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
-   finishTransition(s,a,null);
+ function paintDrag(x){
+  raf=0;
+  if(!gesture||!gesture.claimed)return;
+  app.style.transform="translate3d("+x+"px,0,0)";
+ }
+ function queueDrag(x){
+  queuedX=x;
+  if(!raf)raf=requestAnimationFrame(()=>paintDrag(queuedX));
+ }
+ function settle(g,commit){
+  if(raf){cancelAnimationFrame(raf);raf=0}
+  if(!commit){
+   animateIn(0,190);
+   return;
   }
+  const width=Math.max(1,window.innerWidth);
+  if(g.kind==="tabs"){
+   const target=pages[g.index+(g.direction<0?1:-1)];
+   if(!target){animateIn(0,190);return}
+   setPageDirect(target);
+  }else{
+   const handled=!!window.poNavigateBack?.();
+   if(!handled){animateIn(0,190);return}
+  }
+  // The old screen is no longer in the critical path. Bring the destination
+  // in from the side on the compositor, without cloning or walking the DOM.
+  animateIn(-g.direction*width,Math.max(170,Math.min(250,245*(1-Math.min(.25,Math.abs(g.dx)/width)))));
  }
  function onDown(e){
   if(gesture||transitioning||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false||!app.contains(e.target)||overlay()||excluded(e.target))return;
-  const x=e.clientX,w=innerWidth,idx=pages.indexOf(currentPage());
-  // Keep Safari's native edge-navigation zones free. App swipes work across
-  // the broad central area instead of requiring a narrow left-edge start.
-  // Leave only the narrow native Safari edge zone untouched; the previous 48–72px
-  // exclusion made app-owned back swipes miss most of the left side on iPhone.
-  const safeInset=Math.min(28,Math.max(22,Math.round(w*0.045)));
+  const x=e.clientX,w=window.innerWidth,idx=pages.indexOf(currentPage());
+  const safeInset=Math.min(22,Math.max(16,Math.round(w*.035)));
   if(idx<0||x<safeInset||x>w-safeInset)return;
-  const isNested=nested();
-  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:isNested?"back":"tabs",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
+  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:nested()?"back":"tabs",index:idx,direction:0,started:performance.now()};
  }
  function onMove(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;
   const dx=e.clientX-g.x,dy=e.clientY-g.y;
   if(!g.claimed){
-   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
-   if(Math.abs(dy)>Math.abs(dx)*1.08){gesture=null;return}
+   if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
+   // Decide the axis once; vertical scrolling remains native and untouched.
+   if(Math.abs(dy)>Math.abs(dx)*1.18){gesture=null;return}
+   if(Math.abs(dx)<Math.abs(dy)*1.18)return;
    if(g.kind==="back"&&dx<=0){gesture=null;return}
    const dir=dx<0?-1:1;
    if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))<0){gesture=null;return}
    if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))>=pages.length){gesture=null;return}
    g.claimed=true;g.direction=dir;
    try{app.setPointerCapture(e.pointerId)}catch(_){}
-   if(!reduced()){
-    g.snapshot=snapshot();activeSnapshot=g.snapshot;
-    if(g.kind==="tabs"){
-     const target=pages[g.index+(dir<0?1:-1)];
-     setPageDirect(target);
-    }else{
-     // Prepare the destination before moving: both screens remain visible
-     // throughout the drag, not only after the finger is released.
-     g.backPreview=!!window.poBeginBackPreview?.();
-     if(g.backPreview)app.style.transform="translate3d("+(-dir*innerWidth+dx)+"px,0,0)";
-    }
-   }
+   app.classList.add("po-nav-moving");
   }
   if(e.cancelable)e.preventDefault();
   g.dx=dx;g.dy=dy;
-  if(g.kind==="back"){
-   if(g.backPreview&&g.snapshot){
-    g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
-    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-   }else app.style.transform="translate3d("+dx+"px,0,0)";
-  }else if(g.snapshot){
-   g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
-   app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-  }
+  // Direct manipulation: 1 CSS pixel per finger pixel, with no DOM clone,
+  // layout traversal, state copying or render while the pointer is moving.
+  queueDrag(dx);
  }
  function onUp(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
+  const g=gesture;if(!g||e.pointerId!==g.id)return;
+  gesture=null;
   try{if(app.hasPointerCapture(e.pointerId))app.releasePointerCapture(e.pointerId)}catch(_){}
   if(!g.claimed)return;
-  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
-  const threshold=Math.max(64,innerWidth*.16);
-  g.dx=dx;
-  const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
+  g.dx=e.clientX-g.x;
+  const elapsed=Math.max(1,performance.now()-g.started),velocity=Math.abs(g.dx)/elapsed;
+  const distance=Math.abs(g.dx);
+  const threshold=Math.max(58,window.innerWidth*.17);
+  const commit=g.kind==="back"
+   ?(g.dx>Math.min(112,window.innerWidth*.28)||(g.dx>32&&velocity>.48))
+   :(distance>threshold||(distance>34&&velocity>.48));
   if(reduced()){
    if(commit){if(g.kind==="back")window.poNavigateBack?.();else setPageDirect(pages[g.index+(g.direction<0?1:-1)])}
-   return;
+   clearMotion();return;
   }
-  if(g.kind==="back"){
-   if(g.backPreview&&g.snapshot){
-    if(commit){
-     window.poFinishBackPreview?.(true);
-     animatePair(g.snapshot,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,260);
-    }else{
-     window.poFinishBackPreview?.(false);
-     animatePair(g.snapshot,dx,0,-g.direction*innerWidth+dx,-g.direction*innerWidth,210);
-    }
-   }else if(commit){
-    window.poNavigateBack?.();
-    app.style.transform="";
-   }else{
-    app.classList.add("po-nav-moving");
-    const a=app.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
-    finishTransition(null,a,null);
-   }
-   return;
-  }
-  if(!g.snapshot)return;
-  settleGesture(g,commit);
+  settle(g,commit);
  }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;try{if(app.hasPointerCapture(e.pointerId))app.releasePointerCapture(e.pointerId)}catch(_){}if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){if(g.backPreview&&g.snapshot){window.poFinishBackPreview?.(false);animatePair(g.snapshot,g.dx,0,-g.direction*innerWidth+g.dx,-g.direction*innerWidth,210)}else{app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}}
+ function onCancel(e){
+  const g=gesture;if(!g||e.pointerId!==g.id)return;
+  gesture=null;
+  try{if(app.hasPointerCapture(e.pointerId))app.releasePointerCapture(e.pointerId)}catch(_){}
+  if(g.claimed)settle(g,false);
+ }
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
