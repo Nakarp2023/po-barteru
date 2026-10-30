@@ -5504,10 +5504,11 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function onDown(e){
   if(gesture||transitioning||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false||!app.contains(e.target)||overlay()||excluded(e.target))return;
   const x=e.clientX,w=innerWidth,idx=pages.indexOf(currentPage());
-  if(idx<0||x>=w-24)return;
-  const isNested=nested(),isEdge=x>=24&&x<=58;
-  if(isNested&&!isEdge)return;
-  if(!isNested&&x<58)return;
+  // Keep Safari's native edge-navigation zones free. App swipes work across
+  // the broad central area instead of requiring a narrow left-edge start.
+  const safeInset=Math.min(72,Math.max(48,Math.round(w*0.14)));
+  if(idx<0||x<safeInset||x>w-safeInset)return;
+  const isNested=nested();
   gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:isNested?"back":"tabs",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
  }
  function onMove(e){
