@@ -4731,7 +4731,11 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    requestAnimationFrame(()=>window.poAnimateSurface?.(hub));
   }
  }
- document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});});
+ document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{
+  if(window.poNavigateBack?.())return;
+  const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;
+  document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});
+ });
  hub.querySelectorAll("[data-profile-open]").forEach(btn=>btn.addEventListener("click",()=>{
   const key=btn.dataset.profileOpen;
   if(key==="history"){openPanel("history");const details=document.getElementById("exchangeHistoryDetails");if(details)details.open=true;return}
@@ -5224,7 +5228,36 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  const originalSetPage=window.setPage;
  const stack=[];
  const MAX_STACK=40;
+ const HISTORY_KEY="__poBarterNavigation";
  let restoring=false,gesture=null,settleTimer=0,lastSnapshot=null;
+ let historyCursor=0,historyEntries=[],ignorePopstateIndex=null;
+ function writeHistorySnapshot(stateSnapshot,replace=false){
+  if(restoring||!window.history||typeof window.history.pushState!=="function")return false;
+  const index=replace?historyCursor:historyCursor+1;
+  const currentState=window.history.state&&typeof window.history.state==="object"?window.history.state:{};
+  const nextState=Object.assign({},currentState,{[HISTORY_KEY]:{version:1,index,snapshot:stateSnapshot}});
+  try{
+   if(replace)window.history.replaceState(nextState,"");
+   else window.history.pushState(nextState,"");
+   if(replace)historyEntries[index]=stateSnapshot;
+   else{
+    historyEntries=historyEntries.slice(0,historyCursor+1);
+    historyEntries.push(stateSnapshot);
+    historyCursor=index;
+   }
+   return true;
+  }catch(error){
+   console.warn("Navigation history update failed:",error);
+   return false;
+  }
+ }
+ function consumeHistoryEntry(){
+  const entry=window.history?.state?.[HISTORY_KEY];
+  if(!entry||entry.version!==1||!Number.isInteger(entry.index)||entry.index<=0||typeof window.history.back!=="function")return false;
+  ignorePopstateIndex=entry.index-1;
+  historyCursor=entry.index-1;
+  try{window.history.back();return true}catch(error){ignorePopstateIndex=null;console.warn("Navigation history back failed:",error);return false}
+ }
 
  const $=id=>document.getElementById(id);
  const profileClassNames=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
@@ -5245,24 +5278,32 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   };
  }
  function key(s){return JSON.stringify(s)}
+ function routeKey(s){return s?JSON.stringify(Object.assign({},s,{scrollY:0})):""}
  function pushSnapshot(s){
   if(restoring||!s)return;
   const top=stack[stack.length-1];
   if(top&&key(top)===key(s))return;
   stack.push(s);
   if(stack.length>MAX_STACK)stack.shift();
+  writeHistorySnapshot(snapshot());
  }
  function syncSnapshot(){
   const now=snapshot();
-  if(lastSnapshot&&key(now)!==key(lastSnapshot)){
+  if(lastSnapshot&&routeKey(now)!==routeKey(lastSnapshot)){
    const chatWasClosed=lastSnapshot.chatOpen&&!now.chatOpen;
    if(chatWasClosed){
     while(stack.length&&stack[stack.length-1].page===now.page)stack.pop();
+    consumeHistoryEntry();
    }else pushSnapshot(lastSnapshot);
   }
   lastSnapshot=now;
  }
  lastSnapshot=snapshot();
+ historyEntries=[lastSnapshot];
+ try{
+  const currentState=window.history.state&&typeof window.history.state==="object"?window.history.state:{};
+  window.history.replaceState(Object.assign({},currentState,{[HISTORY_KEY]:{version:1,index:0,snapshot:lastSnapshot}}),"");
+ }catch(error){console.warn("Navigation history initialization failed:",error)}
 
  // One authoritative page transition hook. Tab changes are peers; nested screens
  // are tracked separately and never inferred from tab-bar position.
@@ -5274,6 +5315,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    if(animated){
     stack.length=0;
     lastSnapshot=snapshot();
+    writeHistorySnapshot(lastSnapshot);
     return;
    }
    // If another transition is still settling, never drop the user's tab change.
@@ -5281,8 +5323,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const result=originalSetPage(nextPage);
   const after=snapshot();
   if(!restoring&&before.page!==after.page){
-   // Main tabs are peer destinations, not entries in the hierarchical back stack.
+   // Main tabs remain peers in the in-app back stack, while browser history
+   // still records the destination so Back and Forward restore the visited tab.
    stack.length=0;
+   if(!window.__poNavTransitionMutating)writeHistorySnapshot(after);
   }else if(!restoring&&key(before)!==key(after))pushSnapshot(before);
   lastSnapshot=after;
   return result;
@@ -5384,12 +5428,30 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(prior){restore(prior);return true}
   return false;
  }
- window.poNavigateBack=back;
+ function navigateBack(){
+  const before=snapshot();
+  const handled=back();
+  if(handled&&key(before)!==key(snapshot()))consumeHistoryEntry();
+  return handled;
+ }
+ window.poNavigateBack=navigateBack;
+ window.poCommitNavigationHistory=()=>writeHistorySnapshot(snapshot());
 
-
- // Pointer gestures are coordinated by poPrimaryTabSwipeNavigation.
- window.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.defaultPrevented){if(back())e.preventDefault()}});
- window.addEventListener("popstate",()=>{back()});
+ // Browser Back/Forward restores the exact route snapshot associated with
+ // the activated session-history entry instead of guessing from the current UI.
+ window.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.defaultPrevented){if(navigateBack())e.preventDefault()}});
+ window.addEventListener("popstate",event=>{
+  const entry=event.state&&event.state[HISTORY_KEY];
+  if(ignorePopstateIndex!==null&&entry?.version===1&&entry.index===ignorePopstateIndex){ignorePopstateIndex=null;return}
+  ignorePopstateIndex=null;
+  if(!entry||entry.version!==1||!Number.isInteger(entry.index)||!entry.snapshot)return;
+  const targetIndex=Math.max(0,entry.index);
+  historyEntries[targetIndex]=entry.snapshot;
+  historyCursor=targetIndex;
+  stack.length=0;
+  for(let i=0;i<targetIndex;i++)if(historyEntries[i])stack.push(historyEntries[i]);
+  restore(entry.snapshot);
+ });
 })();
 </script>
 
@@ -5457,8 +5519,24 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
  function finishTransition(s,animationA,animationB){
-  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");if(s)clearSnapshot(s);transitioning=false};
-  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
+  let settled=false;
+  let watchdog;
+  const finish=()=>{
+   if(settled)return;
+   settled=true;
+   if(watchdog)clearTimeout(watchdog);
+   try{animationA?.cancel()}catch(_){}
+   try{animationB?.cancel()}catch(_){}
+   app.style.transform="";
+   app.classList.remove("po-nav-moving");
+   if(s)clearSnapshot(s);
+   transitioning=false;
+  };
+  // Safari can occasionally leave a Web Animation unsettled after an
+  // interrupted gesture or page lifecycle change. Never let that lock
+  // navigation indefinitely; all current transitions are <= 280ms.
+  watchdog=setTimeout(finish,650);
+  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish,finish);
  }
  function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
   app.classList.add("po-nav-moving");
@@ -5469,7 +5547,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function animateMutation(mutator,direction){
   if(transitioning)return false;
-  if(reduced()){mutator();return true}
+  if(reduced()){
+   try{mutator();return true}
+   catch(error){console.error("Navigation transition mutation failed:",error);return false}
+  }
   transitioning=true;
   let s;
   try{
@@ -5478,16 +5559,18 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    const width=Math.max(1,window.innerWidth);
    app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
    animatePair(s,0,direction*width,-direction*width,0,280);
-  }catch(e){
+   return true;
+  }catch(error){
    app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
-   console.error("Navigation transition failed:",e);
+   console.error("Navigation transition failed:",error);
+   return false;
   }
-  return true;
  }
  function settleGesture(g,commit){
   const s=g.snapshot;if(!s)return;
   const width=Math.max(1,window.innerWidth),dx=g.dx,dir=g.direction;
   if(commit){
+   if(g.kind==="tabs")window.poCommitNavigationHistory?.();
    const oldEnd=dir*width,newEnd=0;
    const oldStart=dx,newStart=-dir*width+dx;
    animatePair(s,oldStart,oldEnd,newStart,newEnd,Math.max(150,Math.min(280,280*(1-Math.min(.45,Math.abs(dx)/width)))));
@@ -5546,7 +5629,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   g.dx=dx;
   const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
   if(reduced()){
-   if(commit){if(g.kind==="back")window.poNavigateBack?.();else setPageDirect(pages[g.index+(g.direction<0?1:-1)])}
+   if(commit){if(g.kind==="back")window.poNavigateBack?.();else{setPageDirect(pages[g.index+(g.direction<0?1:-1)]);window.poCommitNavigationHistory?.()}}
    return;
   }
   if(g.kind==="back"){
