@@ -5174,4 +5174,114 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </style>
 
 
+
+<style id="poNativePageSwipeStyles">
+/* Native-feeling transitions between the five primary app sections. */
+.app.po-page-transition-next{animation:poPageEnterNext 280ms cubic-bezier(.22,.72,.18,1) both;will-change:transform,opacity}
+.app.po-page-transition-prev{animation:poPageEnterPrev 280ms cubic-bezier(.22,.72,.18,1) both;will-change:transform,opacity}
+@keyframes poPageEnterNext{from{opacity:.72;transform:translate3d(24px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes poPageEnterPrev{from{opacity:.72;transform:translate3d(-24px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@media(prefers-reduced-motion:reduce){.app.po-page-transition-next,.app.po-page-transition-prev{animation:none!important;will-change:auto}}
+</style>
+<script id="poNativePageSwipeNavigation">
+(function(){
+  if(window.__poNativePageSwipeNavigationInstalled)return;
+  window.__poNativePageSwipeNavigationInstalled=true;
+  const app=document.querySelector(".app");
+  const nav=document.querySelector(".bottom");
+  if(!app||!nav||typeof window.setPage!=="function")return;
+
+  const originalSetPage=window.setPage;
+  let animationToken=0;
+  let activeGesture=null;
+  let forcedDirection=null;
+
+  function tabs(){return Array.from(nav.querySelectorAll(".nav[data-page]"))}
+  function currentIndex(){return tabs().findIndex(tab=>tab.classList.contains("active"))}
+  function targetIndex(pageName){return tabs().findIndex(tab=>tab.dataset.page===pageName)}
+
+  window.setPage=function(nextPage){
+    const before=currentIndex();
+    const after=targetIndex(nextPage);
+    let direction=forcedDirection;
+    forcedDirection=null;
+    if(!direction&&before>=0&&after>=0&&before!==after)direction=after>before?"next":"prev";
+    app.classList.remove("po-page-transition-next","po-page-transition-prev");
+    if(direction){
+      const token=++animationToken;
+      app.dataset.pageTransition=direction;
+      void app.offsetWidth;
+      app.classList.add(direction==="next"?"po-page-transition-next":"po-page-transition-prev");
+      app.addEventListener("animationend",function finish(event){
+        if(event.target!==app)return;
+        app.removeEventListener("animationend",finish);
+        if(token===animationToken){
+          app.classList.remove("po-page-transition-next","po-page-transition-prev");
+          delete app.dataset.pageTransition;
+          app.style.removeProperty("will-change");
+        }
+      });
+    }
+    return originalSetPage(nextPage);
+  };
+
+  function isExcluded(target){
+    if(!(target instanceof Element))return true;
+    if(target.closest("input,textarea,select,button,a,[contenteditable='true'],.modal,.sheet,.chat-composer,#chatMessages,#chatThread,.listing-detail-gallery,[data-no-page-swipe],.profile-info-topic-list,.profile-info-doc-list"))return true;
+    if(!document.getElementById("chatThread")?.hidden)return true;
+    const detailModal=document.getElementById("listingDetailModal");
+    if(detailModal?.classList.contains("open"))return true;
+    for(let node=target;node&&node!==app;node=node.parentElement){
+      const style=getComputedStyle(node);
+      if((style.overflowX==="auto"||style.overflowX==="scroll")&&node.scrollWidth>node.clientWidth+8)return true;
+    }
+    return false;
+  }
+
+  function onPointerDown(event){
+    if(event.pointerType!=="touch"&&event.pointerType!=="pen")return;
+    if(event.isPrimary===false||isExcluded(event.target))return;
+    const index=currentIndex();
+    if(index<0)return;
+    activeGesture={id:event.pointerId,x:event.clientX,y:event.clientY,lastX:event.clientX,lastTime:performance.now(),claimed:false,index};
+  }
+  function onPointerMove(event){
+    const g=activeGesture;
+    if(!g||event.pointerId!==g.id)return;
+    const dx=event.clientX-g.x,dy=event.clientY-g.y;
+    if(!g.claimed){
+      if(Math.abs(dx)<9&&Math.abs(dy)<9)return;
+      if(Math.abs(dy)>Math.abs(dx)*1.15){activeGesture=null;return}
+      if(Math.abs(dx)<=Math.abs(dy)*1.2)return;
+      g.claimed=true;
+    }
+    if(event.cancelable)event.preventDefault();
+    g.lastX=event.clientX;
+    g.lastTime=performance.now();
+  }
+  function onPointerUp(event){
+    const g=activeGesture;
+    if(!g||event.pointerId!==g.id)return;
+    activeGesture=null;
+    if(!g.claimed)return;
+    const dx=event.clientX-g.x;
+    const threshold=Math.max(64,Math.min(92,app.clientWidth*.18));
+    if(Math.abs(dx)<threshold)return;
+    const list=tabs(),next=g.index+(dx<0?1:-1);
+    if(next<0||next>=list.length)return;
+    const destination=list[next]?.dataset.page;
+    if(!destination)return;
+    forcedDirection=dx<0?"next":"prev";
+    window.setPage(destination);
+  }
+  function onPointerCancel(event){if(activeGesture&&event.pointerId===activeGesture.id)activeGesture=null}
+
+  app.addEventListener("pointerdown",onPointerDown,{passive:true});
+  document.addEventListener("pointermove",onPointerMove,{passive:false});
+  document.addEventListener("pointerup",onPointerUp,{passive:true});
+  document.addEventListener("pointercancel",onPointerCancel,{passive:true});
+  app.addEventListener("lostpointercapture",onPointerCancel,{passive:true});
+})();
+</script>
+
 </body></html>
