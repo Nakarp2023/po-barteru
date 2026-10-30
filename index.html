@@ -5438,4 +5438,110 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 })();
 </script>
 
+<style id="poTabSwipeStyles">
+.app.po-tab-dragging,.bottom.po-tab-dragging{transition:none!important;will-change:transform}
+.app.po-tab-settling,.bottom.po-tab-settling{transition:transform 190ms cubic-bezier(.22,.61,.36,1)!important;will-change:transform}
+@media(prefers-reduced-motion:reduce){.app.po-tab-settling,.bottom.po-tab-settling{transition:none!important}}
+</style>
+<script id="poPrimaryTabSwipeNavigation">
+(function(){
+ if(window.__poPrimaryTabSwipeNavigationInstalled)return;
+ window.__poPrimaryTabSwipeNavigationInstalled=true;
+ const app=document.querySelector(".app"),nav=document.querySelector(".bottom");
+ if(!app||!nav||typeof window.setPage!=="function")return;
+ const tabs=[...nav.querySelectorAll(".nav[data-page]")];
+ if(tabs.length<2)return;
+ const pages=tabs.map(tab=>tab.dataset.page);
+ const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+ const $=id=>document.getElementById(id);
+ let gesture=null,settleTimer=0;
+ const nestedProfileClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
+ function currentPage(){return nav.querySelector(".nav.active")?.dataset.page||pages[0]}
+ function hasOverlay(){return !!document.querySelector(".modal.open")}
+ function excluded(target){
+  if(!(target instanceof Element))return true;
+  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,.profile-info-topic-list,.profile-info-doc-list,#advancedSearchPanel,#filtersBackdrop'))return true;
+  const dashboard=$("profileDashboard");
+  if(currentPage()==="profile"&&(dashboard&&(nestedProfileClasses.some(c=>dashboard.classList.contains(c))||dashboard.classList.contains("listings-only"))))return true;
+  if(currentPage()==="chats"&&$("chatThread")&&!$("chatThread").hidden)return true;
+  if($("profileInfoHelpPanel")&&!$("profileInfoHelpPanel").hidden)return true;
+  for(let node=target;node&&node!==app;node=node.parentElement){
+   const cs=getComputedStyle(node);
+   if((cs.overflowX==="auto"||cs.overflowX==="scroll")&&node.scrollWidth>node.clientWidth+8)return true;
+  }
+  return false;
+ }
+ function clearStyles(){
+  app.style.transform="";nav.style.transform="";
+  app.classList.remove("po-tab-dragging","po-tab-settling");
+  nav.classList.remove("po-tab-dragging","po-tab-settling");
+ }
+ function setDragOffset(dx){
+  const value="translate3d("+dx+"px,0,0)";
+  app.style.transform=value;nav.style.transform=value;
+ }
+ function settle(commit,dx,target){
+  if(!gesture)return;
+  gesture=null;
+  if(settleTimer)clearTimeout(settleTimer);
+  app.classList.remove("po-tab-dragging");nav.classList.remove("po-tab-dragging");
+  if(!commit||!target||reduced()){
+   if(commit&&target)window.setPage(target);
+   app.classList.add("po-tab-settling");nav.classList.add("po-tab-settling");
+   setDragOffset(0);
+   settleTimer=window.setTimeout(clearStyles,250);
+   return;
+  }
+  const direction=dx<0?-1:1;
+  app.classList.add("po-tab-settling");nav.classList.add("po-tab-settling");
+  setDragOffset(direction*window.innerWidth);
+  settleTimer=window.setTimeout(()=>{
+   window.setPage(target);
+   app.classList.remove("po-tab-settling");nav.classList.remove("po-tab-settling");
+   const incoming=-direction*Math.min(110,window.innerWidth*.16);
+   setDragOffset(incoming);
+   void app.offsetWidth;
+   app.classList.add("po-tab-settling");nav.classList.add("po-tab-settling");
+   requestAnimationFrame(()=>{
+    setDragOffset(0);
+    settleTimer=window.setTimeout(clearStyles,280);
+   });
+  },195);
+ }
+ function onDown(e){
+  if(gesture||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false)return;
+  const x=e.clientX;
+  if(x<=32||x>=window.innerWidth-12||!app.contains(e.target)||excluded(e.target)||hasOverlay())return;
+  const page=currentPage(),index=pages.indexOf(page);
+  if(index<0)return;
+  gesture={id:e.pointerId,page,index,x,y:e.clientY,dx:0,claimed:false,started:performance.now()};
+ }
+ function onMove(e){
+  const g=gesture;if(!g||e.pointerId!==g.id)return;
+  const dx=e.clientX-g.x,dy=e.clientY-g.y;
+  if(!g.claimed){
+   if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
+   if(Math.abs(dy)>Math.abs(dx)*1.12){gesture=null;return}
+   g.claimed=true;app.classList.add("po-tab-dragging");nav.classList.add("po-tab-dragging");
+  }
+  if(e.cancelable)e.preventDefault();
+  g.dx=dx;setDragOffset(dx);
+ }
+ function onUp(e){
+  const g=gesture;if(!g||e.pointerId!==g.id)return;
+  if(!g.claimed){gesture=null;return}
+  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),velocity=Math.abs(dx)/elapsed;
+  const threshold=Math.max(72,window.innerWidth*.18),direction=dx<0?1:-1,targetIndex=g.index+direction,target=pages[targetIndex];
+  const valid=currentPage()===g.page&&targetIndex>=0&&targetIndex<pages.length&&!hasOverlay();
+  const commit=valid&&(Math.abs(dx)>=threshold||(Math.abs(dx)>36&&velocity>.48));
+  settle(commit,dx,commit?target:null);
+ }
+ function onCancel(e){if(gesture&&e.pointerId===gesture.id)settle(false,0,null)}
+ document.addEventListener("pointerdown",onDown,{passive:true});
+ document.addEventListener("pointermove",onMove,{passive:false});
+ document.addEventListener("pointerup",onUp,{passive:true});
+ document.addEventListener("pointercancel",onCancel,{passive:true});
+})();
+</script>
+
 </body></html>
