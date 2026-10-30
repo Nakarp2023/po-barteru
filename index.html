@@ -5394,7 +5394,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 <style id="poTabSwipeStyles">
-.po-screen-stage.po-nav-moving{will-change:transform}
+.po-screen-stage{touch-action:pan-y;overscroll-behavior-x:contain;-webkit-user-select:none;user-select:none}.po-screen-stage.po-nav-moving{will-change:transform}
 .po-nav-snapshot-viewport{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5;background:var(--bg,#f5f6f2)}
 .po-nav-snapshot-viewport>.po-screen-stage{position:absolute!important;margin:0!important;max-width:none!important;pointer-events:none!important;will-change:transform!important}
 @media(prefers-reduced-motion:reduce){.po-screen-stage.po-nav-moving{will-change:auto}}
@@ -5521,6 +5521,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))<0){gesture=null;return}
    if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))>=pages.length){gesture=null;return}
    g.claimed=true;g.direction=dir;
+   try{app.setPointerCapture(e.pointerId)}catch(_){}
    if(!reduced()){
     g.snapshot=snapshot();activeSnapshot=g.snapshot;
     if(g.kind==="tabs"){
@@ -5540,6 +5541,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function onUp(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
+  try{if(app.hasPointerCapture(e.pointerId))app.releasePointerCapture(e.pointerId)}catch(_){}
   if(!g.claimed)return;
   const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
   const threshold=Math.max(64,innerWidth*.16);
@@ -5568,7 +5570,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(!g.snapshot)return;
   settleGesture(g,commit);
  }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}
+ function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;try{if(app.hasPointerCapture(e.pointerId))app.releasePointerCapture(e.pointerId)}catch(_){}if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
