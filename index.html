@@ -3901,7 +3901,7 @@ document.addEventListener("pointermove",moveNavDrag,{passive:false});
 document.addEventListener("pointerup",finishNavDrag);
 document.addEventListener("pointercancel",cancelNavDrag);
 bottomNav?.addEventListener("lostpointercapture",cancelNavDrag);
-bottomNav?.addEventListener("click",e=>{const tab=e.target.closest(".bottom .nav");if(suppressNavClick){e.preventDefault();e.stopImmediatePropagation();suppressNavClick=false;return}if(tab){e.preventDefault();e.stopImmediatePropagation();const target=tab.dataset.page;if(target&&target!==page)setPage(target);const idx=navTabs().findIndex(n=>n.dataset.page===target);if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));navSetDrag(idx,false);bottomNav.style.setProperty("--drag-index",String(idx))}}},true);$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
+bottomNav?.addEventListener("click",e=>{const tab=e.target.closest(".bottom .nav");if(suppressNavClick){e.preventDefault();e.stopImmediatePropagation();suppressNavClick=false;return}if(tab){e.preventDefault();e.stopImmediatePropagation();const target=tab.dataset.page;if(target==="profile"){const dashboard=$("profileDashboard");dashboard?.classList.remove("listings-only","profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history");const helpPanel=$("profileInfoHelpPanel");if(helpPanel)helpPanel.hidden=true;const hub=$("profileHub");if(hub)hub.hidden=false;}if(target&&target!==page)setPage(target);if(target==="profile"){requestAnimationFrame(()=>{$("profileDashboard")?.scrollIntoView({block:"start",behavior:"smooth"});});}const idx=navTabs().findIndex(n=>n.dataset.page===target);if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));navSetDrag(idx,false);bottomNav.style.setProperty("--drag-index",String(idx))}}},true);$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
 
 
 
@@ -5173,44 +5173,5 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 .profile-info-contact-card{grid-column:1/-1}
 </style>
 
-<script>
-/* Profile root shortcut: selecting the Profile tab always returns to the profile hub. */
-(function bindProfileRootShortcut(){
-  if(window.__profileRootShortcutBound)return;
-  window.__profileRootShortcutBound=true;
-  const resetProfileRoot=()=>{
-    const dashboard=document.getElementById("profileDashboard");
-    if(!dashboard)return;
-    dashboard.classList.remove(
-      "listings-only","profile-show-account","profile-show-exchanges",
-      "profile-show-reputation","profile-show-settings","profile-show-history"
-    );
-    const helpPanel=document.getElementById("profileInfoHelpPanel");
-    if(helpPanel)helpPanel.hidden=true;
-    const hub=document.getElementById("profileHub");
-    if(hub)hub.hidden=false;
-    const profileCard=dashboard.querySelector(".profile-card");
-    if(profileCard)profileCard.hidden=false;
-    const profileTab=document.querySelector('.bottom .nav[data-page="profile"]');
-    if(profileTab&&!profileTab.classList.contains("active")){
-      profileTab.click();
-      return;
-    }
-    requestAnimationFrame(()=>dashboard.scrollIntoView({block:"start",behavior:"smooth"}));
-  };
-  document.addEventListener("click",event=>{
-    const tab=event.target.closest('.bottom .nav[data-page="profile"]');
-    if(!tab)return;
-    requestAnimationFrame(resetProfileRoot);
-  });
-  const canHover=window.matchMedia&&window.matchMedia("(hover: hover) and (pointer: fine)");
-  if(canHover&&canHover.matches){
-    document.addEventListener("pointerover",event=>{
-      const tab=event.target.closest('.bottom .nav[data-page="profile"]');
-      if(!tab||tab.contains(event.relatedTarget))return;
-      tab.click();
-    });
-  }
-})();
-</script>
+
 </body></html>
