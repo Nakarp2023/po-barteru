@@ -5547,7 +5547,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    animateTo(()=>{},incomingFrom,280);
    return;
   }
-  animateTo(()=>{},0,210);
+  animateTo(()=>{},g.dx,210);
  }
  function onDown(e){
   if(gesture||transitioning||hasOverlay()||!e.isPrimary||e.button>0||!app.contains(e.target)||excluded(e.target))return;
@@ -5602,6 +5602,12 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(reduced()){app.style.transform="";app.style.willChange="";return}
   settle(g,false);
  }
+ document.addEventListener("click",event=>{
+  const control=event.target instanceof Element?event.target.closest('.profile-hub-row[data-profile-open],#profileInfoHelpBack,.profile-info-back,[data-profile-back]'):null;
+  if(!control)return;
+  const isBack=control.id==="profileInfoHelpBack"||control.classList.contains("profile-info-back")||control.hasAttribute("data-profile-back");
+  requestAnimationFrame(()=>animateTo(()=>{},isBack?18:-18,230));
+ },true);
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
