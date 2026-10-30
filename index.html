@@ -5397,13 +5397,12 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 
 <style id="poTabSwipeStyles">
 .app{view-transition-name:po-app}
-::view-transition-old(po-app){animation:po-nav-old 300ms cubic-bezier(.22,.61,.36,1) both}
-::view-transition-new(po-app){animation:po-nav-new 300ms cubic-bezier(.22,.61,.36,1) both}
-@keyframes po-nav-old{to{transform:translate3d(var(--po-nav-exit, -100%),0,0);opacity:.96}}
-@keyframes po-nav-new{from{transform:translate3d(var(--po-nav-enter, 100%),0,0);opacity:.98}}
-.app.po-nav-dragging{transition:none!important;will-change:transform}
-.app.po-nav-settling{transition:transform 280ms cubic-bezier(.22,.61,.36,1)!important}
-@media(prefers-reduced-motion:reduce){::view-transition-old(po-app),::view-transition-new(po-app){animation:none!important}.app.po-nav-settling{transition:none!important}}
+::view-transition-old(po-app){animation:po-nav-old 260ms cubic-bezier(.2,.72,.22,1) both}
+::view-transition-new(po-app){animation:po-nav-new 260ms cubic-bezier(.2,.72,.22,1) both}
+@keyframes po-nav-old{to{transform:translate3d(var(--po-nav-exit, -100%),0,0)}}
+@keyframes po-nav-new{from{transform:translate3d(var(--po-nav-enter, 100%),0,0)}}
+.app.po-nav-dragging{transition:none!important}
+@media(prefers-reduced-motion:reduce){::view-transition-old(po-app),::view-transition-new(po-app){animation:none!important}}
 </style>
 <script id="poPrimaryTabSwipeNavigation">
 (function(){
@@ -5432,29 +5431,37 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   return false;
  }
  function clear(){app.style.transform="";app.classList.remove("po-nav-dragging","po-nav-settling");}
- function settleBack(){app.classList.add("po-nav-settling");app.style.transform="translate3d(0,0,0)";settleTimer=setTimeout(clear,300)}
+ function settleBack(){clearTimeout(settleTimer);clear()}
  function animateMutation(mutator,direction,fromDrag){
   if(transitioning)return false;
   transitioning=true;
-  app.classList.remove("po-nav-dragging");
+  clearTimeout(settleTimer);
+  clear();
   const run=()=>{
-   app.style.transform="";
    const previous=window.__poNavTransitionMutating;
    window.__poNavTransitionMutating=true;
    try{mutator()}finally{window.__poNavTransitionMutating=previous||false}
   };
+  const finish=()=>{
+   transitioning=false;
+   clear();
+   document.documentElement.style.removeProperty("--po-nav-exit");
+   document.documentElement.style.removeProperty("--po-nav-enter");
+  };
+  // Reduced-motion and older browsers must never use a delayed fake slide:
+  // this app renders its pages in-place, so that fallback produced a blank gap.
+  if(reduced()||!document.startViewTransition){
+   try{run()}finally{finish()}
+   return true;
+  }
   try{
    document.documentElement.style.setProperty("--po-nav-exit",direction>0?"100%":"-100%");
    document.documentElement.style.setProperty("--po-nav-enter",direction>0?"-100%":"100%");
-   if(!reduced()&&document.startViewTransition){
-    const vt=document.startViewTransition(run);
-    vt.finished.catch(()=>{}).finally(()=>{transitioning=false;clear();document.documentElement.style.removeProperty("--po-nav-exit");document.documentElement.style.removeProperty("--po-nav-enter")});
-   }else{
-    app.classList.add("po-nav-settling");
-    app.style.transform="translate3d("+direction*innerWidth+"px,0,0)";
-    setTimeout(()=>{run();app.style.transform="translate3d("+(-direction*innerWidth)+"px,0,0)";void app.offsetWidth;requestAnimationFrame(()=>{app.style.transform="";setTimeout(()=>{transitioning=false;clear()},280)})},90);
-   }
-  }catch(e){run();transitioning=false;clear();document.documentElement.style.removeProperty("--po-nav-exit");document.documentElement.style.removeProperty("--po-nav-enter")}
+   const vt=document.startViewTransition(run);
+   vt.finished.catch(()=>{}).finally(finish);
+  }catch(e){
+   try{run()}finally{finish()}
+  }
   return true;
  }
  function onDown(e){
@@ -5476,15 +5483,13 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    g.claimed=true;app.classList.add("po-nav-dragging");
   }
   if(e.cancelable)e.preventDefault();
+  // Track intent only. Moving the live, full-height app and then taking a
+  // View Transition snapshot caused a second translation and expensive
+  // compositing on iOS. Keep both snapshots at the same stable origin.
   g.dx=dx;g.dy=dy;
-  if(g.kind==="back"){
-   const p=Math.max(0,dx);
-   app.style.transform="translate3d("+p+"px,0,0)";
-  }else{
-   const dir=dx<0?1:-1,at=(g.index+dir)<0||(g.index+dir)>=pages.length;
-   g.blocked=at;
-   const p=at?Math.sign(dx)*Math.min(22,Math.abs(dx)*.13):dx;
-   app.style.transform="translate3d("+p+"px,0,0)";
+  if(g.kind==="tabs"){
+   const dir=dx<0?1:-1;
+   g.blocked=(g.index+dir)<0||(g.index+dir)>=pages.length;
   }
  }
  function onUp(e){
