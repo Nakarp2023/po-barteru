@@ -5434,7 +5434,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   // Mirror those properties so the outgoing screen is a faithful visual snapshot.
   for(let i=0;i<Math.min(sourceNodes.length,cloneNodes.length);i++){
    const source=sourceNodes[i],copy=cloneNodes[i];
-   if(source instanceof HTMLInputElement){copy.value=source.value;copy.checked=source.checked;copy.indeterminate=source.indeterminate}
+   if(source instanceof HTMLInputElement){if(source.type!=="file")copy.value=source.value;copy.checked=source.checked;copy.indeterminate=source.indeterminate}
    else if(source instanceof HTMLTextAreaElement)copy.value=source.value;
    else if(source instanceof HTMLSelectElement)copy.selectedIndex=source.selectedIndex;
    else if(source instanceof HTMLDetailsElement)copy.open=source.open;
