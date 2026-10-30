@@ -5396,7 +5396,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function onDown(e){
   if(gesture||e.pointerType==="mouse"||e.pointerType==="pen"||e.isPrimary===false)return;
   if(e.clientX>28||excluded(e.target))return;
-  gesture={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,claimed:false};
+  gesture={id:e.pointerId,x:e.clientX,y:e.clientY,dx:0,claimed:false,started:performance.now()};
  }
  function onMove(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;
