@@ -5236,15 +5236,17 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  const isOpen=id=>!!$(id)&&$(id).classList.contains("open");
 
  function snapshot(){
-  const dashboard=$("profileDashboard"),thread=$("chatThread");
+  const dashboard=$("profileDashboard"),thread=$("chatThread"),help=$("profileInfoHelpPanel"),topics=$("profileInfoHelpTopics");
   return {
    page:typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||"home"),
    profile:dashboard?profileClassNames.filter(c=>dashboard.classList.contains(c)):[],
    listingsOnly:!!dashboard?.classList.contains("listings-only"),
-   helpOpen:!!$("profileInfoHelpPanel")&&!$("profileInfoHelpPanel").hidden,
+   helpOpen:!!help&&!help.hidden,
+   helpDetails:topics?[...topics.querySelectorAll("details")].map((el,i)=>el.open?i:-1).filter(i=>i>=0):[],
    chatOpen:!!thread&&!thread.hidden,
    chatId:typeof activeConversationId!=="undefined"?activeConversationId:null,
-   chatTitle:$("chatTitle")?.textContent||"Переписка"
+   chatTitle:$("chatTitle")?.textContent||"Переписка",
+   scrollY:window.scrollY||0
   };
  }
  function key(s){return JSON.stringify(s)}
@@ -5284,7 +5286,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  // Capture nested profile/chat transitions even when their existing handlers
  // are local to an IIFE and cannot be wrapped safely from here.
  const observer=new MutationObserver(()=>syncSnapshot());
- observer.observe(app,{subtree:true,attributes:true,attributeFilter:["class","hidden","aria-hidden"]});
+ observer.observe(app,{subtree:true,attributes:true,attributeFilter:["class","hidden","aria-hidden","open"]});
  document.addEventListener("click",()=>{queueMicrotask(()=>requestAnimationFrame(syncSnapshot))},true);
  if(typeof window.openConversation==="function"){
   const originalOpenConversation=window.openConversation;
@@ -5318,6 +5320,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     if(target.listingsOnly)dashboard.classList.add("listings-only");
    }
    const help=$("profileInfoHelpPanel");if(help)help.hidden=!target.helpOpen;
+   const topics=$("profileInfoHelpTopics");if(topics){const details=[...topics.querySelectorAll("details")];details.forEach((el,i)=>{el.open=(target.helpDetails||[]).includes(i)})}
    if(target.chatOpen){
     if(target.chatId&&target.chatId!==((typeof activeConversationId!=="undefined")?activeConversationId:null)&&typeof window.openConversation==="function"){
      window.openConversation(target.chatId,target.chatTitle);
@@ -5328,7 +5331,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
      if($("refreshChats"))$("refreshChats").hidden=true;
     }
    }else if(snapshot().chatOpen)closeChatToInbox();
-   window.scrollTo({top:0,left:0,behavior:"instant"});
+   window.scrollTo({top:target.scrollY||0,left:0,behavior:"instant"});
   }finally{
    restoring=false;
    lastSnapshot=snapshot();
@@ -5347,6 +5350,11 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    return true;
   }
   const current=snapshot();
+  if(current.helpOpen&&current.helpDetails?.length){
+   const topics=$("profileInfoHelpTopics");
+   if(topics){const details=[...topics.querySelectorAll("details")];const index=current.helpDetails[current.helpDetails.length-1];if(details[index])details[index].open=false}
+   const after=snapshot();if(stack.length&&key(stack[stack.length-1])===key(after))stack.pop();lastSnapshot=after;return true;
+  }
   // A conversation is one level above the inbox. If a prior conversation
   // exists in the stack, restore it; otherwise return to the inbox.
   if(current.chatOpen){
@@ -5441,8 +5449,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 
 <style id="poTabSwipeStyles">
 .app.po-tab-dragging,.bottom.po-tab-dragging{transition:none!important;will-change:transform}
-.app.po-tab-settling,.bottom.po-tab-settling{transition:transform 190ms cubic-bezier(.22,.61,.36,1)!important;will-change:transform}
-@media(prefers-reduced-motion:reduce){.app.po-tab-settling,.bottom.po-tab-settling{transition:none!important}}
+.app.po-tab-settling{transition:transform 260ms cubic-bezier(.22,.61,.36,1)!important;will-change:transform}
+@media(prefers-reduced-motion:reduce){.app.po-tab-settling{transition:none!important}}
 </style>
 <script id="poPrimaryTabSwipeNavigation">
 (function(){
@@ -5477,10 +5485,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   app.classList.remove("po-tab-dragging","po-tab-settling");
   nav.classList.remove("po-tab-dragging","po-tab-settling");
  }
- function setDragOffset(dx){
-  const value="translate3d("+dx+"px,0,0)";
-  app.style.transform=value;nav.style.transform=value;
- }
+ function setDragOffset(dx){app.style.transform="translate3d("+dx+"px,0,0)";}
  function settle(commit,dx,target){
   if(!gesture)return;
   gesture=null;
@@ -5499,7 +5504,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   settleTimer=window.setTimeout(()=>{
    window.setPage(target);
    app.classList.remove("po-tab-settling");nav.classList.remove("po-tab-settling");
-   const incoming=-direction*Math.min(110,window.innerWidth*.16);
+   const incoming=-direction*window.innerWidth;
    setDragOffset(incoming);
    void app.offsetWidth;
    app.classList.add("po-tab-settling");nav.classList.add("po-tab-settling");
