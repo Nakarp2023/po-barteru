@@ -1,0 +1,40 @@
+name: Browser smoke tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/browser-smoke.yml"
+      - "playwright.config.js"
+      - "tests/browser/**"
+      - "index.html"
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Preview URL to test"
+        required: false
+        default: "https://po-barteru-unified-navigation-preview.onrender.com"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install browser test runner
+        run: npm install --no-save --package-lock=false @playwright/test
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run mobile and desktop smoke tests
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: npx playwright test
