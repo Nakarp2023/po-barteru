@@ -5172,4 +5172,45 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 .profile-info-help{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
 .profile-info-contact-card{grid-column:1/-1}
 </style>
+
+<script>
+/* Profile root shortcut: selecting the Profile tab always returns to the profile hub. */
+(function bindProfileRootShortcut(){
+  if(window.__profileRootShortcutBound)return;
+  window.__profileRootShortcutBound=true;
+  const resetProfileRoot=()=>{
+    const dashboard=document.getElementById("profileDashboard");
+    if(!dashboard)return;
+    dashboard.classList.remove(
+      "listings-only","profile-show-account","profile-show-exchanges",
+      "profile-show-reputation","profile-show-settings","profile-show-history"
+    );
+    const helpPanel=document.getElementById("profileInfoHelpPanel");
+    if(helpPanel)helpPanel.hidden=true;
+    const hub=document.getElementById("profileHub");
+    if(hub)hub.hidden=false;
+    const profileCard=dashboard.querySelector(".profile-card");
+    if(profileCard)profileCard.hidden=false;
+    const profileTab=document.querySelector('.bottom .nav[data-page="profile"]');
+    if(profileTab&&!profileTab.classList.contains("active")){
+      profileTab.click();
+      return;
+    }
+    requestAnimationFrame(()=>dashboard.scrollIntoView({block:"start",behavior:"smooth"}));
+  };
+  document.addEventListener("click",event=>{
+    const tab=event.target.closest('.bottom .nav[data-page="profile"]');
+    if(!tab)return;
+    requestAnimationFrame(resetProfileRoot);
+  });
+  const canHover=window.matchMedia&&window.matchMedia("(hover: hover) and (pointer: fine)");
+  if(canHover&&canHover.matches){
+    document.addEventListener("pointerover",event=>{
+      const tab=event.target.closest('.bottom .nav[data-page="profile"]');
+      if(!tab||tab.contains(event.relatedTarget))return;
+      if(tab.classList.contains("active"))resetProfileRoot();
+    });
+  }
+})();
+</script>
 </body></html>
