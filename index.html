@@ -5389,7 +5389,21 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 
  // Pointer gestures are coordinated by poPrimaryTabSwipeNavigation.
  window.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.defaultPrevented){if(back())e.preventDefault()}});
- window.addEventListener("popstate",()=>{back()});
+ // Keep one same-document history entry above the page that opened the app.
+ // iOS Safari's edge-swipe is a browser-history gesture and cannot be reliably
+ // cancelled by page JavaScript. A same-URL guard makes that gesture return
+ // through the app's hierarchy instead of exposing the previous external page.
+ const historyGuardKey="__poBarterNavigationGuard";
+ function armHistoryGuard(){
+  const state=history.state&&typeof history.state==="object"?history.state:{};
+  history.pushState({...state,[historyGuardKey]:true},"",location.href);
+ }
+ try{armHistoryGuard()}catch(error){console.warn("Navigation history guard unavailable:",error)}
+ window.addEventListener("popstate",()=>{
+  let handled=false;
+  try{handled=back()}catch(error){console.error("Navigation back failed:",error)}
+  if(handled){try{armHistoryGuard()}catch(error){console.warn("Navigation history guard could not be restored:",error)}}
+ });
 })();
 </script>
 
