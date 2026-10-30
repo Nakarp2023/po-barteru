@@ -5229,7 +5229,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     if(!(target instanceof Element))return true;
     if(target.closest("input,textarea,select,button,a,[contenteditable='true'],.modal,.sheet,.chat-composer,#chatMessages,#chatThread,.listing-detail-gallery,[data-no-page-swipe],.profile-info-topic-list,.profile-info-doc-list"))return true;
     if(!document.getElementById("chatThread")?.hidden)return true;
-    if(!document.getElementById("listingDetailModal")?.classList.contains("open")===false)return true;
+    const detailModal=document.getElementById("listingDetailModal");
+    if(detailModal?.classList.contains("open"))return true;
     for(let node=target;node&&node!==app;node=node.parentElement){
       const style=getComputedStyle(node);
       if((style.overflowX==="auto"||style.overflowX==="scroll")&&node.scrollWidth>node.clientWidth+8)return true;
