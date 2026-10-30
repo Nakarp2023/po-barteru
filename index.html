@@ -4336,7 +4336,7 @@ function chatMessageHTML(m){
  list.addEventListener("contextmenu",e=>{const row=e.target.closest("[data-message-row][data-own='1']");if(row){e.preventDefault();row.classList.toggle("reveal-delete")}});
 })();
 async function openConversation(id,title){
- if(!currentUser||!db)return;activeConversationId=id;if(chatReceiptChannel){await db.removeChannel(chatReceiptChannel);chatReceiptChannel=null}if(dealTermsChannel){await db.removeChannel(dealTermsChannel);dealTermsChannel=null;dealTermsSubscribedProposalId=null}await db.rpc("mark_conversation_messages_read",{p_conversation_id:id});await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",id).is("read_at",null);await refreshNotificationCount();$("chatThread").hidden=false;$("chatInboxHeader").hidden=true;$("chatInbox").hidden=true;$("refreshChats").hidden=true;$("chatTitle").textContent=title||"Переписка";chatOldestMessage=null;chatHasOlderMessages=false;chatOlderLoading=false;$("loadOlderMessages").hidden=true;$("loadOlderMessages").disabled=false;$("loadOlderMessages").textContent="Загрузить предыдущие сообщения";$("chatMessages").innerHTML='<p class="category">Загружаем сообщения…</p>';
+ if(!currentUser||!db)return;activeConversationId=id;if(chatReceiptChannel){await db.removeChannel(chatReceiptChannel);chatReceiptChannel=null}if(dealTermsChannel){await db.removeChannel(dealTermsChannel);dealTermsChannel=null;dealTermsSubscribedProposalId=null}await db.rpc("mark_conversation_messages_read",{p_conversation_id:id});await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",id).is("read_at",null);await refreshNotificationCount();$("chatThread").hidden=false;$("chatInboxHeader").hidden=true;$("chatInbox").hidden=true;$("refreshChats").hidden=true;requestAnimationFrame(()=>window.poAnimateSurface?.($("chatThread")));$("chatTitle").textContent=title||"Переписка";chatOldestMessage=null;chatHasOlderMessages=false;chatOlderLoading=false;$("loadOlderMessages").hidden=true;$("loadOlderMessages").disabled=false;$("loadOlderMessages").textContent="Загрузить предыдущие сообщения";$("chatMessages").innerHTML='<p class="category">Загружаем сообщения…</p>';
  const {data:msgs,error}=await db.from("messages").select("id,sender_id,body,created_at,delivered_at,read_at").eq("conversation_id",id).order("created_at",{ascending:false}).order("id",{ascending:false}).limit(200);
  if(activeConversationId!==id)return;
  if(error){$("chatMessages").innerHTML='<p class="category">Не удалось загрузить сообщения: '+esc(error.message)+'</p>';return}
@@ -4707,7 +4707,12 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    const wasOpen=!!helpPanel&&!helpPanel.hidden;
    classes.forEach(c=>dashboard.classList.remove(c));
    if(helpPanel)helpPanel.hidden=wasOpen;
-   if(!wasOpen&&helpPanel)requestAnimationFrame(()=>helpPanel.scrollIntoView({behavior:"smooth",block:"start"}));
+   if(!wasOpen&&helpPanel){
+    requestAnimationFrame(()=>{
+     window.poAnimateSurface?.(helpPanel);
+     helpPanel.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+   }
    return;
   }
   if(helpPanel)helpPanel.hidden=true;
@@ -4718,7 +4723,12 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
   if(!wasOpen)dashboard.classList.add(item.cls);
   if(!wasOpen){
    const target=dashboard.querySelector(item.target);
-   if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:"smooth",block:"start"}));
+   requestAnimationFrame(()=>{
+    window.poAnimateSurface?.(dashboard);
+    if(target)target.scrollIntoView({behavior:"smooth",block:"start"});
+   });
+  }else{
+   requestAnimationFrame(()=>window.poAnimateSurface?.(hub));
   }
  }
  document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});});
@@ -5176,11 +5186,36 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 
 
 <style id="poNativePageSwipeStyles">
-/* Native-feeling transitions between the five primary app sections. */
-.app.po-page-transition-next,.app.po-page-transition-prev{animation:poPageContentFade 140ms ease-out both}
-@keyframes poPageContentFade{from{opacity:.88}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.app.po-page-transition-next,.app.po-page-transition-prev{animation:none!important}}
+/* Calm, consistent motion: content fades in without moving the page or fixed navigation. */
+.app.po-page-transition-next,.app.po-page-transition-prev{animation:poPageContentFade 210ms cubic-bezier(.22,.61,.36,1) both}
+@keyframes poPageContentFade{from{opacity:.72}to{opacity:1}}
+.po-motion-surface{will-change:opacity,transform}
+@media(prefers-reduced-motion:reduce){
+ .app.po-page-transition-next,.app.po-page-transition-prev{animation:none!important}
+ .po-motion-surface{animation:none!important;transition:none!important}
+}
 </style>
+<script id="poMotionCoordinator">
+(function(){
+ if(window.__poMotionCoordinatorInstalled)return;
+ window.__poMotionCoordinatorInstalled=true;
+ const reduced=()=>window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ let lastRun=0;
+ window.poAnimateSurface=function(node){
+  if(!node||reduced()||typeof node.animate!=="function")return;
+  const now=performance.now();
+  if(now-lastRun<28)return;
+  lastRun=now;
+  node.classList.add("po-motion-surface");
+  const animation=node.animate(
+   [{opacity:.68,transform:"translate3d(0,7px,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
+   {duration:230,easing:"cubic-bezier(.22,.61,.36,1)",fill:"both"}
+  );
+  animation.onfinish=()=>node.classList.remove("po-motion-surface");
+  animation.oncancel=()=>node.classList.remove("po-motion-surface");
+ };
+})();
+</script>
 <script id="poNativePageSwipeNavigation">
 (function(){
   if(window.__poNativePageSwipeNavigationInstalled)return;
