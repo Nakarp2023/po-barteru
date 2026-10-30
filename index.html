@@ -4707,7 +4707,12 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    const wasOpen=!!helpPanel&&!helpPanel.hidden;
    classes.forEach(c=>dashboard.classList.remove(c));
    if(helpPanel)helpPanel.hidden=wasOpen;
-   if(!wasOpen&&helpPanel)requestAnimationFrame(()=>helpPanel.scrollIntoView({behavior:"smooth",block:"start"}));
+   if(!wasOpen&&helpPanel){
+    requestAnimationFrame(()=>{
+     window.poAnimateSurface?.(helpPanel);
+     helpPanel.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+   }
    return;
   }
   if(helpPanel)helpPanel.hidden=true;
@@ -4718,7 +4723,12 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
   if(!wasOpen)dashboard.classList.add(item.cls);
   if(!wasOpen){
    const target=dashboard.querySelector(item.target);
-   if(target)requestAnimationFrame(()=>target.scrollIntoView({behavior:"smooth",block:"start"}));
+   requestAnimationFrame(()=>{
+    window.poAnimateSurface?.(dashboard);
+    if(target)target.scrollIntoView({behavior:"smooth",block:"start"});
+   });
+  }else{
+   requestAnimationFrame(()=>window.poAnimateSurface?.(hub));
   }
  }
  document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});});
@@ -5176,11 +5186,36 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 
 
 <style id="poNativePageSwipeStyles">
-/* Native-feeling transitions between the five primary app sections. */
-.app.po-page-transition-next,.app.po-page-transition-prev{animation:poPageContentFade 140ms ease-out both}
-@keyframes poPageContentFade{from{opacity:.88}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.app.po-page-transition-next,.app.po-page-transition-prev{animation:none!important}}
+/* Calm, consistent motion: content fades in without moving the page or fixed navigation. */
+.app.po-page-transition-next,.app.po-page-transition-prev{animation:poPageContentFade 210ms cubic-bezier(.22,.61,.36,1) both}
+@keyframes poPageContentFade{from{opacity:.72}to{opacity:1}}
+.po-motion-surface{will-change:opacity,transform}
+@media(prefers-reduced-motion:reduce){
+ .app.po-page-transition-next,.app.po-page-transition-prev{animation:none!important}
+ .po-motion-surface{animation:none!important;transition:none!important}
+}
 </style>
+<script id="poMotionCoordinator">
+(function(){
+ if(window.__poMotionCoordinatorInstalled)return;
+ window.__poMotionCoordinatorInstalled=true;
+ const reduced=()=>window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ let lastRun=0;
+ window.poAnimateSurface=function(node){
+  if(!node||reduced()||typeof node.animate!=="function")return;
+  const now=performance.now();
+  if(now-lastRun<28)return;
+  lastRun=now;
+  node.classList.add("po-motion-surface");
+  const animation=node.animate(
+   [{opacity:.68,transform:"translate3d(0,7px,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
+   {duration:230,easing:"cubic-bezier(.22,.61,.36,1)",fill:"both"}
+  );
+  animation.onfinish=()=>node.classList.remove("po-motion-surface");
+  animation.oncancel=()=>node.classList.remove("po-motion-surface");
+ };
+})();
+</script>
 <script id="poNativePageSwipeNavigation">
 (function(){
   if(window.__poNativePageSwipeNavigationInstalled)return;
