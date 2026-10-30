@@ -5476,9 +5476,13 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");if(s)clearSnapshot(s);transitioning=false};
   Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
  }
- function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
+ function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=320){
+  // Every paired transition owns the navigation lock, including gesture-driven
+  // transitions. Without this lock a second pointer sequence can start while
+  // the first pair is still animating and leave the stage/snapshot out of sync.
+  transitioning=true;
   app.classList.add("po-nav-moving");
-  const easing="cubic-bezier(.22,.72,.22,1)";
+  const easing="cubic-bezier(.16,1,.3,1)";
   const a=s.clone.animate([{transform:"translate3d("+oldFrom+"px,0,0)"},{transform:"translate3d("+oldTo+"px,0,0)"}],{duration,easing,fill:"both"});
   const b=app.animate([{transform:"translate3d("+newFrom+"px,0,0)"},{transform:"translate3d("+newTo+"px,0,0)"}],{duration,easing,fill:"both"});
   finishTransition(s,a,b);
@@ -5493,7 +5497,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    mutator();
    const width=Math.max(1,window.innerWidth);
    app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
-   animatePair(s,0,direction*width,-direction*width,0,280);
+   animatePair(s,0,direction*width,-direction*width,0,320);
   }catch(e){
    app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
    console.error("Navigation transition failed:",e);
@@ -5628,7 +5632,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    direction<0
     ?[{opacity:.72,transform:"translate3d(18px,0,0)"},{opacity:1,transform:"translate3d(0,0,0)"}]
     :[{opacity:.72,transform:"translate3d(-18px,0,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
-   {duration:245,easing:"cubic-bezier(.22,.72,.22,1)",fill:"both"}
+   {duration:280,easing:"cubic-bezier(.16,1,.3,1)",fill:"both"}
   );
   animation.onfinish=()=>{if(run===sequence)target.classList.remove("po-nested-enter")};
   animation.oncancel=()=>{if(run===sequence)target.classList.remove("po-nested-enter")};
