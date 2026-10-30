@@ -5335,10 +5335,16 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   return true;
  }
  function back(){
-  // Modal/detail surfaces are always the topmost layer and close before
-  // navigating the underlying screen.
-  if(isOpen("modal")){if(typeof window.closeForm==="function")window.closeForm();else $("cancel")?.click();return true}
-  if(isOpen("listingDetailModal")){if(typeof window.closeListingDetails==="function")window.closeListingDetails();else $("listingDetailClose")?.click();return true}
+  // Close the topmost overlay first; never navigate the screen underneath it.
+  const overlays=["modal","cityPickerModal","promotionPickerModal","listingDetailModal"];
+  for(let i=overlays.length-1;i>=0;i--){
+   const id=overlays[i];if(!isOpen(id))continue;
+   if(id==="modal"){if(typeof window.closeForm==="function")window.closeForm();else $("cancel")?.click()}
+   else if(id==="cityPickerModal"){if(typeof window.closeCityPicker==="function")window.closeCityPicker();else $("cityPickerCancel")?.click()}
+   else if(id==="promotionPickerModal")$("promotionPickerCancel")?.click();
+   else if(id==="listingDetailModal"){if(typeof window.closeListingDetails==="function")window.closeListingDetails();else $("listingDetailClose")?.click()}
+   return true;
+  }
   const current=snapshot();
   // A conversation is one level above the inbox. If a prior conversation
   // exists in the stack, restore it; otherwise return to the inbox.
@@ -5364,7 +5370,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 
  function excluded(target){
   if(!(target instanceof Element))return true;
-  if(target.closest('input,textarea,select,button,a,[contenteditable="true"],.modal,.sheet,.chat-composer,#chatMessages,#chatThread,.listing-detail-gallery,[data-no-page-swipe],.profile-info-topic-list,.profile-info-doc-list,.bottom'))return true;
+  if(target.closest('input,textarea,select,button,a,[contenteditable="true"],.chat-composer,#chatMessages,.listing-detail-gallery,[data-no-page-swipe],.profile-info-topic-list,.profile-info-doc-list,.bottom'))return true;
   for(let node=target;node&&node!==app;node=node.parentElement){
    const style=getComputedStyle(node);
    if((style.overflowX==="auto"||style.overflowX==="scroll")&&node.scrollWidth>node.clientWidth+8)return true;
