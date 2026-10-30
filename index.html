@@ -5185,15 +5185,9 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 
 
 
-<style id="poNativePageSwipeStyles">
-/* Calm, consistent motion: content fades in without moving the page or fixed navigation. */
-.app.po-page-transition-next,.app.po-page-transition-prev{animation:poPageContentFade 210ms cubic-bezier(.22,.61,.36,1) both}
-@keyframes poPageContentFade{from{opacity:.72}to{opacity:1}}
+<style id="poMotionSurfaceStyles">
 .po-motion-surface{will-change:opacity,transform}
-@media(prefers-reduced-motion:reduce){
- .app.po-page-transition-next,.app.po-page-transition-prev{animation:none!important}
- .po-motion-surface{animation:none!important;transition:none!important}
-}
+@media(prefers-reduced-motion:reduce){.po-motion-surface{animation:none!important;transition:none!important}}
 </style>
 <script id="poMotionCoordinator">
 (function(){
