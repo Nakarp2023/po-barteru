@@ -5477,9 +5477,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   app.classList.remove("po-nav-moving");
  }
  function animateIn(fromX,duration=245){
-  // Every settle animation (commit AND cancel) owns the navigation lock.
-  // Direct swipe commits bypass setPage's wrapper, so lock here as well.
-  if(transitioning)return;
+  // animateMutation may already own the lock; direct swipe settle paths do not.
+  // Re-assert ownership here without rejecting an already-locked transition.
   transitioning=true;
   if(reduced()){clearMotion();transitioning=false;return}
   app.classList.add("po-nav-moving");
