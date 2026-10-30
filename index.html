@@ -5456,7 +5456,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  const $=id=>document.getElementById(id);
  let gesture=null,settleTimer=0;
  const nestedProfileClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
- function currentPage(){return nav.querySelector(".nav.active")?.dataset.page||pages[0]}
+ function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
  function hasOverlay(){return !!document.querySelector(".modal.open")}
  function excluded(target){
   if(!(target instanceof Element))return true;
