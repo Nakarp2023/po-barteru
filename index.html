@@ -5446,7 +5446,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
  function finishTransition(s,animationA,animationB){
-  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");clearSnapshot(s);transitioning=false};
+  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");if(s)clearSnapshot(s);transitioning=false};
   Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
  }
  function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
@@ -5468,8 +5468,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
    animatePair(s,0,direction*width,-direction*width,0,280);
   }catch(e){
-   try{mutator()}catch(_){}
    app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
+   console.error("Navigation transition failed:",e);
   }
   return true;
  }
@@ -5520,9 +5520,11 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   }
   if(e.cancelable)e.preventDefault();
   g.dx=dx;g.dy=dy;
-  if(g.snapshot){
+  if(g.kind==="back"){
+   app.style.transform="translate3d("+dx+"px,0,0)";
+  }else if(g.snapshot){
    g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
-   if(g.kind==="tabs")app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
+   app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
   }
  }
  function onUp(e){
@@ -5530,23 +5532,31 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(!g.claimed)return;
   const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
   const threshold=Math.max(64,innerWidth*.16);
+  g.dx=dx;
   const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
   if(reduced()){
    if(commit){if(g.kind==="back")window.poNavigateBack?.();else setPageDirect(pages[g.index+(g.direction<0?1:-1)])}
    return;
   }
+  if(g.kind==="back"){
+   if(commit){
+    // Capture the current screen only once the edge gesture is accepted.
+    const s=snapshot();activeSnapshot=s;
+    app.style.transform="";
+    window.poNavigateBack?.();
+    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
+    animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
+   }else{
+    app.classList.add("po-nav-moving");
+    const a=app.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
+    finishTransition(null,a,null);
+   }
+   return;
+  }
   if(!g.snapshot)return;
-  if(commit&&g.kind==="back"){
-   // Back mutates the hierarchy only after the gesture has committed.
-   const oldPage=g.page;
-   const s=g.snapshot;
-   app.style.transform="";
-   window.poNavigateBack?.();
-   app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-   animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
-  }else settleGesture(g,commit);
+  settleGesture(g,commit);
  }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;if(g.claimed&&g.snapshot)settleGesture(g,false)}}
+ function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
