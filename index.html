@@ -5211,12 +5211,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 })();
 </script>
 <style id="poHierarchicalSwipeStyles">
-.app,.bottom{transition:transform 0s}.bottom{will-change:transform}
 .app{touch-action:pan-y;overscroll-behavior-x:contain}
-.app.po-back-dragging,.bottom.po-back-dragging{transition:none!important}
-.app.po-back-settling,.bottom.po-back-settling{transition:transform 260ms cubic-bezier(.2,.75,.25,1)!important}
-.app.po-back-dragging{box-shadow: -18px 0 34px rgba(20,35,28,.13)}
-@media(prefers-reduced-motion:reduce){.app.po-back-settling,.bottom.po-back-settling{transition:none!important}}
 </style>
 <script id="poHierarchicalSwipeNavigation">
 (function(){
@@ -5434,13 +5429,26 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function snapshot(){
   const rect=app.getBoundingClientRect(),viewport=document.createElement("div"),clone=app.cloneNode(true);
+  const sourceNodes=[app,...app.querySelectorAll("*")],cloneNodes=[clone,...clone.querySelectorAll("*")];
+  // cloneNode copies markup, not live form state or nested scroll positions.
+  // Mirror those properties so the outgoing screen is a faithful visual snapshot.
+  for(let i=0;i<Math.min(sourceNodes.length,cloneNodes.length);i++){
+   const source=sourceNodes[i],copy=cloneNodes[i];
+   if(source instanceof HTMLInputElement){copy.value=source.value;copy.checked=source.checked;copy.indeterminate=source.indeterminate}
+   else if(source instanceof HTMLTextAreaElement)copy.value=source.value;
+   else if(source instanceof HTMLSelectElement)copy.selectedIndex=source.selectedIndex;
+   else if(source instanceof HTMLDetailsElement)copy.open=source.open;
+   if(source.scrollTop||source.scrollLeft){copy.scrollTop=source.scrollTop;copy.scrollLeft=source.scrollLeft}
+   if(source instanceof HTMLCanvasElement){try{copy.width=source.width;copy.height=source.height;copy.getContext("2d")?.drawImage(source,0,0)}catch(_){}}
+  }
   viewport.className="po-nav-snapshot-viewport";
+  viewport.setAttribute("aria-hidden","true");
+  clone.inert=true;
   clone.style.setProperty("top",rect.top+"px","important");
   clone.style.setProperty("left",rect.left+"px","important");
   clone.style.setProperty("width",rect.width+"px","important");
   clone.style.setProperty("height","auto","important");
   clone.style.setProperty("transform","translate3d(0,0,0)","important");
-  clone.querySelectorAll("video,audio").forEach(el=>{try{el.pause?.()}catch(_){}});
   viewport.appendChild(clone);document.body.appendChild(viewport);
   return {viewport,clone};
  }
