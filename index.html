@@ -5270,10 +5270,13 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const before=snapshot();
   if(!restoring&&before.page!==nextPage&&typeof window.poRunNavigationTransition==="function"&&!window.__poNavTransitionMutating){
    const from=pagesForMotion(before.page),to=pagesForMotion(nextPage),direction=to>=from?-1:1;
-   window.poRunNavigationTransition(()=>{window.__poNavTransitionMutating=true;try{originalSetPage(nextPage)}finally{window.__poNavTransitionMutating=false}},direction,false);
-   stack.length=0;
-   lastSnapshot=snapshot();
-   return;
+   const animated=window.poRunNavigationTransition(()=>{window.__poNavTransitionMutating=true;try{originalSetPage(nextPage)}finally{window.__poNavTransitionMutating=false}},direction,false);
+   if(animated){
+    stack.length=0;
+    lastSnapshot=snapshot();
+    return;
+   }
+   // If another transition is still settling, never drop the user's tab change.
   }
   const result=originalSetPage(nextPage);
   const after=snapshot();
@@ -5571,6 +5574,50 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  document.addEventListener("pointerup",onUp,{passive:true});
  document.addEventListener("pointercancel",onCancel,{passive:true});
  window.poRunNavigationTransition=animateMutation;
+})();
+</script>
+
+
+<style id="poNestedNavigationMotionStyles">
+/* Consistent, restrained motion for nested profile destinations. */
+#profileDashboard.po-nested-enter,
+#profileInfoHelpPanel.po-nested-enter{
+  will-change:opacity,transform;
+}
+@media(prefers-reduced-motion:reduce){
+  #profileDashboard.po-nested-enter,
+  #profileInfoHelpPanel.po-nested-enter{will-change:auto}
+}
+</style>
+<script id="poNestedNavigationMotion">
+(function(){
+ if(window.__poNestedNavigationMotionInstalled)return;
+ window.__poNestedNavigationMotionInstalled=true;
+ const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+ const profileSelector='.profile-hub-row[data-profile-open],#profileInfoHelpBack,.profile-info-back,[data-profile-back]';
+ let sequence=0;
+ function animateDestination(direction){
+  const dashboard=document.getElementById("profileDashboard");
+  const help=document.getElementById("profileInfoHelpPanel");
+  const target=help&&!help.hidden?help:dashboard;
+  if(!target||reduced()||typeof target.animate!=="function")return;
+  const run=++sequence;
+  target.classList.add("po-nested-enter");
+  const animation=target.animate(
+   direction<0
+    ?[{opacity:.72,transform:"translate3d(18px,0,0)"},{opacity:1,transform:"translate3d(0,0,0)"}]
+    :[{opacity:.72,transform:"translate3d(-18px,0,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
+   {duration:245,easing:"cubic-bezier(.22,.72,.22,1)",fill:"both"}
+  );
+  animation.onfinish=()=>{if(run===sequence)target.classList.remove("po-nested-enter")};
+  animation.oncancel=()=>{if(run===sequence)target.classList.remove("po-nested-enter")};
+ }
+ document.addEventListener("click",function(event){
+  const control=event.target instanceof Element?event.target.closest(profileSelector):null;
+  if(!control)return;
+  const isBack=control.id==="profileInfoHelpBack"||control.classList.contains("profile-info-back")||control.hasAttribute("data-profile-back");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>animateDestination(isBack?1:-1)));
+ },true);
 })();
 </script>
 
