@@ -5262,7 +5262,12 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function syncSnapshot(){
   const now=snapshot();
-  if(lastSnapshot&&key(now)!==key(lastSnapshot))pushSnapshot(lastSnapshot);
+  if(lastSnapshot&&key(now)!==key(lastSnapshot)){
+   const chatWasClosed=lastSnapshot.chatOpen&&!now.chatOpen;
+   if(chatWasClosed){
+    while(stack.length&&stack[stack.length-1].page===now.page)stack.pop();
+   }else pushSnapshot(lastSnapshot);
+  }
   lastSnapshot=now;
  }
  lastSnapshot=snapshot();
@@ -5343,6 +5348,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(current.chatOpen){
    const prior=stack.pop();
    if(prior&&prior.chatOpen&&prior.chatId){restore(prior);return true}
+   while(stack.length&&stack[stack.length-1].page===current.page)stack.pop();
    closeChatToInbox();lastSnapshot=snapshot();return true;
   }
   if(current.helpOpen||current.profile.length||current.listingsOnly){
