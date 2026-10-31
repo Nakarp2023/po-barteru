@@ -90,3 +90,27 @@ test('vertical pointer movement does not trigger horizontal page navigation', as
   expect(diagnostics?.transitioning).toBe(false);
   expect(diagnostics?.gestureActive).toBe(false);
 });
+
+test('lost focus cancels an active drag without leaving the screen displaced', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const heading = await page.locator('#homeHero h1').boundingBox();
+  expect(heading).not.toBeNull();
+  const x = heading.x + heading.width * 0.82;
+  const y = heading.y + heading.height * 0.5;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x - 70, y, { steps: 6 });
+  const active = await page.evaluate(() => window.poNavigationDiagnostics?.());
+  expect(active?.gestureActive).toBe(true);
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  const recovered = await page.evaluate(() => ({
+    diagnostics: window.poNavigationDiagnostics?.(),
+    inlineTransform: document.querySelector('#poScreenStage')?.style.transform || '',
+  }));
+  expect(recovered.diagnostics?.currentPage).toBe('home');
+  expect(recovered.diagnostics?.gestureActive).toBe(false);
+  expect(recovered.diagnostics?.transitioning).toBe(false);
+  expect(recovered.inlineTransform).toBe('');
+  await page.mouse.up();
+});
