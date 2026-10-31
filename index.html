@@ -3448,12 +3448,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .notification-menu[hidden],.notification-menu-wrap[hidden]{display:none!important}
 @media(max-width:480px){.notification-head{display:flex;flex-wrap:nowrap;align-items:center}.notification-head-tools{flex:0 0 auto}.notification-head h2{font-size:clamp(20px,5vw,24px)}.notification-actions .chip{white-space:normal;max-width:150px}}
 </style>
-<style id="poSimpleNavigationStyles">
-/* Keep tap navigation deterministic; horizontal page gestures belong to the screen stage. */
-.bottom{touch-action:manipulation!important}
-.bottom .nav{touch-action:manipulation!important}
-</style></head><body>
-<main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><div class="po-screen-stage" id="poScreenStage" data-navigation-build="liquid-swipe-v2-20261031-01"><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
+</head><body>
+<main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
     <div class="hero-product hero-product-headphones"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt=""></div>
@@ -3637,8 +3633,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 <div id="purchaseHistorySection" class="profile-section" style="margin-top:20px"><div class="sectionhead"><h2 style="margin:0">История покупок</h2><button type="button" class="chip" id="refreshMonetizationOrders">Обновить</button></div><div id="monetizationOrders"><p class="category">Загружаем историю…</p></div></div>
 
-</section><p id="backendNote" class="category"></p><button class="pill" id="backHome">Вернуться к объявлениям</button></section></div></main><nav class="bottom"><button class="nav active" data-page="home"><span class="nav-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 10.5 12 3l8.5 7.5V21h-17z"/><path d="M9 21v-6h6v6"/></svg></span>Главная</button><button class="nav" data-page="favorites"><span class="nav-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 5.2-8.8 11-8.8 11s-8.8-5.8-8.8-11a4.8 4.8 0 0 1 8.8-2.2 4.8 4.8 0 0 1 8.8 2.2Z"/></svg></span>Избранное</button><button class="nav" data-page="my-listings"><span class="nav-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="14" rx="2"/><path d="M8 7h4M8 10h4M8 13h4"/><path d="M8 20h12V8"/></svg></span>Мои объявления</button><button class="nav" data-page="chats"><span class="nav-icon-wrap"><svg class="nav-symbol" aria-hidden="true" viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.5-3A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11h8M8 14h5"/></svg><span id="chatUnreadBadge" class="ios-badge nav-badge" hidden>0</span></span>Сообщения</button><button class="nav" data-page="profile"><span class="nav-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span>Профиль</button></nav><div class="modal" id="modal"><form class="sheet" id="form"><h2 id="listingFormTitle">Новое предложение</h2><p style="color:#68756e;margin-top:-5px">Расскажи, что предлагаешь и что хочешь получить.</p><label class="field">Название<input name="title" required maxlength="80" placeholder="Например, велосипед горный"></label><label class="field">Категория<select name="category"><option>Техника</option><option>Электроника</option><option>Дом и мебель</option><option>Одежда</option><option>Обувь и аксессуары</option><option>Спорт</option><option>Авто и транспорт</option><option>Недвижимость</option><option>Земельные участки</option><option>Коммерческие помещения</option><option>Строительство и ремонт</option><option>Услуги</option><option>Детские товары</option><option>Игрушки</option><option>Книги</option><option>Хобби и творчество</option><option>Красота и здоровье</option><option>Животные</option><option>Продукты питания</option><option>Сад и огород</option><option>Компьютеры и офис</option><option>Путешествия</option><option>Благотворительность</option><option>Другие товары</option><option>Другое</option></select></label><label class="field">Подкатегория<select name="subcategory" id="listingSubcategory"><option value="">Без уточнения</option></select></label><div class="field listing-images-field" id="listingImagesField"><label for="listingImages">Фотографии товара (можно несколько)</label><input id="listingImages" name="images" type="file" accept="image/*"><small>Добавляй фотографии по одной — не больше 5 на объявление, каждое до 5 МБ. Когда лимит достигнут, выбор новых фото будет отключён.</small><div id="imagePreview" class="image-preview"></div></div><label class="field">Что хочешь взамен?<input name="want" required maxlength="120" placeholder="Например, смартфон или услуги"></label><label class="field listing-city-field">Город<input name="city" id="listingCity" type="text" required autocomplete="off" autocapitalize="words" placeholder="Начни вводить название города…" aria-autocomplete="list" aria-controls="listingCitySuggestions"><div id="listingCitySuggestions" class="listing-city-suggestions" role="listbox" hidden></div><small id="cityCatalogStatus">Загружаем каталог городов России…</small></label><input type="hidden" name="region" id="listingRegion"><label class="field">Примерная стоимость, ₽<input name="price" type="number" min="0" placeholder="Необязательно"></label><label class="field">Описание<textarea name="description" rows="3" maxlength="500" placeholder="Состояние, условия обмена…"></textarea></label><div class="actions"><button type="button" id="cancel">Отмена</button><button class="primary" id="listingSubmit" type="submit">Опубликовать объявление</button></div></form></div><div class="modal" id="cityPickerModal" aria-hidden="true"><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cityPickerTitle"><h2 id="cityPickerTitle">Выбери город</h2><p class="category">Начни вводить название города или региона.</p><label class="field">Поиск<input id="cityPickerSearch" type="search" placeholder="Например, Екатеринбург" autocomplete="off"></label><div class="field city-picker-results-field"><span class="city-picker-results-label">Город и регион</span><div id="cityPickerResults" class="city-picker-results" role="listbox" aria-label="Населённые пункты"><p class="city-picker-hint">Начни вводить название — варианты появятся здесь.</p></div></div><div class="actions"><button type="button" id="cityPickerCancel">Отмена</button><button type="button" class="primary" id="cityPickerConfirm">Выбрать город</button></div></section></div><div class="modal promotion-picker" id="promotionPickerModal" aria-hidden="true"><section class="sheet promotion-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="promotionPickerTitle"><h2 id="promotionPickerTitle">К какому объявлению применить услугу?</h2><p class="picker-intro">Выбери объявление, для которого создаётся заказ на продвижение.</p><div class="promotion-list" id="promotionPickerList"></div><div class="promotion-picker-actions"><button type="button" class="promotion-picker-cancel" id="promotionPickerCancel">Отмена</button><button type="button" class="promotion-picker-confirm" id="promotionPickerConfirm" disabled>Продолжить</button></div></section></div><div class="modal" id="listingDetailModal" aria-hidden="true"><section class="sheet listing-detail-sheet" role="dialog" aria-modal="true" aria-labelledby="listingDetailTitle"><button type="button" class="listing-detail-close listing-detail-close-fixed" id="listingDetailClose" aria-label="Закрыть">×</button><div id="listingDetailContent" class="listing-detail-scroll"></div></section></div><div class="toast" id="toast"></div><script>
-const seed=[{id:1,title:"Велосипед горный",category:"Спорт",want:"Смартфон или планшет",city:"Москва",price:18000,emoji:"🚲",desc:"Хорошее состояние, готов к обмену."},{id:2,title:"Наушники беспроводные",category:"Техника",want:"Настольная игра или книги",city:"Санкт-Петербург",price:7000,emoji:"🎧",desc:"Работают отлично, есть коробка."},{id:3,title:"Помощь с дизайном",category:"Услуги",want:"Ремонт или настройка техники",city:"Казань",price:0,emoji:"🎨",desc:"Сделаю баннер, логотип или оформление."},{id:4,title:"Кофемашина",category:"Дом и мебель",want:"Электроинструмент",city:"Екатеринбург",price:12000,emoji:"☕",desc:"Исправная, обмен с доплатой обсуждается."},{id:5,title:"Детский самокат",category:"Детские товары",want:"Детские книги или конструктор",city:"Новосибирск",price:3500,emoji:"🛴",desc:"В хорошем состоянии."},{id:6,title:"Фотосессия на час",category:"Услуги",want:"Стрижка или услуги мастера",city:"Краснодар",price:5000,emoji:"📸",desc:"Портретная или семейная съёмка."},{id:7,title:"Игровая приставка",category:"Техника",want:"Ноутбук с доплатой",city:"Нижний Новгород",price:22000,emoji:"🎮",desc:"Рабочая приставка, детали обсудим."},{id:8,title:"Книжная полка",category:"Дом и мебель",want:"Комнатное растение или лампа",city:"Пермь",price:2500,emoji:"📚",desc:"Самовывоз, состояние хорошее."}];const SUPABASE_URL="https://qxsnjksepzmpsifpxyea.supabase.co",SUPABASE_KEY="sb_publishable_rYAZPOkGIrxOHX_IEupByw_PZmPhVty";const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY);window.db=db;let currentUser=null,activePlanCode="free";const STORE_ITEMS="po_barteru_items_v1",STORE_FAVS="po_barteru_favs_v1";function loadJSON(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch{return fallback}}let remoteCatalogCursor=null,hasMoreRemoteListings=false,loadingMoreRemoteListings=false,items=loadJSON(STORE_ITEMS,[...seed]),favorites=new Set(loadJSON(STORE_FAVS,[]).map(String)),category="Все",page="home",advancedSearchExpanded=false;const $=id=>document.getElementById(id);function persist(){try{localStorage.setItem(STORE_ITEMS,JSON.stringify(items));localStorage.setItem(STORE_FAVS,JSON.stringify([...favorites]))}catch(e){toast("Не удалось сохранить данные на устройстве")}}const cats=["Все","Техника","Электроника","Дом и мебель","Одежда","Обувь и аксессуары","Спорт","Авто и транспорт","Недвижимость","Земельные участки","Коммерческие помещения","Строительство и ремонт","Услуги","Детские товары","Игрушки","Книги","Хобби и творчество","Красота и здоровье","Животные","Продукты питания","Сад и огород","Компьютеры и офис","Путешествия","Благотворительность","Другие товары","Другое"];
+</section><p id="backendNote" class="category"></p><button class="pill" id="backHome">Вернуться к объявлениям</button></section></main><nav class="bottom"><button class="nav active" data-page="home"><span class="nav-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 10.5 12 3l8.5 7.5V21h-17z"/><path d="M9 21v-6h6v6"/></svg></span>Главная</button><button class="nav" data-page="favorites"><span class="nav-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 5.2-8.8 11-8.8 11s-8.8-5.8-8.8-11a4.8 4.8 0 0 1 8.8-2.2 4.8 4.8 0 0 1 8.8 2.2Z"/></svg></span>Избранное</button><button class="nav" data-page="my-listings"><span class="nav-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="14" rx="2"/><path d="M8 7h4M8 10h4M8 13h4"/><path d="M8 20h12V8"/></svg></span>Мои объявления</button><button class="nav" data-page="chats"><span class="nav-icon-wrap"><svg class="nav-symbol" aria-hidden="true" viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.5-3A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11h8M8 14h5"/></svg><span id="chatUnreadBadge" class="ios-badge nav-badge" hidden>0</span></span>Сообщения</button><button class="nav" data-page="profile"><span class="nav-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span>Профиль</button></nav><div class="modal" id="modal"><form class="sheet" id="form"><h2 id="listingFormTitle">Новое предложение</h2><p style="color:#68756e;margin-top:-5px">Расскажи, что предлагаешь и что хочешь получить.</p><label class="field">Название<input name="title" required maxlength="80" placeholder="Например, велосипед горный"></label><label class="field">Категория<select name="category"><option>Техника</option><option>Электроника</option><option>Дом и мебель</option><option>Одежда</option><option>Обувь и аксессуары</option><option>Спорт</option><option>Авто и транспорт</option><option>Недвижимость</option><option>Земельные участки</option><option>Коммерческие помещения</option><option>Строительство и ремонт</option><option>Услуги</option><option>Детские товары</option><option>Игрушки</option><option>Книги</option><option>Хобби и творчество</option><option>Красота и здоровье</option><option>Животные</option><option>Продукты питания</option><option>Сад и огород</option><option>Компьютеры и офис</option><option>Путешествия</option><option>Благотворительность</option><option>Другие товары</option><option>Другое</option></select></label><label class="field">Подкатегория<select name="subcategory" id="listingSubcategory"><option value="">Без уточнения</option></select></label><div class="field listing-images-field" id="listingImagesField"><label for="listingImages">Фотографии товара (можно несколько)</label><input id="listingImages" name="images" type="file" accept="image/*"><small>Добавляй фотографии по одной — не больше 5 на объявление, каждое до 5 МБ. Когда лимит достигнут, выбор новых фото будет отключён.</small><div id="imagePreview" class="image-preview"></div></div><label class="field">Что хочешь взамен?<input name="want" required maxlength="120" placeholder="Например, смартфон или услуги"></label><label class="field listing-city-field">Город<input name="city" id="listingCity" type="text" required autocomplete="off" autocapitalize="words" placeholder="Начни вводить название города…" aria-autocomplete="list" aria-controls="listingCitySuggestions"><div id="listingCitySuggestions" class="listing-city-suggestions" role="listbox" hidden></div><small id="cityCatalogStatus">Загружаем каталог городов России…</small></label><input type="hidden" name="region" id="listingRegion"><label class="field">Примерная стоимость, ₽<input name="price" type="number" min="0" placeholder="Необязательно"></label><label class="field">Описание<textarea name="description" rows="3" maxlength="500" placeholder="Состояние, условия обмена…"></textarea></label><div class="actions"><button type="button" id="cancel">Отмена</button><button class="primary" id="listingSubmit" type="submit">Опубликовать объявление</button></div></form></div><div class="modal" id="cityPickerModal" aria-hidden="true"><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cityPickerTitle"><h2 id="cityPickerTitle">Выбери город</h2><p class="category">Начни вводить название города или региона.</p><label class="field">Поиск<input id="cityPickerSearch" type="search" placeholder="Например, Екатеринбург" autocomplete="off"></label><div class="field city-picker-results-field"><span class="city-picker-results-label">Город и регион</span><div id="cityPickerResults" class="city-picker-results" role="listbox" aria-label="Населённые пункты"><p class="city-picker-hint">Начни вводить название — варианты появятся здесь.</p></div></div><div class="actions"><button type="button" id="cityPickerCancel">Отмена</button><button type="button" class="primary" id="cityPickerConfirm">Выбрать город</button></div></section></div><div class="modal promotion-picker" id="promotionPickerModal" aria-hidden="true"><section class="sheet promotion-picker-sheet" role="dialog" aria-modal="true" aria-labelledby="promotionPickerTitle"><h2 id="promotionPickerTitle">К какому объявлению применить услугу?</h2><p class="picker-intro">Выбери объявление, для которого создаётся заказ на продвижение.</p><div class="promotion-list" id="promotionPickerList"></div><div class="promotion-picker-actions"><button type="button" class="promotion-picker-cancel" id="promotionPickerCancel">Отмена</button><button type="button" class="promotion-picker-confirm" id="promotionPickerConfirm" disabled>Продолжить</button></div></section></div><div class="modal" id="listingDetailModal" aria-hidden="true"><section class="sheet listing-detail-sheet" role="dialog" aria-modal="true" aria-labelledby="listingDetailTitle"><button type="button" class="listing-detail-close listing-detail-close-fixed" id="listingDetailClose" aria-label="Закрыть">×</button><div id="listingDetailContent" class="listing-detail-scroll"></div></section></div><div class="toast" id="toast"></div><script>
+const seed=[{id:1,title:"Велосипед горный",category:"Спорт",want:"Смартфон или планшет",city:"Москва",price:18000,emoji:"🚲",desc:"Хорошее состояние, готов к обмену."},{id:2,title:"Наушники беспроводные",category:"Техника",want:"Настольная игра или книги",city:"Санкт-Петербург",price:7000,emoji:"🎧",desc:"Работают отлично, есть коробка."},{id:3,title:"Помощь с дизайном",category:"Услуги",want:"Ремонт или настройка техники",city:"Казань",price:0,emoji:"🎨",desc:"Сделаю баннер, логотип или оформление."},{id:4,title:"Кофемашина",category:"Дом и мебель",want:"Электроинструмент",city:"Екатеринбург",price:12000,emoji:"☕",desc:"Исправная, обмен с доплатой обсуждается."},{id:5,title:"Детский самокат",category:"Детские товары",want:"Детские книги или конструктор",city:"Новосибирск",price:3500,emoji:"🛴",desc:"В хорошем состоянии."},{id:6,title:"Фотосессия на час",category:"Услуги",want:"Стрижка или услуги мастера",city:"Краснодар",price:5000,emoji:"📸",desc:"Портретная или семейная съёмка."},{id:7,title:"Игровая приставка",category:"Техника",want:"Ноутбук с доплатой",city:"Нижний Новгород",price:22000,emoji:"🎮",desc:"Рабочая приставка, детали обсудим."},{id:8,title:"Книжная полка",category:"Дом и мебель",want:"Комнатное растение или лампа",city:"Пермь",price:2500,emoji:"📚",desc:"Самовывоз, состояние хорошее."}];const SUPABASE_URL="https://qxsnjksepzmpsifpxyea.supabase.co",SUPABASE_KEY="sb_publishable_rYAZPOkGIrxOHX_IEupByw_PZmPhVty";const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_KEY);window.db=db;let currentUser=null,activePlanCode="free";const STORE_ITEMS="po_barteru_items_v1",STORE_FAVS="po_barteru_favs_v1";function loadJSON(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch{return fallback}}let remoteCatalogCursor=null,remoteCatalogOffset=0,hasMoreRemoteListings=false,loadingMoreRemoteListings=false,catalogRequestId=0,items=loadJSON(STORE_ITEMS,[...seed]),favorites=new Set(loadJSON(STORE_FAVS,[]).map(String)),category="Все",page="home",advancedSearchExpanded=false;const $=id=>document.getElementById(id);function persist(){try{localStorage.setItem(STORE_ITEMS,JSON.stringify(items));localStorage.setItem(STORE_FAVS,JSON.stringify([...favorites]))}catch(e){toast("Не удалось сохранить данные на устройстве")}}const cats=["Все","Техника","Электроника","Дом и мебель","Одежда","Обувь и аксессуары","Спорт","Авто и транспорт","Недвижимость","Земельные участки","Коммерческие помещения","Строительство и ремонт","Услуги","Детские товары","Игрушки","Книги","Хобби и творчество","Красота и здоровье","Животные","Продукты питания","Сад и огород","Компьютеры и офис","Путешествия","Благотворительность","Другие товары","Другое"];
 const categoryPlaceholderFiles={"Техника":"02_home_appliances.png","Электроника":"01_electronics.png","Дом и мебель":"03_furniture.png","Одежда":"04_clothing.png","Обувь и аксессуары":"05_accessories.png","Спорт":"06_sports_fitness.png","Авто и транспорт":"07_cars.png","Недвижимость":"08_apartments.png","Земельные участки":"09_houses.png","Коммерческие помещения":"10_commercial_property.png","Строительство и ремонт":"11_tools_repair.png","Услуги":"12_services_partnership.png","Детские товары":"13_baby_products.png","Игрушки":"14_toys.png","Книги":"15_books.png","Хобби и творчество":"16_art_hobbies.png","Красота и здоровье":"17_beauty_care.png","Животные":"18_pets.png","Продукты питания":"19_food.png","Сад и огород":"20_garden.png","Путешествия":"21_travel.png","Компьютеры и офис":"22_computers_office.png","Благотворительность":"23_charity.png","Другие товары":"24_other_goods.png","Другое":"25_other.png"};
 const listingSubcategories={"Техника":["Бытовая техника","Кухонная техника","Уборочная техника","Климатическая техника","Инструменты и оборудование","Прочая техника"],"Электроника":["Смартфоны и телефоны","Планшеты","Наушники и акустика","Фото- и видеотехника","Телевизоры и проекторы","Игровые устройства","Комплектующие и аксессуары"],"Дом и мебель":["Диваны и кресла","Столы и стулья","Шкафы и системы хранения","Кровати и матрасы","Посуда и кухонные принадлежности","Текстиль и декор","Освещение","Товары для дома"],"Одежда":["Женская одежда","Мужская одежда","Детская одежда","Верхняя одежда","Повседневная одежда","Деловая одежда","Одежда для особых случаев","Другая одежда"],"Обувь и аксессуары":["Кроссовки и кеды","Ботинки и сапоги","Туфли и повседневная обувь","Сумки и рюкзаки","Часы и украшения","Ремни и кошельки","Очки","Другие аксессуары"],"Спорт":["Велосипеды и самокаты","Фитнес и тренажёры","Спортивный инвентарь","Туризм и походы","Рыбалка и охота","Зимний спорт","Командные виды спорта","Спортивная одежда"],"Авто и транспорт":["Легковые автомобили","Мотоциклы и скутеры","Велотранспорт","Запчасти","Шины и диски","Автоэлектроника","Аксессуары для автомобиля","Коммерческий транспорт"],"Недвижимость":["Квартиры","Комнаты","Дома и коттеджи","Дачи","Аренда жилья","Покупка и продажа","Доли в недвижимости","Другая недвижимость"],"Земельные участки":["ИЖС","Дачные участки","Садовые участки","Сельскохозяйственная земля","Коммерческие участки","Участки с постройками","Другие участки"],"Коммерческие помещения":["Офисы","Магазины и торговые площади","Склады","Производственные помещения","Помещения общественного питания","Салоны и студии","Гаражи и боксы","Другие коммерческие объекты"],"Строительство и ремонт":["Ручной инструмент","Электроинструмент","Стройматериалы","Сантехника","Электрика","Отделочные материалы","Двери и окна","Крепёж и расходники"],"Услуги":["Ремонт и обслуживание","Строительные работы","Перевозки и доставка","IT и настройка техники","Дизайн и творчество","Фото- и видеосъёмка","Обучение и репетиторство","Красота и уход","Уборка и бытовая помощь","Деловые услуги","Другие услуги"],"Детские товары":["Коляски","Автокресла","Кроватки и мебель","Детское питание и кормление","Уход за ребёнком","Детская безопасность","Товары для прогулок","Прочие детские товары"],"Игрушки":["Конструкторы","Куклы и фигурки","Мягкие игрушки","Машинки и транспорт","Настольные игры","Развивающие игрушки","Игрушки для улицы","Другие игрушки"],"Книги":["Художественная литература","Учебники и пособия","Детские книги","Бизнес и саморазвитие","Энциклопедии и справочники","Комиксы и графические романы","Журналы","Другая литература"],"Хобби и творчество":["Рисование и живопись","Рукоделие и шитьё","Музыкальные инструменты","Коллекционирование","Моделизм","Ручная работа","Товары для творчества","Другие увлечения"],"Красота и здоровье":["Уход за кожей","Косметика и макияж","Уход за волосами","Фены и стайлеры","Маникюр и педикюр","Парфюмерия","Массажные устройства","Другие товары для ухода"],"Животные":["Товары для собак","Товары для кошек","Аквариумистика","Птицы","Грызуны","Переноски и вольеры","Корма и аксессуары","Другие товары для животных"],"Продукты питания":["Овощи и фрукты","Мясо и рыба","Молочные продукты","Выпечка и хлеб","Бакалея","Напитки","Домашние заготовки","Другие продукты"],"Сад и огород":["Садовый инструмент","Растения и рассада","Семена и луковицы","Грунт и удобрения","Полив","Техника для сада","Товары для теплиц","Другое для сада"],"Компьютеры и офис":["Компьютеры и ноутбуки","Мониторы","Принтеры и сканеры","Комплектующие","Сетевое оборудование","Офисная техника","Канцелярия","Мебель для офиса"],"Путешествия":["Туристическое снаряжение","Чемоданы и сумки","Товары для кемпинга","Аксессуары для поездок","Туристические услуги","Другое для путешествий"],"Благотворительность":["Помощь вещами","Продукты и товары первой необходимости","Помощь семьям","Помощь животным","Волонтёрские услуги","Другое"],"Другие товары":["Разные товары","Коллекционные предметы","Другое"],"Другое":["Прочее"]};
 function updateSubcategoryOptions(selectedValue=""){
@@ -3779,7 +3775,7 @@ $("homeCityFilterBtn")?.addEventListener("click",()=>{if(!selectedHomeCity){toas
 let cityPickerMatches=[],selectedCityPickerCity=null;function openCityPicker(target="home"){if(!cityCatalogReady){toast("Каталог населённых пунктов ещё загружается");return}cityPickerTarget=target;const modal=$("cityPickerModal"),search=$("cityPickerSearch"),results=$("cityPickerResults");if(!modal||!search||!results)return;selectedCityPickerCity=null;const confirmButton=$("cityPickerConfirm");if(confirmButton)confirmButton.textContent="Выбрать город";search.value="";results.innerHTML='<p class="city-picker-hint">Начни вводить название — варианты появятся здесь.</p>';const preferred=target==="listing"?$("listingCity")?.value:target==="filters"?(filterCityName||""):(selectedHomeCity?cityLabel(russianCities.find(c=>normalizeCityText(c.name)===normalizeCityText(selectedHomeCity.name)&&normalizeCityText(c.region.fullname||c.region.name)===normalizeCityText(selectedHomeCity.region))):"");if(preferred){search.value=preferred.split(" — ")[0];filterCityPicker();const exact=cityPickerMatches.find(c=>cityLabel(c)===preferred);if(exact)selectCityPickerResult(exact)}modal.classList.add("open");modal.setAttribute("aria-hidden","false");search.focus()}
 function closeCityPicker(){const modal=$("cityPickerModal");modal?.classList.remove("open");modal?.setAttribute("aria-hidden","true")}
 function filterCityPicker(){const q=normalizeCityText($("cityPickerSearch")?.value),results=$("cityPickerResults"),confirmButton=$("cityPickerConfirm");if(!results)return;selectedCityPickerCity=null;if(confirmButton)confirmButton.textContent="Выбрать город";if(q.length<2){cityPickerMatches=[];results.innerHTML='<p class="city-picker-hint">Введи минимум 2 буквы — покажу подходящие населённые пункты.</p>';return}cityPickerMatches=russianCities.filter(c=>normalizeCityText(c.name).startsWith(q)||normalizeCityText(c.name).includes(q)||normalizeCityText(c.region.fullname||c.region.name).includes(q)).sort((a,b)=>{const an=normalizeCityText(a.name),bn=normalizeCityText(b.name),ae=an===q?0:1,be=bn===q?0:1,ap=an.startsWith(q)?0:1,bp=bn.startsWith(q)?0:1;return ae-be||ap-bp||a.name.localeCompare(b.name,"ru")}).slice(0,80);const exact=cityPickerMatches.find(c=>normalizeCityText(c.name)===q);if(exact){selectedCityPickerCity=exact;if(confirmButton)confirmButton.textContent="Выбрать: "+exact.name}results.innerHTML=cityPickerMatches.length?cityPickerMatches.map((c,i)=>{const chosen=c===selectedCityPickerCity;return '<button type="button" class="city-picker-result'+(chosen?' selected':'')+'" role="option" aria-selected="'+String(chosen)+'" data-city-result="'+i+'"><span>'+esc(c.name)+'</span><small>'+esc(c.region.fullname||c.region.name||"Россия")+''+'</small></button>'}).join(""):'<p class="city-picker-hint">Ничего не найдено. Проверь написание или попробуй название региона.</p>'}function selectCityPickerResult(city){selectedCityPickerCity=city;const results=$("cityPickerResults");if(results)results.querySelectorAll("[data-city-result]").forEach(el=>{const chosen=cityPickerMatches[Number(el.dataset.cityResult)]===city;el.classList.toggle("selected",chosen);el.setAttribute("aria-selected",String(chosen))});const confirm=$("cityPickerConfirm");if(confirm)confirm.textContent="Выбрать город"}
-$("cityPickerSearch")?.addEventListener("input",filterCityPicker);$("cityPickerResults")?.addEventListener("click",e=>{const button=e.target.closest("[data-city-result]");if(button){const city=cityPickerMatches[Number(button.dataset.cityResult)];if(city)selectCityPickerResult(city)}});$("cityPickerCancel")?.addEventListener("click",closeCityPicker);$("cityPickerModal")?.addEventListener("click",e=>{if(e.target===$("cityPickerModal"))closeCityPicker()});$("cityPickerConfirm")?.addEventListener("click",()=>{const city=selectedCityPickerCity;if(!city){toast("Сначала выбери населённый пункт из подсказок");return}if(cityPickerTarget==="listing"){const input=$("listingCity");if(input){input.value=city.name;input.dataset.selectedCity=cityLabel(city)}syncListingCity();$("listingRegion").value=city.region.fullname||city.region.name}else if(cityPickerTarget==="filters"){filterCityName=city.name;filterCityRegion=city.region?.fullname||city.region?.name||"";$("advancedCity").value=filterCityName;$("filterCityLabel").textContent=filterCityName+", "+filterCityRegion}else{setHomeCity(city);if(currentUser&&db){const p=profileLocal();p.city=city.name;p.region=city.region.fullname||city.region.name;localStorage.setItem("po_barteru_profile_"+currentUser.id,JSON.stringify(p));db.from("profiles").upsert({id:currentUser.id,city:city.name},{onConflict:"id"}).then(({error})=>{if(error)console.warn("Profile city sync failed",error.message)})}}closeCityPicker();toast("Город выбран: "+city.name);render()});
+$("cityPickerSearch")?.addEventListener("input",filterCityPicker);$("cityPickerResults")?.addEventListener("click",e=>{const button=e.target.closest("[data-city-result]");if(button){const city=cityPickerMatches[Number(button.dataset.cityResult)];if(city)selectCityPickerResult(city)}});$("cityPickerCancel")?.addEventListener("click",closeCityPicker);$("cityPickerModal")?.addEventListener("click",e=>{if(e.target===$("cityPickerModal"))closeCityPicker()});$("cityPickerConfirm")?.addEventListener("click",()=>{const city=selectedCityPickerCity;if(!city){toast("Сначала выбери населённый пункт из подсказок");return}if(cityPickerTarget==="listing"){const input=$("listingCity");if(input){input.value=city.name;input.dataset.selectedCity=cityLabel(city)}syncListingCity();$("listingRegion").value=city.region.fullname||city.region.name}else if(cityPickerTarget==="filters"){filterCityName=city.name;filterCityRegion=city.region?.fullname||city.region?.name||"";$("advancedCity").value=filterCityName;$("filterCityLabel").textContent=filterCityName+", "+filterCityRegion}else{setHomeCity(city);if(currentUser&&db){const p=profileLocal();p.city=city.name;p.region=city.region.fullname||city.region.name;localStorage.setItem("po_barteru_profile_"+currentUser.id,JSON.stringify(p));db.from("profiles").upsert({id:currentUser.id,city:city.name},{onConflict:"id"}).then(({error})=>{if(error)console.warn("Profile city sync failed",error.message)})}}closeCityPicker();toast("Город выбран: "+city.name);if(cityPickerTarget==="filters")loadRemoteListings();else render()});
 $("chooseCityBtn")?.addEventListener("click",()=>openCityPicker("home"));$("profileChooseCityBtn")?.addEventListener("click",()=>openCityPicker("home"));$("profileLocateCityBtn")?.addEventListener("click",()=>locateRussianCity("home"));
 updateHomeCityLabel();loadRussianCityCatalog();
 const categoryTitleRules=[
@@ -3860,7 +3856,7 @@ async function openListingDetails(item){
   reviewList.innerHTML=rows.length?'<div class="listing-detail-label" style="margin-top:16px">Отзывы об авторе</div>'+rows.map(r=>'<article class="card" style="padding:12px;margin:8px 0"><b>'+esc((profiles||[]).find(p=>String(p.id)===String(r.reviewer_id))?.show_public_name===false?"Пользователь":(names.get(String(r.reviewer_id))||"Пользователь"))+'</b><div style="margin:4px 0;color:var(--muted)">'+("★".repeat(Number(r.rating))+"☆".repeat(5-Number(r.rating)))+' · '+new Date(r.created_at).toLocaleDateString("ru-RU")+'</div>'+(r.comment?'<p>'+esc(r.comment)+'</p>':'')+'</article>').join(""):'<p class="category">После завершённых обменов здесь появятся оценки и отзывы других пользователей.</p>';
  }
 }
-function renderFilters(){$("filters").innerHTML=cats.map(c=>'<button class="chip '+(c===category?'active':'')+'" data-cat="'+c+'">'+c+'</button>').join("");document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{category=b.dataset.cat;renderFilters();render()})}function render(){$("refreshChats").hidden=page!=="chats"||!$("chatThread").hidden;document.querySelector(".app")?.classList.toggle("show-auth",page==="profile"&&!currentUser);document.querySelector(".app")?.classList.toggle("show-my-listings",page==="my-listings");const navTabs=[...document.querySelectorAll(".bottom .nav")];const navIndex=navTabs.findIndex(n=>n.dataset.page===page);document.querySelector(".bottom")?.style.setProperty("--active-index",String(Math.max(0,navIndex)));$("myFavCount").textContent=items.filter(x=>favorites.has(String(x.id))).length;$("notificationTop").hidden=!currentUser;$("notificationsWorkspace").hidden=page!=="notifications"||!currentUser;$("homeHero").hidden=page!=="home";$("homeSearch").hidden=page!=="home";$("cityHomeBar").hidden=true;$("filters").hidden=page!=="home"&&page!=="favorites";const canUseAdvancedSearch=["pro","pro_plus","business"].includes(activePlanCode);$("advancedSearchToggle").hidden=page!=="home";$("advancedSearchPanel").hidden=page!=="home"||!advancedSearchExpanded;$("filtersBackdrop").hidden=page!=="home"||!advancedSearchExpanded;$("advancedSearchToggle").setAttribute("aria-expanded",String(advancedSearchExpanded));const activeFilterCount=(filterCityName?1:0)+(filterCityName&&filterCityOnly?1:0)+($("advancedMinPrice").value.trim()?1:0)+($("advancedMaxPrice").value.trim()?1:0)+(filterSortMode!=="recommended"?1:0);$("advancedSearchToggle").innerHTML='<span aria-hidden="true">☷</span> Фильтры <span id="activeFilterCount" class="filter-count" '+(activeFilterCount?"":"hidden")+">"+activeFilterCount+"</span>";$("filterCityLabel").textContent=filterCityName?filterCityName+(filterCityRegion?", "+filterCityRegion:""):"Любой город";$("filterCityOnly").disabled=!filterCityName;$("filterCityOnly").checked=!!filterCityName&&filterCityOnly;$("filterSort").value=filterSortMode;$("advancedMinPrice").disabled=!canUseAdvancedSearch;$("advancedMaxPrice").disabled=!canUseAdvancedSearch;$("priceFilterPlanNote").hidden=canUseAdvancedSearch;$("saveMatchingSearch").hidden=!canUseAdvancedSearch;$("saveMatchingNote").hidden=canUseAdvancedSearch;$("addTop").hidden=page!=="home";const q=$("q").value.trim().toLowerCase(),advancedMin=!["pro","pro_plus","business"].includes(activePlanCode)||$("advancedMinPrice").value===""?null:Number($("advancedMinPrice").value),advancedMax=!["pro","pro_plus","business"].includes(activePlanCode)||$("advancedMaxPrice").value===""?null:Number($("advancedMaxPrice").value);let arr=items.filter(x=>(category==="Все"||x.category===category)&&(!filterCityName||!filterCityOnly||normalizeCityText(x.city)===normalizeCityText(filterCityName))&&(!q||(x.title+" "+x.want+" "+x.city+" "+x.category).toLowerCase().includes(q))&&(advancedMin===null||Number(x.price||0)>=advancedMin)&&(advancedMax===null||Number(x.price||0)<=advancedMax));arr=[...new Map(arr.map(x=>[String(x.id),x])).values()];if(page==="favorites")arr=arr.filter(x=>favorites.has(String(x.id)));const promotionRank={boost_24h:4,vip_7d:3,highlight_7d:2};if(filterSortMode==="newest")arr.sort((a,b)=>String(b.created_at||b.createdAt||"").localeCompare(String(a.created_at||a.createdAt||""))||Number(b.id||0)-Number(a.id||0));else if(filterSortMode==="price-low")arr.sort((a,b)=>Number(a.price||0)-Number(b.price||0));else if(filterSortMode==="price-high")arr.sort((a,b)=>Number(b.price||0)-Number(a.price||0));else arr.sort((a,b)=>(promotionRank[b.promotionCode]||0)-(promotionRank[a.promotionCode]||0));if(page!=="home"&&page!=="favorites"){ $("loadMoreListings").hidden=true;$("chatWorkspace").hidden=page!=="chats"||!currentUser; $("listHeader").hidden=true;$("filters").hidden=true;$("list").hidden=true;$("empty").hidden=true;$("other").hidden=false;$("otherTitle").textContent=page==="chats"?"Сообщения":page==="notifications"?"Уведомления":page==="my-listings"?"Мои объявления":"Профиль";$("otherTitle").parentElement.hidden=page==="notifications"||page==="my-listings";$("otherEmpty").hidden=page!=="chats";$("notificationsWorkspace").hidden=page!=="notifications"||!currentUser;if(page==="notifications"&&currentUser)loadNotifications();if(page==="chats"){$("otherEmptyIcon").textContent="✉";$("otherEmptyTitle").textContent="Пока нет сообщений";$("otherEmptyText").textContent="Войди в аккаунт, чтобы видеть переписки и отправлять сообщения.";$("otherEmptyAction").textContent="Найти обмен";$("otherEmpty").hidden=!!currentUser;$("chatWorkspace").hidden=!currentUser;if(currentUser)loadChats()}$("profileDashboard").hidden=(page!=="profile"&&page!=="my-listings")||!currentUser;$("profileDashboard").classList.toggle("listings-only",page==="my-listings");$("authBox").hidden=!!currentUser||page!=="profile";$("authOut").hidden=true;$("backHome").hidden=true;$("authBox").hidden=!!currentUser||page!=="profile";if((page==="profile"||page==="my-listings")&&currentUser)loadProfileDashboard();return}else{$("listHeader").hidden=false;$("filters").hidden=page==="favorites"&&arr.length===0;$("list").hidden=false;$("other").hidden=true} $("loadMoreListings").hidden=page!=="home"||!hasMoreRemoteListings;$("loadMoreListings").disabled=loadingMoreRemoteListings;$("loadMoreListings").textContent=loadingMoreRemoteListings?"Загружаем…":"Показать ещё объявления";$("listTitle").textContent=page==="favorites"?"Избранное":"Подходящие предложения";$("count").textContent=arr.length+" предлож.";$("empty").hidden=arr.length>0;if(page==="favorites"&&arr.length===0){$("empty").className="empty empty-state favorites-empty-state";$("empty").innerHTML='<div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/></svg></div><h3>Здесь пока пусто</h3><p>Добавляй понравившиеся объявления в избранное, чтобы быстро находить их позже.</p><button type="button" class="pill" id="favoritesEmptyAction">Смотреть объявления</button>';}else{$("empty").className="empty empty-state";$("empty").innerHTML='<div class="empty-icon" aria-hidden="true">⌕</div><h3>Пока нет подходящих предложений</h3><p>Попробуй изменить поиск или сбросить фильтры — возможно, подходящие варианты найдутся.</p><button type="button" class="pill" id="emptyResetSearch">Сбросить поиск</button>';}const listingMarkup=arr.map((x,index)=>'<article class="card '+((x.promotionCodes||[]).includes("vip_7d")?"is-vip ":((x.promotionCodes||[]).includes("highlight_7d")?"is-highlighted ":""))+'"><div class="photo" data-view-detail="'+esc(String(x.id))+'" role="button" tabindex="0" aria-label="Открыть объявление: '+esc(x.title)+'">'+((x.promotionCodes||[]).includes("vip_7d")?'<span class="vip-ribbon">👑 VIP</span>':"")+((x.promotionCodes||[]).includes("highlight_7d")?'<span class="highlight-ribbon">✦ Выделение</span>':"")+(x.image_urls&&x.image_urls.length?'<img class="card-photo-img" src="'+esc(x.image_urls[0])+'" alt="Фото объявления: '+esc(x.title)+'" loading="'+(index<4?'eager':'lazy')+'" decoding="async" fetchpriority="'+(index===0?'high':'auto')+'">':categoryPlaceholder(x.category,"",x.title,x.subcategory||""))+'<button class="heart" data-heart="'+x.id+'" aria-label="'+(favorites.has(String(x.id))?"Убрать из избранного":"Добавить в избранное")+'" aria-pressed="'+(favorites.has(String(x.id))?"true":"false")+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5.2-8.8 11-8.8 11s-8.8-5.8-8.8-11a4.8 4.8 0 0 1 8.8-2.2 4.8 4.8 0 0 1 8.8 2.2Z" '+(favorites.has(String(x.id))?'fill="#e94b55" stroke="#e94b55"':'fill="none" stroke="currentColor"')+' stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="cardbody"><div class="category">'+esc(x.category)+'</div><h3 data-view-detail="'+esc(String(x.id))+'">'+esc(x.title)+'</h3><div class="want"><span class="want-label">ХОЧУ ВЗАМЕН</span><span class="want-value">↔ '+esc(x.want)+'</span></div><div class="card-meta"><div class="city">⌖ '+esc(x.city||"Город не указан")+'</div>'+(x.price?'<div class="price"><span>Оценка</span><b>~'+Number(x.price).toLocaleString("ru-RU")+' ₽</b></div>':'')+'</div><button type="button" class="offer" data-offer="'+x.id+'" aria-label="Предложить обмен: '+esc(x.title)+'">Предложить обмен</button></div></article>').join("");const listRenderKey=JSON.stringify(arr.map(x=>[String(x.id),x.title,x.category,x.want,x.city,x.price,x.image_urls||[],x.promotionCodes||[],x.promotionCode||""]));const listElement=$("list");if(listElement.dataset.renderKey!==listRenderKey){listElement.innerHTML=listingMarkup;listElement.dataset.renderKey=listRenderKey}document.querySelectorAll("[data-heart]").forEach(button=>{const active=favorites.has(String(button.dataset.heart));button.setAttribute("aria-pressed",String(active));button.setAttribute("aria-label",active?"Убрать из избранного":"Добавить в избранное");const path=button.querySelector("svg path");if(path){path.setAttribute("fill",active?"#e94b55":"none");path.setAttribute("stroke",active?"#e94b55":"currentColor")}});document.querySelectorAll("#list .card-photo-img").forEach(img=>{img.decoding="async";img.addEventListener("error",()=>{const card=img.closest(".card"),photo=img.closest(".photo");if(!card||!photo)return;const category=card.querySelector(".category")?.textContent||"";const title=card.querySelector("h3")?.textContent||"";img.remove();photo.insertAdjacentHTML("afterbegin",categoryPlaceholder(category,"",title,""));},{once:true})});document.querySelectorAll("[data-view-detail]").forEach(el=>{el.onclick=e=>{if(e.target.closest("[data-heart]"))return;const item=items.find(x=>String(x.id)===String(el.dataset.viewDetail));if(item)openListingDetails(item)};el.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&el.dataset.viewDetail){e.preventDefault();const item=items.find(x=>String(x.id)===String(el.dataset.viewDetail));if(item)openListingDetails(item)}}});document.querySelectorAll("[data-heart]").forEach(b=>b.onclick=async()=>{const id=String(b.dataset.heart);const wasFavorite=favorites.has(id);wasFavorite?favorites.delete(id):favorites.add(id);persist();render();if(currentUser)await persistFavoriteForAccount(id,!wasFavorite);else if(items.find(x=>String(x.id)===id)?.remote)toast("Войди в аккаунт, чтобы синхронизировать избранное между устройствами.")});document.querySelectorAll("[data-offer]").forEach(b=>b.onclick=async()=>{const item=items.find(x=>String(x.id)===b.dataset.offer);if(!item)return;if(!item.remote){toast("Это демонстрационное объявление. Предложения доступны для реальных объявлений.");return}if(!currentUser){toast("Сначала войди в профиле, чтобы предложить обмен.");setPage("profile");return}if(item.user_id===currentUser.id){toast("Нельзя предложить обмен самому себе.");return}const {data:myListings,error:myListingsError}=await db.from("listings").select("id,title,status,created_at").eq("user_id",currentUser.id).eq("status","active").order("created_at",{ascending:false});if(myListingsError){toast("Не удалось загрузить твои объявления. Попробуй ещё раз.");return}let offeredListing=null,offeredDescription="";if(myListings?.length){const choices=myListings.map((x,i)=>(i+1)+". "+x.title).join("\n");const rawChoice=await appPromptDialog({title:"Что предлагаешь взамен?",message:"Выбери номер своего объявления из списка или введи 0, чтобы описать предмет вручную.\n\n"+choices,placeholder:"Номер объявления или 0",maxLength:12});if(rawChoice===null)return;const choiceNumber=Number(rawChoice.trim());if(!Number.isInteger(choiceNumber)||choiceNumber<0||choiceNumber>myListings.length){toast("Выбери номер объявления из списка или 0.");return}if(choiceNumber===0){offeredDescription=(await appPromptDialog({title:"Опиши предмет для обмена",message:"Укажи, что предлагаешь взамен.",placeholder:"Например, мопед, марка, модель и состояние",multiline:true,maxLength:500}))?.trim()||"";}else{offeredListing=myListings[choiceNumber-1];if(!offeredListing||offeredListing.id===item.id){toast("Нельзя предлагать одно и то же объявление с обеих сторон.");return}}}else{offeredDescription=(await appPromptDialog({title:"Что предлагаешь взамен?",message:"У тебя пока нет активных объявлений. Опиши предмет, который готов обменять.",placeholder:"Марка, модель, состояние и другие детали",multiline:true,maxLength:500}))?.trim()||"";}if(!offeredListing&&!offeredDescription){toast("Укажи предмет, который предлагаешь взамен.");return}if(offeredDescription.length>500){toast("Описание предмета должно быть не длиннее 500 символов.");return}const message=await appPromptDialog({title:"Сообщение владельцу",message:"Добавь пояснение к предложению, если нужно.",placeholder:"Напиши сообщение (необязательно)",multiline:true,maxLength:1000,optional:true});if(message===null)return;let dealType="barter",surchargeAmount=0,surchargePayer="none";let dealTerms="Тип сделки: чистый бартер без доплаты.";const dealChoice=await appChoiceDialog({title:"Условия обмена",message:"Выбери, как будет проходить обмен.",options:[{value:"barter",label:"Чистый бартер"},{value:"surcharge",label:"Обмен с доплатой"}],defaultValue:"barter",actionLabel:"Продолжить"});if(dealChoice===null)return;if(dealChoice==="surcharge"){const rawAmount=await appPromptDialog({title:"Сумма доплаты",message:"Укажи сумму в рублях.",placeholder:"Например, 15000",maxLength:14});if(rawAmount===null)return;const amount=Number(rawAmount.replace(/[\s\u00a0]/g,"").replace(",","."));if(!Number.isFinite(amount)||amount<=0||amount>100000000){toast("Укажи корректную сумму доплаты.");return}const payerValue=await appChoiceDialog({title:"Кто доплачивает?",message:"Выбери участника, который вносит доплату.",options:[{value:"sender",label:"Я доплачиваю"},{value:"owner",label:"Владелец объявления доплачивает"}],defaultValue:"sender",actionLabel:"Выбрать"});if(payerValue===null)return;const payerChoice=payerValue==="sender";dealType="surcharge";surchargeAmount=amount;surchargePayer=payerChoice?"sender":"owner";dealTerms="Тип сделки: обмен с доплатой. Сумма: "+amount.toLocaleString("ru-RU")+" ₽. Доплачивает: "+(payerChoice?"отправитель предложения":"владелец объявления")+". Оплата проводится напрямую между участниками; платформа деньги не принимает.";}const offeredTitle=offeredListing?.title||offeredDescription;const fullMessage=(message.trim()?message.trim()+"\n\n":"")+"Предлагаю обмен: отдаю «"+offeredTitle+"» и получаю «"+item.title+"».\n"+(!offeredListing?"Предмет предложен текстом, без отдельного объявления.\n":"")+dealTerms;const payload={listing_id:item.id,sender_id:currentUser.id,message:fullMessage,deal_type:dealType,surcharge_amount:surchargeAmount,surcharge_payer:surchargePayer,terms_version:1,sender_confirmed_terms:true,owner_confirmed_terms:false};if(offeredListing)payload.offered_listing_id=offeredListing.id;const {data:proposal,error}=await db.from("exchange_proposals").insert(payload).select("id").single();if(error){toast("Не удалось отправить предложение: "+error.message);$("backendNote").textContent=error.message;return}toast("Предложение отправлено: "+offeredTitle+" → "+item.title+".");await refreshNotificationCount();})}$("otherEmptyAction").onclick=()=>setPage("home");
+function renderFilters(){$("filters").innerHTML=cats.map(c=>'<button class="chip '+(c===category?'active':'')+'" data-cat="'+c+'">'+c+'</button>').join("");document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{category=b.dataset.cat;renderFilters();loadRemoteListings()})}function render(){$("refreshChats").hidden=page!=="chats"||!$("chatThread").hidden;document.querySelector(".app")?.classList.toggle("show-auth",page==="profile"&&!currentUser);document.querySelector(".app")?.classList.toggle("show-my-listings",page==="my-listings");const navTabs=[...document.querySelectorAll(".bottom .nav")];const navIndex=navTabs.findIndex(n=>n.dataset.page===page);document.querySelector(".bottom")?.style.setProperty("--active-index",String(Math.max(0,navIndex)));$("myFavCount").textContent=items.filter(x=>favorites.has(String(x.id))).length;$("notificationTop").hidden=!currentUser;$("notificationsWorkspace").hidden=page!=="notifications"||!currentUser;$("homeHero").hidden=page!=="home";$("homeSearch").hidden=page!=="home";$("cityHomeBar").hidden=true;$("filters").hidden=page!=="home"&&page!=="favorites";const canUseAdvancedSearch=["pro","pro_plus","business"].includes(activePlanCode);$("advancedSearchToggle").hidden=page!=="home";$("advancedSearchPanel").hidden=page!=="home"||!advancedSearchExpanded;$("filtersBackdrop").hidden=page!=="home"||!advancedSearchExpanded;$("advancedSearchToggle").setAttribute("aria-expanded",String(advancedSearchExpanded));const activeFilterCount=(filterCityName?1:0)+(filterCityName&&filterCityOnly?1:0)+($("advancedMinPrice").value.trim()?1:0)+($("advancedMaxPrice").value.trim()?1:0)+(filterSortMode!=="recommended"?1:0);$("advancedSearchToggle").innerHTML='<span aria-hidden="true">☷</span> Фильтры <span id="activeFilterCount" class="filter-count" '+(activeFilterCount?"":"hidden")+">"+activeFilterCount+"</span>";$("filterCityLabel").textContent=filterCityName?filterCityName+(filterCityRegion?", "+filterCityRegion:""):"Любой город";$("filterCityOnly").disabled=!filterCityName;$("filterCityOnly").checked=!!filterCityName&&filterCityOnly;$("filterSort").value=filterSortMode;$("advancedMinPrice").disabled=!canUseAdvancedSearch;$("advancedMaxPrice").disabled=!canUseAdvancedSearch;$("priceFilterPlanNote").hidden=canUseAdvancedSearch;$("saveMatchingSearch").hidden=!canUseAdvancedSearch;$("saveMatchingNote").hidden=canUseAdvancedSearch;$("addTop").hidden=page!=="home";const q=$("q").value.trim().toLocaleLowerCase("ru-RU"),advancedMin=!["pro","pro_plus","business"].includes(activePlanCode)||$("advancedMinPrice").value===""?null:Number($("advancedMinPrice").value),advancedMax=!["pro","pro_plus","business"].includes(activePlanCode)||$("advancedMaxPrice").value===""?null:Number($("advancedMaxPrice").value);let arr=items.filter(x=>(category==="Все"||x.category===category)&&(!filterCityName||!filterCityOnly||normalizeCityText(x.city)===normalizeCityText(filterCityName))&&(!q||[x.title,x.desc,x.want,x.city,x.region,x.category,x.subcategory].some(value=>String(value||"").toLocaleLowerCase("ru-RU").includes(q)))&&(advancedMin===null||Number(x.price||0)>=advancedMin)&&(advancedMax===null||Number(x.price||0)<=advancedMax));arr=[...new Map(arr.map(x=>[String(x.id),x])).values()];if(page==="favorites")arr=arr.filter(x=>favorites.has(String(x.id)));const promotionRank={boost_24h:4,vip_7d:3,highlight_7d:2};const compareNewest=(a,b)=>String(b.created_at||b.createdAt||"").localeCompare(String(a.created_at||a.createdAt||""))||String(b.id??"").localeCompare(String(a.id??""));const comparePrice=(a,b,direction)=>{const av=a.price==null?null:Number(a.price),bv=b.price==null?null:Number(b.price);if(av===null&&bv!==null)return 1;if(bv===null&&av!==null)return -1;if(av!==null&&bv!==null&&av!==bv)return direction*(av-bv);return compareNewest(a,b)};if(filterSortMode==="newest")arr.sort(compareNewest);else if(filterSortMode==="price-low")arr.sort((a,b)=>comparePrice(a,b,1));else if(filterSortMode==="price-high")arr.sort((a,b)=>comparePrice(a,b,-1));else arr.sort((a,b)=>(promotionRank[b.promotionCode]||0)-(promotionRank[a.promotionCode]||0)||compareNewest(a,b));if(page!=="home"&&page!=="favorites"){ $("loadMoreListings").hidden=true;$("chatWorkspace").hidden=page!=="chats"||!currentUser; $("listHeader").hidden=true;$("filters").hidden=true;$("list").hidden=true;$("empty").hidden=true;$("other").hidden=false;$("otherTitle").textContent=page==="chats"?"Сообщения":page==="notifications"?"Уведомления":page==="my-listings"?"Мои объявления":"Профиль";$("otherTitle").parentElement.hidden=page==="notifications"||page==="my-listings";$("otherEmpty").hidden=page!=="chats";$("notificationsWorkspace").hidden=page!=="notifications"||!currentUser;if(page==="notifications"&&currentUser)loadNotifications();if(page==="chats"){$("otherEmptyIcon").textContent="✉";$("otherEmptyTitle").textContent="Пока нет сообщений";$("otherEmptyText").textContent="Войди в аккаунт, чтобы видеть переписки и отправлять сообщения.";$("otherEmptyAction").textContent="Найти обмен";$("otherEmpty").hidden=!!currentUser;$("chatWorkspace").hidden=!currentUser;if(currentUser)loadChats()}$("profileDashboard").hidden=(page!=="profile"&&page!=="my-listings")||!currentUser;$("profileDashboard").classList.toggle("listings-only",page==="my-listings");$("authBox").hidden=!!currentUser||page!=="profile";$("authOut").hidden=true;$("backHome").hidden=true;$("authBox").hidden=!!currentUser||page!=="profile";if((page==="profile"||page==="my-listings")&&currentUser)loadProfileDashboard();return}else{$("listHeader").hidden=false;$("filters").hidden=page==="favorites"&&arr.length===0;$("list").hidden=false;$("other").hidden=true} $("loadMoreListings").hidden=page!=="home"||!hasMoreRemoteListings;$("loadMoreListings").disabled=loadingMoreRemoteListings;$("loadMoreListings").textContent=loadingMoreRemoteListings?"Загружаем…":"Показать ещё объявления";$("listTitle").textContent=page==="favorites"?"Избранное":"Подходящие предложения";$("count").textContent=arr.length+" предлож.";$("empty").hidden=arr.length>0;if(page==="favorites"&&arr.length===0){$("empty").className="empty empty-state favorites-empty-state";$("empty").innerHTML='<div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/></svg></div><h3>Здесь пока пусто</h3><p>Добавляй понравившиеся объявления в избранное, чтобы быстро находить их позже.</p><button type="button" class="pill" id="favoritesEmptyAction">Смотреть объявления</button>';}else{$("empty").className="empty empty-state";$("empty").innerHTML='<div class="empty-icon" aria-hidden="true">⌕</div><h3>Пока нет подходящих предложений</h3><p>Попробуй изменить поиск или сбросить фильтры — возможно, подходящие варианты найдутся.</p><button type="button" class="pill" id="emptyResetSearch">Сбросить поиск</button>';}const listingMarkup=arr.map((x,index)=>'<article class="card '+((x.promotionCodes||[]).includes("vip_7d")?"is-vip ":((x.promotionCodes||[]).includes("highlight_7d")?"is-highlighted ":""))+'"><div class="photo" data-view-detail="'+esc(String(x.id))+'" role="button" tabindex="0" aria-label="Открыть объявление: '+esc(x.title)+'">'+((x.promotionCodes||[]).includes("vip_7d")?'<span class="vip-ribbon">👑 VIP</span>':"")+((x.promotionCodes||[]).includes("highlight_7d")?'<span class="highlight-ribbon">✦ Выделение</span>':"")+(x.image_urls&&x.image_urls.length?'<img class="card-photo-img" src="'+esc(x.image_urls[0])+'" alt="Фото объявления: '+esc(x.title)+'" loading="'+(index<4?'eager':'lazy')+'" decoding="async" fetchpriority="'+(index===0?'high':'auto')+'">':categoryPlaceholder(x.category,"",x.title,x.subcategory||""))+'<button class="heart" data-heart="'+x.id+'" aria-label="'+(favorites.has(String(x.id))?"Убрать из избранного":"Добавить в избранное")+'" aria-pressed="'+(favorites.has(String(x.id))?"true":"false")+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5.2-8.8 11-8.8 11s-8.8-5.8-8.8-11a4.8 4.8 0 0 1 8.8-2.2 4.8 4.8 0 0 1 8.8 2.2Z" '+(favorites.has(String(x.id))?'fill="#e94b55" stroke="#e94b55"':'fill="none" stroke="currentColor"')+' stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><div class="cardbody"><div class="category">'+esc(x.category)+'</div><h3 data-view-detail="'+esc(String(x.id))+'">'+esc(x.title)+'</h3><div class="want"><span class="want-label">ХОЧУ ВЗАМЕН</span><span class="want-value">↔ '+esc(x.want)+'</span></div><div class="card-meta"><div class="city">⌖ '+esc(x.city||"Город не указан")+'</div>'+(x.price?'<div class="price"><span>Оценка</span><b>~'+Number(x.price).toLocaleString("ru-RU")+' ₽</b></div>':'')+'</div><button type="button" class="offer" data-offer="'+x.id+'" aria-label="Предложить обмен: '+esc(x.title)+'">Предложить обмен</button></div></article>').join("");const listRenderKey=JSON.stringify(arr.map(x=>[String(x.id),x.title,x.category,x.want,x.city,x.price,x.image_urls||[],x.promotionCodes||[],x.promotionCode||""]));const listElement=$("list");if(listElement.dataset.renderKey!==listRenderKey){listElement.innerHTML=listingMarkup;listElement.dataset.renderKey=listRenderKey}document.querySelectorAll("[data-heart]").forEach(button=>{const active=favorites.has(String(button.dataset.heart));button.setAttribute("aria-pressed",String(active));button.setAttribute("aria-label",active?"Убрать из избранного":"Добавить в избранное");const path=button.querySelector("svg path");if(path){path.setAttribute("fill",active?"#e94b55":"none");path.setAttribute("stroke",active?"#e94b55":"currentColor")}});document.querySelectorAll("#list .card-photo-img").forEach(img=>{img.decoding="async";img.addEventListener("error",()=>{const card=img.closest(".card"),photo=img.closest(".photo");if(!card||!photo)return;const category=card.querySelector(".category")?.textContent||"";const title=card.querySelector("h3")?.textContent||"";img.remove();photo.insertAdjacentHTML("afterbegin",categoryPlaceholder(category,"",title,""));},{once:true})});document.querySelectorAll("[data-view-detail]").forEach(el=>{el.onclick=e=>{if(e.target.closest("[data-heart]"))return;const item=items.find(x=>String(x.id)===String(el.dataset.viewDetail));if(item)openListingDetails(item)};el.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&el.dataset.viewDetail){e.preventDefault();const item=items.find(x=>String(x.id)===String(el.dataset.viewDetail));if(item)openListingDetails(item)}}});document.querySelectorAll("[data-heart]").forEach(b=>b.onclick=async()=>{const id=String(b.dataset.heart);const wasFavorite=favorites.has(id);wasFavorite?favorites.delete(id):favorites.add(id);persist();render();if(currentUser)await persistFavoriteForAccount(id,!wasFavorite);else if(items.find(x=>String(x.id)===id)?.remote)toast("Войди в аккаунт, чтобы синхронизировать избранное между устройствами.")});document.querySelectorAll("[data-offer]").forEach(b=>b.onclick=async()=>{const item=items.find(x=>String(x.id)===b.dataset.offer);if(!item)return;if(!item.remote){toast("Это демонстрационное объявление. Предложения доступны для реальных объявлений.");return}if(!currentUser){toast("Сначала войди в профиле, чтобы предложить обмен.");setPage("profile");return}if(item.user_id===currentUser.id){toast("Нельзя предложить обмен самому себе.");return}const {data:myListings,error:myListingsError}=await db.from("listings").select("id,title,status,created_at").eq("user_id",currentUser.id).eq("status","active").order("created_at",{ascending:false});if(myListingsError){toast("Не удалось загрузить твои объявления. Попробуй ещё раз.");return}let offeredListing=null,offeredDescription="";if(myListings?.length){const choices=myListings.map((x,i)=>(i+1)+". "+x.title).join("\n");const rawChoice=await appPromptDialog({title:"Что предлагаешь взамен?",message:"Выбери номер своего объявления из списка или введи 0, чтобы описать предмет вручную.\n\n"+choices,placeholder:"Номер объявления или 0",maxLength:12});if(rawChoice===null)return;const choiceNumber=Number(rawChoice.trim());if(!Number.isInteger(choiceNumber)||choiceNumber<0||choiceNumber>myListings.length){toast("Выбери номер объявления из списка или 0.");return}if(choiceNumber===0){offeredDescription=(await appPromptDialog({title:"Опиши предмет для обмена",message:"Укажи, что предлагаешь взамен.",placeholder:"Например, мопед, марка, модель и состояние",multiline:true,maxLength:500}))?.trim()||"";}else{offeredListing=myListings[choiceNumber-1];if(!offeredListing||offeredListing.id===item.id){toast("Нельзя предлагать одно и то же объявление с обеих сторон.");return}}}else{offeredDescription=(await appPromptDialog({title:"Что предлагаешь взамен?",message:"У тебя пока нет активных объявлений. Опиши предмет, который готов обменять.",placeholder:"Марка, модель, состояние и другие детали",multiline:true,maxLength:500}))?.trim()||"";}if(!offeredListing&&!offeredDescription){toast("Укажи предмет, который предлагаешь взамен.");return}if(offeredDescription.length>500){toast("Описание предмета должно быть не длиннее 500 символов.");return}const message=await appPromptDialog({title:"Сообщение владельцу",message:"Добавь пояснение к предложению, если нужно.",placeholder:"Напиши сообщение (необязательно)",multiline:true,maxLength:1000,optional:true});if(message===null)return;let dealType="barter",surchargeAmount=0,surchargePayer="none";let dealTerms="Тип сделки: чистый бартер без доплаты.";const dealChoice=await appChoiceDialog({title:"Условия обмена",message:"Выбери, как будет проходить обмен.",options:[{value:"barter",label:"Чистый бартер"},{value:"surcharge",label:"Обмен с доплатой"}],defaultValue:"barter",actionLabel:"Продолжить"});if(dealChoice===null)return;if(dealChoice==="surcharge"){const rawAmount=await appPromptDialog({title:"Сумма доплаты",message:"Укажи сумму в рублях.",placeholder:"Например, 15000",maxLength:14});if(rawAmount===null)return;const amount=Number(rawAmount.replace(/[\s\u00a0]/g,"").replace(",","."));if(!Number.isFinite(amount)||amount<=0||amount>100000000){toast("Укажи корректную сумму доплаты.");return}const payerValue=await appChoiceDialog({title:"Кто доплачивает?",message:"Выбери участника, который вносит доплату.",options:[{value:"sender",label:"Я доплачиваю"},{value:"owner",label:"Владелец объявления доплачивает"}],defaultValue:"sender",actionLabel:"Выбрать"});if(payerValue===null)return;const payerChoice=payerValue==="sender";dealType="surcharge";surchargeAmount=amount;surchargePayer=payerChoice?"sender":"owner";dealTerms="Тип сделки: обмен с доплатой. Сумма: "+amount.toLocaleString("ru-RU")+" ₽. Доплачивает: "+(payerChoice?"отправитель предложения":"владелец объявления")+". Оплата проводится напрямую между участниками; платформа деньги не принимает.";}const offeredTitle=offeredListing?.title||offeredDescription;const fullMessage=(message.trim()?message.trim()+"\n\n":"")+"Предлагаю обмен: отдаю «"+offeredTitle+"» и получаю «"+item.title+"».\n"+(!offeredListing?"Предмет предложен текстом, без отдельного объявления.\n":"")+dealTerms;const payload={listing_id:item.id,sender_id:currentUser.id,message:fullMessage,deal_type:dealType,surcharge_amount:surchargeAmount,surcharge_payer:surchargePayer,terms_version:1,sender_confirmed_terms:true,owner_confirmed_terms:false};if(offeredListing)payload.offered_listing_id=offeredListing.id;const {data:proposal,error}=await db.from("exchange_proposals").insert(payload).select("id").single();if(error){toast("Не удалось отправить предложение: "+error.message);$("backendNote").textContent=error.message;return}toast("Предложение отправлено: "+offeredTitle+" → "+item.title+".");await refreshNotificationCount();})}$("otherEmptyAction").onclick=()=>setPage("home");
 $("markAllNotificationsRead")?.addEventListener("click",async()=>{if(!db||!currentUser)return;const btn=$("markAllNotificationsRead");btn.disabled=true;const {data,error}=await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).is("read_at",null).select("id");btn.disabled=false;if(error){toast("Не удалось отметить уведомления прочитанными.");return}await refreshNotificationCount();await loadNotifications();toast("Все уведомления отмечены прочитанными"+(data?.length?" ("+data.length+")":""))});
 function formatNotificationTime(value){const date=new Date(value);if(!Number.isFinite(date.getTime()))return "";const diff=Math.max(0,Date.now()-date.getTime());if(diff<60000)return "Только что";if(diff<3600000)return Math.floor(diff/60000)+" мин назад";if(diff<86400000)return Math.floor(diff/3600000)+" ч назад";if(diff<604800000)return Math.floor(diff/86400000)+" дн назад";return date.toLocaleDateString("ru-RU",{day:"numeric",month:"short",...(date.getFullYear()!==new Date().getFullYear()?{year:"numeric"}:{})})+" · "+date.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})}
 function notificationEmptyStateHTML(){return '<div class="notification-empty-state"><div class="notification-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Пока тихо</h3><p>Здесь появятся предложения обмена, сообщения и отзывы.</p></div>'}
@@ -3895,31 +3891,38 @@ function renderImagePreview(){
   else{selectedNewImageFiles.splice(index,1);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files}
   updatePhotoPickerState();renderImagePreview();
  }));
-}["addTop","heroAdd"].forEach(id=>{const button=$(id);if(button){button.type="button";button.addEventListener("click",event=>{event.preventDefault();openForm()})}});$("cancel").onclick=closeForm;$("modal").onclick=e=>{if(e.target===$("modal"))closeForm()};$("form").onsubmit=async e=>{e.preventDefault();const submitButton=$("listingSubmit");if(submitButton.disabled)return;submitButton.disabled=true;const originalButtonText=submitButton.textContent;submitButton.textContent="Сохраняем…";try{const f=new FormData(e.target),categoryValue=String(f.get("category")||"Другое"),files=categoryValue==="Услуги"?[]:Array.from($("listingImages").files||[]);if(files.length>5||editingImageUrls.length+files.length>5){toast("В объявлении может быть не больше 5 фотографий. Удали лишние или выбери меньше новых.");return}if(files.some(file=>!file.type.startsWith("image/"))){toast("Выбери именно фотографии в формате изображения");return}if(files.some(file=>file.size>5*1024*1024)){toast("Каждая фотография должна быть не больше 5 МБ. Уменьши размер фото и попробуй снова.");return}const newItem={id:editingListingId||Date.now(),title:capitalizeInitial(f.get("title")),category:categoryValue,subcategory:String(f.get("subcategory")||""),want:capitalizeInitial(f.get("want")),city:(cityByLabel(f.get("city"))?.name||String(f.get("city")||"").trim()),region:(cityByLabel(f.get("city"))?.region?.fullname||cityByLabel(f.get("city"))?.region?.name||""),price:Number(f.get("price"))||0,emoji:"🔄",desc:f.get("description"),image_urls:editingImageUrls.slice()};if(currentUser&&db&&files.length){const urls=[];for(let i=0;i<files.length;i++){const file=files[i],ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("listing-images").upload(path,file,{contentType:file.type,upsert:false});if(error){toast("Не удалось загрузить фото: "+error.message);return}urls.push(db.storage.from("listing-images").getPublicUrl(path).data.publicUrl)}newItem.image_urls=editingListingId?editingImageUrls.concat(urls).slice(-5):urls}else if(files.length){toast("Чтобы фотографии были видны всем, сначала войди в профиль.");return}if(editingListingId){if(!currentUser||!db){toast("Войди в аккаунт, чтобы редактировать объявление");return}const {data:updatedListing,error}=await db.from("listings").update({title:newItem.title,description:newItem.desc||"",category:newItem.category,subcategory:newItem.subcategory||null,city:newItem.city,region:newItem.region||null,want:newItem.want,estimated_value:newItem.price||null,image_urls:newItem.image_urls,status:editingListingStatus}).eq("id",editingListingId).eq("user_id",currentUser.id).select("id").maybeSingle();if(error){toast("Не удалось сохранить изменения: "+error.message);$("backendNote").textContent=error.message;return}if(!updatedListing){toast("Объявление не найдено или у вас нет прав на изменение.");return}items=items.map(x=>String(x.id)===String(editingListingId)?{...x,...newItem,remote:true}:x);persist();editingListingId=null;editingImageUrls=[];closeForm();await loadRemoteListings();profileBusy=false;await loadProfileDashboard();setPage("my-listings");toast("Изменения сохранены")}else{if(currentUser){const saved=await saveListing(newItem);if(!saved)return;closeForm()}else{items.unshift(newItem);persist();closeForm();toast("Сохранено на устройстве. Войди в профиле для публикации для всех.")};page="home";category="Все";document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page==="home"));renderFilters();render();if(currentUser)toast("Объявление опубликовано для всех");else toast("Объявление добавлено")}}catch(err){console.error("Listing save failed",err);toast("Не удалось сохранить: "+(err?.message||"неизвестная ошибка"));}finally{submitButton.disabled=false;submitButton.textContent=originalButtonText}};function updateImageField(){const isService=$("form").elements.category.value==="Услуги";$("listingImagesField").hidden=isService;if(isService){selectedNewImageFiles=[];$("listingImages").value="";$("imagePreview").innerHTML="";updatePhotoPickerState()}}$("form").addEventListener("change",event=>{if(event.target?.name==="category"){updateSubcategoryOptions();updateImageField()}});$("form").elements.category.addEventListener("input",()=>{updateSubcategoryOptions();updateImageField()});$("listingImages").addEventListener("click",event=>{if(editingImageUrls.length+selectedNewImageFiles.length>=5){event.preventDefault();toast("Уже добавлено 5 фотографий. Удали одну, чтобы выбрать другую.")}});$("listingImages").addEventListener("change",()=>{const chosen=Array.from($("listingImages").files||[])[0];if(!chosen){renderImagePreview();return}if(editingImageUrls.length+selectedNewImageFiles.length>=5){toast("Можно добавить не больше 5 фотографий");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(!chosen.type.startsWith("image/")){toast("Выбери файл изображения");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(chosen.size>5*1024*1024){toast("Каждая фотография должна быть не больше 5 МБ");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}selectedNewImageFiles.push(chosen);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview()});let searchRenderTimer=null;const runSearch=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=setTimeout(()=>{searchRenderTimer=null;render()},140)};$("searchBtn").onclick=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()};$("q").oninput=runSearch;$("q").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()}};$("advancedCity").oninput=render;$("advancedMinPrice").oninput=render;$("advancedMaxPrice").oninput=render;$("resetAdvancedSearch").onclick=()=>{filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("filterCityOnly").checked=false;$("advancedCity").value="";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";render()};$("saveMatchingSearch").onclick=async()=>{if(!currentUser||!db){toast("Войди в аккаунт, чтобы сохранять поиск.");return}if(!["pro","pro_plus","business"].includes(activePlanCode)){toast("Сохранённые поиски доступны на тарифе PRO и выше.");return}const queryText=$("q").value.trim(),city=$("advancedCity").value.trim(),minRaw=$("advancedMinPrice").value,maxRaw=$("advancedMaxPrice").value,min=minRaw===""?null:Number(minRaw),max=maxRaw===""?null:Number(maxRaw);if((min!==null&&min<0)||(max!==null&&max<0)||(min!==null&&max!==null&&min>max)){toast("Проверь диапазон цены.");return}const {error}=await db.from("saved_searches").insert({user_id:currentUser.id,name:[queryText||"Все предложения",category==="Все"?"Все категории":category,city||"Все города"].join(" · "),query_text:queryText||null,category:category==="Все"?null:category,city:city||null,min_price:min,max_price:max,is_active:true});if(error){toast("Не удалось сохранить поиск: "+error.message);return}toast("Поиск сохранён. Новые совпадения появятся в уведомлениях.");};$("backHome").onclick=()=>setPage("home");function setPage(p){document.querySelectorAll("#profileDashboard.listings-only #myListings .my-actions-menu[open]").forEach(menu=>menu.removeAttribute("open"));if($("modal")?.classList.contains("open"))closeForm();const profileDashboard=$("profileDashboard");if(profileDashboard&&p!=="profile"){profileDashboard.classList.remove("profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history")}page=p;const tabs=navTabs();const selected=tabs.findIndex(n=>n.dataset.page===p);const bar=document.querySelector(".bottom");tabs.forEach((n,i)=>{n.classList.toggle("active",n.dataset.page===p);const proximity=selected<0?0:Math.max(0,1-Math.abs(i-selected));n.style.setProperty("--lens-scale",String(1+proximity*.16));n.style.setProperty("--lens-y",String(proximity*-1.5)+"px")});if(bar&&selected>=0){bar.style.setProperty("--active-index",String(selected));bar.style.setProperty("--drag-index",String(selected));}if(p==="chats"||p==="notifications")refreshNotificationCount();render()}const bottomNav=document.querySelector(".bottom");
+}["addTop","heroAdd"].forEach(id=>{const button=$(id);if(button){button.type="button";button.addEventListener("click",event=>{event.preventDefault();openForm()})}});$("cancel").onclick=closeForm;$("modal").onclick=e=>{if(e.target===$("modal"))closeForm()};$("form").onsubmit=async e=>{e.preventDefault();const submitButton=$("listingSubmit");if(submitButton.disabled)return;submitButton.disabled=true;const originalButtonText=submitButton.textContent;submitButton.textContent="Сохраняем…";try{const f=new FormData(e.target),categoryValue=String(f.get("category")||"Другое"),files=categoryValue==="Услуги"?[]:Array.from($("listingImages").files||[]);if(files.length>5||editingImageUrls.length+files.length>5){toast("В объявлении может быть не больше 5 фотографий. Удали лишние или выбери меньше новых.");return}if(files.some(file=>!file.type.startsWith("image/"))){toast("Выбери именно фотографии в формате изображения");return}if(files.some(file=>file.size>5*1024*1024)){toast("Каждая фотография должна быть не больше 5 МБ. Уменьши размер фото и попробуй снова.");return}const newItem={id:editingListingId||Date.now(),title:capitalizeInitial(f.get("title")),category:categoryValue,subcategory:String(f.get("subcategory")||""),want:capitalizeInitial(f.get("want")),city:(cityByLabel(f.get("city"))?.name||String(f.get("city")||"").trim()),region:(cityByLabel(f.get("city"))?.region?.fullname||cityByLabel(f.get("city"))?.region?.name||""),price:Number(f.get("price"))||0,emoji:"🔄",desc:f.get("description"),image_urls:editingImageUrls.slice()};if(currentUser&&db&&files.length){const urls=[];for(let i=0;i<files.length;i++){const file=files[i],ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("listing-images").upload(path,file,{contentType:file.type,upsert:false});if(error){toast("Не удалось загрузить фото: "+error.message);return}urls.push(db.storage.from("listing-images").getPublicUrl(path).data.publicUrl)}newItem.image_urls=editingListingId?editingImageUrls.concat(urls).slice(-5):urls}else if(files.length){toast("Чтобы фотографии были видны всем, сначала войди в профиль.");return}if(editingListingId){if(!currentUser||!db){toast("Войди в аккаунт, чтобы редактировать объявление");return}const {data:updatedListing,error}=await db.from("listings").update({title:newItem.title,description:newItem.desc||"",category:newItem.category,subcategory:newItem.subcategory||null,city:newItem.city,region:newItem.region||null,want:newItem.want,estimated_value:newItem.price||null,image_urls:newItem.image_urls,status:editingListingStatus}).eq("id",editingListingId).eq("user_id",currentUser.id).select("id").maybeSingle();if(error){toast("Не удалось сохранить изменения: "+error.message);$("backendNote").textContent=error.message;return}if(!updatedListing){toast("Объявление не найдено или у вас нет прав на изменение.");return}items=items.map(x=>String(x.id)===String(editingListingId)?{...x,...newItem,remote:true}:x);persist();editingListingId=null;editingImageUrls=[];closeForm();await loadRemoteListings();profileBusy=false;await loadProfileDashboard();setPage("my-listings");toast("Изменения сохранены")}else{if(currentUser){const saved=await saveListing(newItem);if(!saved)return;closeForm()}else{items.unshift(newItem);persist();closeForm();toast("Сохранено на устройстве. Войди в профиле для публикации для всех.")};page="home";category="Все";document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page==="home"));renderFilters();render();if(currentUser)toast("Объявление опубликовано для всех");else toast("Объявление добавлено")}}catch(err){console.error("Listing save failed",err);toast("Не удалось сохранить: "+(err?.message||"неизвестная ошибка"));}finally{submitButton.disabled=false;submitButton.textContent=originalButtonText}};function updateImageField(){const isService=$("form").elements.category.value==="Услуги";$("listingImagesField").hidden=isService;if(isService){selectedNewImageFiles=[];$("listingImages").value="";$("imagePreview").innerHTML="";updatePhotoPickerState()}}$("form").addEventListener("change",event=>{if(event.target?.name==="category"){updateSubcategoryOptions();updateImageField()}});$("form").elements.category.addEventListener("input",()=>{updateSubcategoryOptions();updateImageField()});$("listingImages").addEventListener("click",event=>{if(editingImageUrls.length+selectedNewImageFiles.length>=5){event.preventDefault();toast("Уже добавлено 5 фотографий. Удали одну, чтобы выбрать другую.")}});$("listingImages").addEventListener("change",()=>{const chosen=Array.from($("listingImages").files||[])[0];if(!chosen){renderImagePreview();return}if(editingImageUrls.length+selectedNewImageFiles.length>=5){toast("Можно добавить не больше 5 фотографий");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(!chosen.type.startsWith("image/")){toast("Выбери файл изображения");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(chosen.size>5*1024*1024){toast("Каждая фотография должна быть не больше 5 МБ");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}selectedNewImageFiles.push(chosen);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview()});let searchRenderTimer=null;const runSearch=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=setTimeout(()=>{searchRenderTimer=null;loadRemoteListings()},260)};$("searchBtn").onclick=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;loadRemoteListings();$("q").blur()};$("q").oninput=runSearch;$("q").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;loadRemoteListings();$("q").blur()}};$("advancedCity").oninput=render;$("advancedMinPrice").oninput=render;$("advancedMaxPrice").oninput=render;$("resetAdvancedSearch").onclick=()=>{filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("filterCityOnly").checked=false;$("advancedCity").value="";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";loadRemoteListings()};$("saveMatchingSearch").onclick=async()=>{if(!currentUser||!db){toast("Войди в аккаунт, чтобы сохранять поиск.");return}if(!["pro","pro_plus","business"].includes(activePlanCode)){toast("Сохранённые поиски доступны на тарифе PRO и выше.");return}const queryText=$("q").value.trim(),city=$("advancedCity").value.trim(),minRaw=$("advancedMinPrice").value,maxRaw=$("advancedMaxPrice").value,min=minRaw===""?null:Number(minRaw),max=maxRaw===""?null:Number(maxRaw);if((min!==null&&min<0)||(max!==null&&max<0)||(min!==null&&max!==null&&min>max)){toast("Проверь диапазон цены.");return}const {error}=await db.from("saved_searches").insert({user_id:currentUser.id,name:[queryText||"Все предложения",category==="Все"?"Все категории":category,city||"Все города"].join(" · "),query_text:queryText||null,category:category==="Все"?null:category,city:city||null,min_price:min,max_price:max,is_active:true});if(error){toast("Не удалось сохранить поиск: "+error.message);return}toast("Поиск сохранён. Новые совпадения появятся в уведомлениях.");};$("backHome").onclick=()=>setPage("home");function setPage(p){document.querySelectorAll("#profileDashboard.listings-only #myListings .my-actions-menu[open]").forEach(menu=>menu.removeAttribute("open"));if($("modal")?.classList.contains("open"))closeForm();const profileDashboard=$("profileDashboard");if(profileDashboard&&p!=="profile"){profileDashboard.classList.remove("profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history")}page=p;const tabs=navTabs();const selected=tabs.findIndex(n=>n.dataset.page===p);const bar=document.querySelector(".bottom");tabs.forEach((n,i)=>{n.classList.toggle("active",n.dataset.page===p);const proximity=selected<0?0:Math.max(0,1-Math.abs(i-selected));n.style.setProperty("--lens-scale",String(1+proximity*.16));n.style.setProperty("--lens-y",String(proximity*-1.5)+"px")});if(bar&&selected>=0){bar.style.setProperty("--active-index",String(selected));if(!navDrag)bar.style.setProperty("--drag-index",String(selected));}if(p==="chats"||p==="notifications")refreshNotificationCount();render()}const bottomNav=document.querySelector(".bottom");let navDrag=null,suppressNavClick=false;
 const navTabs=()=>[...document.querySelectorAll(".bottom .nav")];
+function navSetDrag(value,dragging=false){
+ if(!bottomNav)return;
+ const tabs=navTabs(),max=Math.max(0,tabs.length-1);
+ value=Math.max(0,Math.min(max,value));
+ bottomNav.style.setProperty("--drag-index",String(value));
+ bottomNav.classList.remove("nav-dragging");
+ bottomNav.style.setProperty("--lens-stretch","1");
+ bottomNav.style.setProperty("--lens-origin","50%");
+ tabs.forEach((tab,index)=>{
+  const proximity=Math.max(0,1-Math.abs(index-value));
+  tab.style.setProperty("--lens-scale",String(1+proximity*.12));
+  tab.style.setProperty("--lens-y",String(proximity*-1.5)+"px");
+  tab.classList.remove("nav-following");
+ });
+}
 bottomNav?.addEventListener("click",e=>{
- const tab=e.target.closest(".bottom .nav");
- if(!tab)return;
- e.preventDefault();
- e.stopImmediatePropagation();
+ const tab=e.target.closest(".bottom .nav");if(!tab)return;
+ e.preventDefault();e.stopImmediatePropagation();
  const target=tab.dataset.page;
- if(!target)return;
  if(target==="profile"){
   const dashboard=$("profileDashboard");
   dashboard?.classList.remove("listings-only","profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history");
   const helpPanel=$("profileInfoHelpPanel");if(helpPanel)helpPanel.hidden=true;
   const hub=$("profileHub");if(hub)hub.hidden=false;
  }
- if(target!==page){
-  setPage(target);
-  window.scrollTo({top:0,left:0,behavior:"instant"});
- }else if(target==="profile"){
-  window.scrollTo({top:0,left:0,behavior:"instant"});
- }
+ if(target&&target!==page){window.scrollTo({top:0,left:0,behavior:"instant"});setPage(target);}
+ else if(target==="profile"){window.scrollTo({top:0,left:0,behavior:"instant"});}
  const idx=navTabs().findIndex(n=>n.dataset.page===target);
- if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));bottomNav.style.setProperty("--drag-index",String(idx))}
-},true);
-$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
+ if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));navSetDrag(idx,false);bottomNav.style.setProperty("--drag-index",String(idx));}
+},true);$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
 
 
 
@@ -3938,19 +3941,21 @@ async function loadMonetizationOrders(){
 }
 setInterval(()=>{if(currentUser&&db)loadMonetizationOrders()},30000);
 async function loadActiveSubscription(){
+ const previousPlanCode=activePlanCode;
  const el=$("subscriptionStatus");
- if(!currentUser||!db){activePlanCode="free";if(el)el.hidden=true;return}
+ if(!currentUser||!db){activePlanCode="free";if(el)el.hidden=true;if(previousPlanCode!=="free")loadRemoteListings();return}
  const now=new Date().toISOString();
  const {data:rows,error}=await db.from("user_subscriptions").select("plan_code,starts_at,ends_at,status").eq("user_id",currentUser.id).eq("status","active").lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(10);
- if(error){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Обнови профиль позже.</div></article>'}return}
+ if(error){if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Текущие ограничения временно не изменены. Обнови профиль позже.</div></article>'}return}
  const rank={business:3,pro_plus:2,pro:1,free:0};
  const data=(rows||[]).sort((a,b)=>(rank[b.plan_code]||0)-(rank[a.plan_code]||0)||new Date(b.ends_at)-new Date(a.ends_at))[0]||null;
- if(!data){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Ваш тариф: Free</b><div class="category" style="margin-top:6px">До 3 активных объявлений. Платный тариф можно подключить ниже.</div></article>'}return}
+ if(!data){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Ваш тариф: Free</b><div class="category" style="margin-top:6px">До 3 активных объявлений. Платный тариф можно подключить ниже.</div></article>'}if(previousPlanCode!=="free")loadRemoteListings();return}
  activePlanCode=data.plan_code||"free";
  const names={pro:"PRO",pro_plus:"PRO+",business:"Business"};
  const until=new Date(data.ends_at).toLocaleDateString("ru-RU");
  const endDate=new Date(data.ends_at);const today=new Date();const endDay=Date.UTC(endDate.getFullYear(),endDate.getMonth(),endDate.getDate());const todayDay=Date.UTC(today.getFullYear(),today.getMonth(),today.getDate());const days=Math.max(0,Math.round((endDay-todayDay)/86400000));
  if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px;border-color:#d7efaa"><b>Ваш тариф: '+esc(names[data.plan_code]||data.plan_code)+'</b><div class="category" style="margin-top:6px">Активен до '+esc(until)+' · осталось '+days+' дн.</div></article>'}
+ if(previousPlanCode!==activePlanCode)loadRemoteListings();
 }
 function choosePromotionListing(listings){
  return new Promise(resolve=>{
@@ -4540,16 +4545,35 @@ async function persistFavoriteForAccount(id,isFavorite){
  }
 }
 async function mapRemoteListingRows(rows){
- const listingIds=(rows||[]).map(x=>x.id);let promotions=[];if(listingIds.length){const {data:promotionRows}=await db.from("listing_promotions").select("listing_id,plan_code,starts_at,ends_at,created_at").eq("status","active").in("listing_id",listingIds).lte("starts_at",new Date().toISOString()).gt("ends_at",new Date().toISOString());promotions=promotionRows||[]}const promotionByListing=new Map(),promotionCodesByListing=new Map();for(const p of promotions){const key=String(p.listing_id),codes=promotionCodesByListing.get(key)||[];if(!codes.includes(p.plan_code))codes.push(p.plan_code);promotionCodesByListing.set(key,codes);const old=promotionByListing.get(key);const rank={boost_24h:4,vip_7d:3,highlight_7d:2};if(!old||(rank[p.plan_code]||0)>(rank[old.plan_code]||0))promotionByListing.set(key,p)}const remote=(rows||[]).map(x=>({id:x.id,user_id:x.user_id,title:x.title,category:x.category,subcategory:x.subcategory||"",want:x.want,city:x.city,region:x.region||"",price:x.estimated_value||0,emoji:"🔄",desc:x.description||"",image_urls:x.image_urls||[],promotionCode:promotionByListing.get(String(x.id))?.plan_code||null,promotionCodes:promotionCodesByListing.get(String(x.id))||[],remote:true}));
+ const listingIds=(rows||[]).map(x=>x.id);let promotions=[];if(listingIds.length){const {data:promotionRows}=await db.from("listing_promotions").select("listing_id,plan_code,starts_at,ends_at,created_at").eq("status","active").in("listing_id",listingIds).lte("starts_at",new Date().toISOString()).gt("ends_at",new Date().toISOString());promotions=promotionRows||[]}const promotionByListing=new Map(),promotionCodesByListing=new Map();for(const p of promotions){const key=String(p.listing_id),codes=promotionCodesByListing.get(key)||[];if(!codes.includes(p.plan_code))codes.push(p.plan_code);promotionCodesByListing.set(key,codes);const old=promotionByListing.get(key);const rank={boost_24h:4,vip_7d:3,highlight_7d:2};if(!old||(rank[p.plan_code]||0)>(rank[old.plan_code]||0))promotionByListing.set(key,p)}const remote=(rows||[]).map(x=>({id:x.id,user_id:x.user_id,title:x.title,category:x.category,subcategory:x.subcategory||"",want:x.want,city:x.city,region:x.region||"",price:x.estimated_value??null,created_at:x.created_at,emoji:"🔄",desc:x.description||"",image_urls:x.image_urls||[],promotionCode:promotionByListing.get(String(x.id))?.plan_code||null,promotionCodes:promotionCodesByListing.get(String(x.id))||[],remote:true}));
  return remote;
 }
+function applyCatalogServerFilters(query){
+ if(category!=="Все")query=query.eq("category",category);
+ if(filterCityName&&filterCityOnly){query=query.eq("city",filterCityName);if(filterCityRegion)query=query.eq("region",filterCityRegion)}
+ const canUseAdvancedSearch=["pro","pro_plus","business"].includes(activePlanCode);
+ const minRaw=$("advancedMinPrice")?.value?.trim()||"",maxRaw=$("advancedMaxPrice")?.value?.trim()||"";
+ if(canUseAdvancedSearch&&minRaw!==""){const min=Number(minRaw);if(Number.isFinite(min)&&min>=0)query=query.gte("estimated_value",min)}
+ if(canUseAdvancedSearch&&maxRaw!==""){const max=Number(maxRaw);if(Number.isFinite(max)&&max>=0)query=query.lte("estimated_value",max)}
+ const term=$("q")?.value?.trim().toLocaleLowerCase("ru-RU").replace(/[^\p{L}\p{N}\s-]/gu," ").replace(/\s+/g," ").trim()||"";
+ if(term)query=query.or("title.ilike.%"+term+"%,description.ilike.%"+term+"%,want.ilike.%"+term+"%,city.ilike.%"+term+"%,region.ilike.%"+term+"%,category.ilike.%"+term+"%,subcategory.ilike.%"+term+"%");
+ if(filterSortMode==="price-low")query=query.order("estimated_value",{ascending:true,nullsFirst:false}).order("created_at",{ascending:false}).order("id",{ascending:false});
+ else if(filterSortMode==="price-high")query=query.order("estimated_value",{ascending:false,nullsFirst:false}).order("created_at",{ascending:false}).order("id",{ascending:false});
+ else query=query.order("created_at",{ascending:false}).order("id",{ascending:false});
+ return query;
+}
 async function loadRemoteListings(){
+ const requestId=++catalogRequestId;
+ loadingMoreRemoteListings=false;
  const status=$("catalogStatus");
  if(!db){if(status){status.hidden=false;status.classList.add("is-error");status.textContent="Каталог временно недоступен: клиент базы данных не загрузился.";}return}
  if(status){status.hidden=false;status.classList.remove("is-error");status.textContent="Обновляем предложения…";}
- let {data,error}=await db.from("listings").select("id,user_id,title,description,category,subcategory,city,region,want,estimated_value,image_urls,created_at").eq("status","active").order("created_at",{ascending:false}).order("id",{ascending:false}).range(0,99);
+ let catalogQuery=db.from("listings").select("id,user_id,title,description,category,subcategory,city,region,want,estimated_value,image_urls,created_at").eq("status","active");
+ catalogQuery=applyCatalogServerFilters(catalogQuery).range(0,99);
+ let {data,error}=await catalogQuery;
+ if(requestId!==catalogRequestId)return;
  if(error){const status=$("catalogStatus");if(status){status.hidden=false;status.classList.add("is-error");status.textContent="Не удалось загрузить предложения. Проверь соединение и нажми «Повторить».";}const note=$("backendNote");if(note)note.textContent="Ошибка загрузки каталога: "+(error.message||"временно недоступна база данных");console.error("Catalog load failed",error);return}
- const catalogPageRows=data||[];remoteCatalogCursor=catalogPageRows.length?catalogPageRows[catalogPageRows.length-1]:null;hasMoreRemoteListings=catalogPageRows.length===100;
+ const catalogPageRows=data||[];remoteCatalogCursor=catalogPageRows.length?catalogPageRows[catalogPageRows.length-1]:null;remoteCatalogOffset=catalogPageRows.length;hasMoreRemoteListings=catalogPageRows.length===100;
  // Load this account's active favorites even when they are older than the first 100 catalog rows.
  if(currentUser){
   const {data:favRows,error:favError}=await db.from("favorites").select("listing_id").eq("user_id",currentUser.id);
@@ -4563,6 +4587,7 @@ async function loadRemoteListings(){
   }
  }
  const remote=await mapRemoteListingRows(data||[]);
+ if(requestId!==catalogRequestId)return;
  const local=loadJSON(STORE_ITEMS,[]).filter(x=>!x.remote);
  const listingKey=x=>[String(x.title||"").trim().toLowerCase(),String(x.category||"").trim().toLowerCase(),String(x.city||"").trim().toLowerCase(),String(x.want||"").trim().toLowerCase(),Number(x.price||0)].join("|");
  // Remote rows have unique database IDs; do not hide separate users' identical offers.
@@ -4578,14 +4603,16 @@ async function loadRemoteListings(){
 }
 async function loadMoreRemoteListings(){
  if(!db||!hasMoreRemoteListings||loadingMoreRemoteListings)return;
+ const requestId=catalogRequestId;
  loadingMoreRemoteListings=true;render();
  try{
-  const cursor=remoteCatalogCursor;
   let query=db.from("listings").select("id,user_id,title,description,category,subcategory,city,region,want,estimated_value,image_urls,created_at").eq("status","active");
-  if(cursor)query=query.or("created_at.lt."+cursor.created_at+",and(created_at.eq."+cursor.created_at+",id.lt."+cursor.id+")");
-  const {data,error}=await query.order("created_at",{ascending:false}).order("id",{ascending:false}).limit(100);
+  query=applyCatalogServerFilters(query).range(remoteCatalogOffset,remoteCatalogOffset+99);
+  const {data,error}=await query;
+  if(requestId!==catalogRequestId)return;
   if(error)throw error;
   const rows=data||[];
+  remoteCatalogOffset+=rows.length;
   if(rows.length)remoteCatalogCursor=rows[rows.length-1];
   hasMoreRemoteListings=rows.length===100;
   const remoteRows=await mapRemoteListingRows(rows);
@@ -4602,7 +4629,7 @@ async function loadMoreRemoteListings(){
   toast("Не удалось загрузить следующие объявления. Попробуй ещё раз.");
   console.warn("Catalog pagination failed:",error?.message||error);
  }finally{
-  loadingMoreRemoteListings=false;render();
+  if(requestId===catalogRequestId){loadingMoreRemoteListings=false;render();}
  }
 }
 $("loadMoreListings").onclick=loadMoreRemoteListings;
@@ -4749,11 +4776,7 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    requestAnimationFrame(()=>window.poAnimateSurface?.(hub));
   }
  }
- document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{
-  if(window.poNavigateBack?.())return;
-  const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;
-  document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});
- });
+ document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});});
  hub.querySelectorAll("[data-profile-open]").forEach(btn=>btn.addEventListener("click",()=>{
   const key=btn.dataset.profileOpen;
   if(key==="history"){openPanel("history");const details=document.getElementById("exchangeHistoryDetails");if(details)details.open=true;return}
@@ -4782,14 +4805,14 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
   });
 })();
 document.addEventListener("click",function(e){if(e.target&&e.target.closest("#favoritesEmptyAction")){const home=document.querySelector('.bottom .nav[data-page="home"]');if(home)home.click();window.scrollTo({top:0,behavior:"smooth"});}});
-document.addEventListener("click",function(e){if(!e.target||!e.target.closest("#emptyResetSearch"))return;$("q").value="";$("advancedCity").value="";filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";category="Все";advancedSearchExpanded=false;render();window.scrollTo({top:0,behavior:"smooth"});});
+document.addEventListener("click",function(e){if(!e.target||!e.target.closest("#emptyResetSearch"))return;$("q").value="";$("advancedCity").value="";filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";category="Все";advancedSearchExpanded=false;loadRemoteListings();window.scrollTo({top:0,behavior:"smooth"});});
 $("advancedSearchToggle")?.addEventListener("click",()=>{advancedSearchExpanded=!advancedSearchExpanded;render()});
 $("filtersBackdrop")?.addEventListener("click",()=>{advancedSearchExpanded=false;render()});
 $("closeFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;render()});
 $("filterCityButton")?.addEventListener("click",()=>openCityPicker("filters"));
 $("filterCityOnly")?.addEventListener("change",event=>{filterCityOnly=event.target.checked});
 $("filterSort")?.addEventListener("change",event=>{filterSortMode=event.target.value});
-$("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;render()});
+$("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;loadRemoteListings()});
 
 /* Native-like swipe-down dismissal for the mobile filters bottom sheet. */
 (()=>{
@@ -5246,36 +5269,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  const originalSetPage=window.setPage;
  const stack=[];
  const MAX_STACK=40;
- const HISTORY_KEY="__poBarterNavigation";
  let restoring=false,gesture=null,settleTimer=0,lastSnapshot=null;
- let historyCursor=0,historyEntries=[],ignorePopstateIndex=null;
- function writeHistorySnapshot(stateSnapshot,replace=false){
-  if(restoring||!window.history||typeof window.history.pushState!=="function")return false;
-  const index=replace?historyCursor:historyCursor+1;
-  const currentState=window.history.state&&typeof window.history.state==="object"?window.history.state:{};
-  const nextState=Object.assign({},currentState,{[HISTORY_KEY]:{version:1,index,snapshot:stateSnapshot}});
-  try{
-   if(replace)window.history.replaceState(nextState,"");
-   else window.history.pushState(nextState,"");
-   if(replace)historyEntries[index]=stateSnapshot;
-   else{
-    historyEntries=historyEntries.slice(0,historyCursor+1);
-    historyEntries.push(stateSnapshot);
-    historyCursor=index;
-   }
-   return true;
-  }catch(error){
-   console.warn("Navigation history update failed:",error);
-   return false;
-  }
- }
- function consumeHistoryEntry(){
-  const entry=window.history?.state?.[HISTORY_KEY];
-  if(!entry||entry.version!==1||!Number.isInteger(entry.index)||entry.index<=0||typeof window.history.back!=="function")return false;
-  ignorePopstateIndex=entry.index-1;
-  historyCursor=entry.index-1;
-  try{window.history.back();return true}catch(error){ignorePopstateIndex=null;console.warn("Navigation history back failed:",error);return false}
- }
 
  const $=id=>document.getElementById(id);
  const profileClassNames=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
@@ -5296,32 +5290,24 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   };
  }
  function key(s){return JSON.stringify(s)}
- function routeKey(s){return s?JSON.stringify(Object.assign({},s,{scrollY:0})):""}
  function pushSnapshot(s){
   if(restoring||!s)return;
   const top=stack[stack.length-1];
   if(top&&key(top)===key(s))return;
   stack.push(s);
   if(stack.length>MAX_STACK)stack.shift();
-  writeHistorySnapshot(snapshot());
  }
  function syncSnapshot(){
   const now=snapshot();
-  if(lastSnapshot&&routeKey(now)!==routeKey(lastSnapshot)){
+  if(lastSnapshot&&key(now)!==key(lastSnapshot)){
    const chatWasClosed=lastSnapshot.chatOpen&&!now.chatOpen;
    if(chatWasClosed){
     while(stack.length&&stack[stack.length-1].page===now.page)stack.pop();
-    consumeHistoryEntry();
    }else pushSnapshot(lastSnapshot);
   }
   lastSnapshot=now;
  }
  lastSnapshot=snapshot();
- historyEntries=[lastSnapshot];
- try{
-  const currentState=window.history.state&&typeof window.history.state==="object"?window.history.state:{};
-  window.history.replaceState(Object.assign({},currentState,{[HISTORY_KEY]:{version:1,index:0,snapshot:lastSnapshot}}),"");
- }catch(error){console.warn("Navigation history initialization failed:",error)}
 
  // One authoritative page transition hook. Tab changes are peers; nested screens
  // are tracked separately and never inferred from tab-bar position.
@@ -5329,23 +5315,19 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const before=snapshot();
   if(!restoring&&before.page!==nextPage&&typeof window.poRunNavigationTransition==="function"&&!window.__poNavTransitionMutating){
    const from=pagesForMotion(before.page),to=pagesForMotion(nextPage),direction=to>=from?-1:1;
-   const animated=window.poRunNavigationTransition(()=>{
-    window.__poNavTransitionMutating=true;
-    try{originalSetPage(nextPage)}finally{window.__poNavTransitionMutating=false}
+   const animated=window.poRunNavigationTransition(()=>{window.__poNavTransitionMutating=true;try{originalSetPage(nextPage)}finally{window.__poNavTransitionMutating=false}},direction,false);
+   if(animated){
     stack.length=0;
     lastSnapshot=snapshot();
-    writeHistorySnapshot(lastSnapshot);
-   },direction,false);
-   if(animated)return;
+    return;
+   }
    // If another transition is still settling, never drop the user's tab change.
   }
   const result=originalSetPage(nextPage);
   const after=snapshot();
-  if(!restoring&&before.page!==after.page){window.scrollTo({top:0,left:0,behavior:"instant"});
-   // Main tabs remain peers in the in-app back stack, while browser history
-   // still records the destination so Back and Forward restore the visited tab.
+  if(!restoring&&before.page!==after.page){
+   // Main tabs are peer destinations, not entries in the hierarchical back stack.
    stack.length=0;
-   if(!window.__poNavTransitionMutating)writeHistorySnapshot(after);
   }else if(!restoring&&key(before)!==key(after))pushSnapshot(before);
   lastSnapshot=after;
   return result;
@@ -5404,8 +5386,6 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     }
    }else if(snapshot().chatOpen)closeChatToInbox();
    window.scrollTo({top:target.scrollY||0,left:0,behavior:"instant"});
-   const surface=target.chatOpen?$("chatThread"):(target.helpOpen?help:(target.page==="profile"?dashboard:(target.page==="chats"?$("chatInbox"):null)));
-   if(surface)requestAnimationFrame(()=>window.poAnimateSurface?.(surface));
   }finally{
    restoring=false;
    lastSnapshot=snapshot();
@@ -5449,139 +5429,196 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(prior){restore(prior);return true}
   return false;
  }
- function navigateBack(){
-  const before=snapshot();
-  const handled=back();
-  if(handled&&key(before)!==key(snapshot()))consumeHistoryEntry();
-  return handled;
- }
- window.poCanNavigateBack=()=>{const current=snapshot();return ["modal","cityPickerModal","promotionPickerModal","listingDetailModal"].some(id=>isOpen(id))||!!(current.helpOpen&&current.helpDetails?.length)||!!current.chatOpen||!!current.helpOpen||!!current.profile.length||!!current.listingsOnly||stack.length>0};
- window.poNavigateBack=navigateBack;
- window.poCommitNavigationHistory=()=>writeHistorySnapshot(snapshot());
+ window.poNavigateBack=back;
 
- // Browser Back/Forward restores the exact route snapshot associated with
- // the activated session-history entry instead of guessing from the current UI.
- window.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.defaultPrevented){if(navigateBack())e.preventDefault()}});
- window.addEventListener("popstate",event=>{
-  const hasOpenOverlay=["modal","cityPickerModal","promotionPickerModal","listingDetailModal"].some(id=>isOpen(id));
-  if(hasOpenOverlay)back();
-  const entry=event.state&&event.state[HISTORY_KEY];
-  if(ignorePopstateIndex!==null&&entry?.version===1&&entry.index===ignorePopstateIndex){ignorePopstateIndex=null;return}
-  ignorePopstateIndex=null;
-  if(!entry||entry.version!==1||!Number.isInteger(entry.index)||!entry.snapshot)return;
-  const targetIndex=Math.max(0,entry.index);
-  historyEntries[targetIndex]=entry.snapshot;
-  historyCursor=targetIndex;
-  stack.length=0;
-  for(let i=0;i<targetIndex;i++)if(historyEntries[i])stack.push(historyEntries[i]);
-  restore(entry.snapshot);
- });
+
+ // Pointer gestures are coordinated by poPrimaryTabSwipeNavigation.
+ window.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.defaultPrevented){if(back())e.preventDefault()}});
+ window.addEventListener("popstate",()=>{back()});
 })();
 </script>
 
 <style id="poTabSwipeStyles">
-/* Reserve horizontal gestures inside the tab bar for the glass lens.
-   Vertical page scrolling remains native on iPhone. */
-.bottom,.bottom .nav{touch-action:pan-y!important;-webkit-user-select:none;user-select:none}
-.bottom .nav{-webkit-user-drag:none}
-html,body{overscroll-behavior-x:none}
-.po-screen-stage{touch-action:pan-y;overscroll-behavior-x:contain;view-transition-name:po-screen}
-.po-screen-stage.po-nav-moving{will-change:transform,opacity}
-::view-transition-group(po-screen){animation-duration:280ms}
-html.po-nav-next::view-transition-old(po-screen){animation:po-screen-exit-left 280ms cubic-bezier(.22,.61,.36,1) both}
-html.po-nav-next::view-transition-new(po-screen){animation:po-screen-enter-right 280ms cubic-bezier(.22,.61,.36,1) both}
-html.po-nav-prev::view-transition-old(po-screen){animation:po-screen-exit-right 280ms cubic-bezier(.22,.61,.36,1) both}
-html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 280ms cubic-bezier(.22,.61,.36,1) both}
-@keyframes po-screen-exit-left{from{transform:translateX(0)}to{transform:translateX(-100%)}}
-@keyframes po-screen-enter-right{from{transform:translateX(100%)}to{transform:translateX(0)}}
-@keyframes po-screen-exit-right{from{transform:translateX(0)}to{transform:translateX(100%)}}
-@keyframes po-screen-enter-left{from{transform:translateX(-100%)}to{transform:translateX(0)}}
-@media(prefers-reduced-motion:reduce){::view-transition-group(po-screen){animation-duration:1ms!important}html.po-nav-next::view-transition-old(po-screen),html.po-nav-next::view-transition-new(po-screen),html.po-nav-prev::view-transition-old(po-screen),html.po-nav-prev::view-transition-new(po-screen){animation-duration:1ms!important}}
-@media(prefers-reduced-motion:reduce){.po-screen-stage.po-nav-moving{will-change:auto}}
+.app.po-nav-moving{will-change:transform}
+.po-nav-snapshot-viewport{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5;background:var(--bg,#f5f6f2)}
+.po-nav-snapshot-viewport>.app{position:absolute!important;margin:0!important;max-width:none!important;pointer-events:none!important;will-change:transform!important}
+@media(prefers-reduced-motion:reduce){.app.po-nav-moving{will-change:auto}}
 </style>
 <script id="poPrimaryTabSwipeNavigation">
-/* Bottom-bar-only Liquid Glass lens tracking. No screen swipes or page drag navigation. */
 (function(){
-  if(window.__poBottomLensNavigationInstalled)return;
-  const bar=document.querySelector(".bottom");
-  if(!bar)return;
-  const tabs=[...bar.querySelectorAll(".nav[data-page]")];
-  if(tabs.length<2)return;
-  window.__poBottomLensNavigationInstalled=true;
-  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
-  let pointer=null,suppressClick=false,suppressTimer=0;
-  function selectedIndex(){
-    const active=tabs.findIndex(tab=>tab.classList.contains("active"));
-    return active>=0?active:0;
+ if(window.__poPrimaryTabSwipeNavigationInstalled)return;
+ window.__poPrimaryTabSwipeNavigationInstalled=true;
+ const app=document.querySelector(".app"),nav=document.querySelector(".bottom");
+ if(!app||!nav||typeof window.setPage!=="function")return;
+ const tabs=[...nav.querySelectorAll(".nav[data-page]")],pages=tabs.map(t=>t.dataset.page);
+ if(pages.length<2)return;
+ const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+ const $=id=>document.getElementById(id);
+ let gesture=null,transitioning=false,activeSnapshot=null;
+ const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
+ function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
+ function nested(){
+  const d=$("profileDashboard"),thread=$("chatThread");
+  return !!(d&&(d.classList.contains("listings-only")||nestedClasses.some(c=>d.classList.contains(c))))||
+   !!($("profileInfoHelpPanel")&&!$("profileInfoHelpPanel").hidden)||
+   !!(thread&&!thread.hidden);
+ }
+ function overlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open")}
+ function excluded(target){
+  if(!(target instanceof Element))return true;
+  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
+  for(let n=target;n&&n!==app;n=n.parentElement){const s=getComputedStyle(n);if((s.overflowX==="auto"||s.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
+  return false;
+ }
+ function setPageDirect(value){
+  const previous=window.__poNavTransitionMutating;
+  window.__poNavTransitionMutating=true;
+  try{window.setPage(value)}finally{window.__poNavTransitionMutating=previous||false}
+ }
+ function snapshot(){
+  const rect=app.getBoundingClientRect(),viewport=document.createElement("div"),clone=app.cloneNode(true);
+  const sourceNodes=[app,...app.querySelectorAll("*")],cloneNodes=[clone,...clone.querySelectorAll("*")];
+  // cloneNode copies markup, not live form state or nested scroll positions.
+  // Mirror those properties so the outgoing screen is a faithful visual snapshot.
+  for(let i=0;i<Math.min(sourceNodes.length,cloneNodes.length);i++){
+   const source=sourceNodes[i],copy=cloneNodes[i];
+   if(source instanceof HTMLInputElement){if(source.type!=="file")copy.value=source.value;copy.checked=source.checked;copy.indeterminate=source.indeterminate}
+   else if(source instanceof HTMLTextAreaElement)copy.value=source.value;
+   else if(source instanceof HTMLSelectElement)copy.selectedIndex=source.selectedIndex;
+   else if(source instanceof HTMLDetailsElement)copy.open=source.open;
+   if(source.scrollTop||source.scrollLeft){copy.scrollTop=source.scrollTop;copy.scrollLeft=source.scrollLeft}
+   if(source instanceof HTMLCanvasElement){try{copy.width=source.width;copy.height=source.height;copy.getContext("2d")?.drawImage(source,0,0)}catch(_){}}
   }
-  function paint(index,dragging){
-    const value=clamp(index,0,tabs.length-1);
-    bar.style.setProperty("--drag-index",String(value));
-    tabs.forEach((tab,i)=>{
-      const proximity=Math.max(0,1-Math.abs(i-value));
-      tab.style.setProperty("--lens-scale",String(1+proximity*.20));
-      tab.style.setProperty("--lens-y",String(proximity*-2.4)+"px");
-    });
-    bar.classList.toggle("nav-dragging",!!dragging);
+  viewport.className="po-nav-snapshot-viewport";
+  viewport.setAttribute("aria-hidden","true");
+  clone.inert=true;
+  clone.style.setProperty("top",rect.top+"px","important");
+  clone.style.setProperty("left",rect.left+"px","important");
+  clone.style.setProperty("width",rect.width+"px","important");
+  clone.style.setProperty("height","auto","important");
+  clone.style.setProperty("transform","translate3d(0,0,0)","important");
+  viewport.appendChild(clone);document.body.appendChild(viewport);
+  return {viewport,clone};
+ }
+ function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
+ function finishTransition(s,animationA,animationB){
+  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");if(s)clearSnapshot(s);transitioning=false};
+  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
+ }
+ function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
+  app.classList.add("po-nav-moving");
+  const easing="cubic-bezier(.22,.72,.22,1)";
+  const a=s.clone.animate([{transform:"translate3d("+oldFrom+"px,0,0)"},{transform:"translate3d("+oldTo+"px,0,0)"}],{duration,easing,fill:"both"});
+  const b=app.animate([{transform:"translate3d("+newFrom+"px,0,0)"},{transform:"translate3d("+newTo+"px,0,0)"}],{duration,easing,fill:"both"});
+  finishTransition(s,a,b);
+ }
+ function animateMutation(mutator,direction){
+  if(transitioning)return false;
+  if(reduced()){mutator();return true}
+  transitioning=true;
+  let s;
+  try{
+   s=snapshot();activeSnapshot=s;
+   mutator();
+   const width=Math.max(1,window.innerWidth);
+   app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
+   animatePair(s,0,direction*width,-direction*width,0,280);
+  }catch(e){
+   app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
+   console.error("Navigation transition failed:",e);
   }
-  function indexAt(clientX){
-    const rect=bar.getBoundingClientRect();
-    const inset=parseFloat(getComputedStyle(bar).paddingLeft)||7;
-    const usable=Math.max(1,rect.width-inset*2);
-    const slot=usable/tabs.length;
-    return clamp((clientX-rect.left-inset)/slot-.5,0,tabs.length-1);
+  return true;
+ }
+ function settleGesture(g,commit){
+  const s=g.snapshot;if(!s)return;
+  const width=Math.max(1,window.innerWidth),dx=g.dx,dir=g.direction;
+  if(commit){
+   const oldEnd=dir*width,newEnd=0;
+   const oldStart=dx,newStart=-dir*width+dx;
+   animatePair(s,oldStart,oldEnd,newStart,newEnd,Math.max(150,Math.min(280,280*(1-Math.min(.45,Math.abs(dx)/width)))));
+  }else{
+   // Restore the original route behind the outgoing snapshot, then return it
+   // to its exact origin. This makes a cancelled gesture reversible.
+   if(g.kind==="tabs")setPageDirect(g.page);
+   app.style.transform="";
+   app.classList.add("po-nav-moving");
+   const a=s.clone.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
+   finishTransition(s,a,null);
   }
-  function onDown(e){
-    if(!e.isPrimary||e.button!==0||!e.target.closest(".nav[data-page]"))return;
-    pointer={id:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,dragging:false};
-    /* Capture from the initial touch: iOS Safari can otherwise hand the gesture
-       to the button's native manipulation behavior before horizontal moves arrive. */
-    try{bar.setPointerCapture(e.pointerId)}catch(_){}
-  }
-  function onMove(e){
-    if(!pointer||e.pointerId!==pointer.id)return;
-    const dx=e.clientX-pointer.startX,dy=e.clientY-pointer.startY;
-    if(!pointer.dragging){
-      if(Math.abs(dx)<6&&Math.abs(dy)<6)return;
-      if(Math.abs(dy)>Math.abs(dx)*1.15){pointer=null;return;}
-      pointer.dragging=true;
-      bar.classList.add("nav-dragging");
+ }
+ function onDown(e){
+  if(gesture||transitioning||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false||!app.contains(e.target)||overlay()||excluded(e.target))return;
+  const x=e.clientX,w=innerWidth,idx=pages.indexOf(currentPage());
+  if(idx<0||x>=w-24)return;
+  const isNested=nested(),isEdge=x>=24&&x<=58;
+  // Main tabs switch only on tap; edge-swipe is reserved for nested back navigation.
+  if(!isNested||!isEdge)return;
+  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:"back",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
+ }
+ function onMove(e){
+  const g=gesture;if(!g||e.pointerId!==g.id)return;
+  const dx=e.clientX-g.x,dy=e.clientY-g.y;
+  if(!g.claimed){
+   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
+   if(Math.abs(dy)>Math.abs(dx)*1.08){gesture=null;return}
+   if(g.kind==="back"&&dx<=0){gesture=null;return}
+   const dir=dx<0?-1:1;
+   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))<0){gesture=null;return}
+   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))>=pages.length){gesture=null;return}
+   g.claimed=true;g.direction=dir;
+   if(!reduced()){
+    g.snapshot=snapshot();activeSnapshot=g.snapshot;
+    if(g.kind==="tabs"){
+     const target=pages[g.index+(dir<0?1:-1)];
+     setPageDirect(target);
     }
-    if(e.cancelable)e.preventDefault();
-    pointer.lastX=e.clientX;
-    paint(indexAt(e.clientX),true);
+   }
   }
-  function finish(e,cancelled){
-    if(!pointer||e.pointerId!==pointer.id)return;
-    const state=pointer;pointer=null;
-    try{if(bar.hasPointerCapture(e.pointerId))bar.releasePointerCapture(e.pointerId)}catch(_){}
-    if(!state.dragging){bar.classList.remove("nav-dragging");return;}
-    const targetIndex=cancelled?selectedIndex():Math.round(indexAt(e.clientX));
-    paint(targetIndex,false);
-    if(!cancelled){
-      suppressClick=true;
-      clearTimeout(suppressTimer);
-      suppressTimer=setTimeout(()=>{suppressClick=false},450);
-      tabs[targetIndex]?.click();
-    }
+  if(e.cancelable)e.preventDefault();
+  g.dx=dx;g.dy=dy;
+  if(g.kind==="back"){
+   app.style.transform="translate3d("+dx+"px,0,0)";
+  }else if(g.snapshot){
+   g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
+   app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
   }
-  bar.addEventListener("pointerdown",onDown,{passive:true});
-  bar.addEventListener("pointermove",onMove,{passive:false});
-  bar.addEventListener("pointerup",e=>finish(e,false),{passive:true});
-  bar.addEventListener("pointercancel",e=>finish(e,true),{passive:true});
-  bar.addEventListener("lostpointercapture",e=>finish(e,true),{passive:true});
-  document.addEventListener("click",e=>{
-    if(!suppressClick||e.detail===0)return;
-    suppressClick=false;clearTimeout(suppressTimer);
-    if(bar.contains(e.target)){e.preventDefault();e.stopImmediatePropagation();}
-  },true);
-  const sync=()=>paint(selectedIndex(),false);
-  sync();
-  window.poNavigationDiagnostics=()=>({
-    installed:true,mode:"tap-and-bottom-bar-lens-drag",screenSwipe:false,
-    lensIndex:Number(bar.style.getPropertyValue("--drag-index"))||0,
-    gestureActive:!!pointer,currentPage:tabs[selectedIndex()]?.dataset.page||"home"
-  });
+ }
+ function onUp(e){
+  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
+  if(!g.claimed)return;
+  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
+  const threshold=Math.max(64,innerWidth*.16);
+  g.dx=dx;
+  const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
+  if(reduced()){
+   if(commit){if(g.kind==="back")window.poNavigateBack?.();else setPageDirect(pages[g.index+(g.direction<0?1:-1)])}
+   return;
+  }
+  if(g.kind==="back"){
+   if(commit){
+    // Capture the current screen only once the edge gesture is accepted.
+    app.style.transform="";
+    const s=snapshot();activeSnapshot=s;
+    s.clone.style.transform="translate3d("+dx+"px,0,0)";
+    window.poNavigateBack?.();
+    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
+    animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
+   }else{
+    app.classList.add("po-nav-moving");
+    const a=app.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
+    finishTransition(null,a,null);
+   }
+   return;
+  }
+  if(!g.snapshot)return;
+  settleGesture(g,commit);
+ }
+ function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}
+ document.addEventListener("pointerdown",onDown,{passive:true});
+ document.addEventListener("pointermove",onMove,{passive:false});
+ document.addEventListener("pointerup",onUp,{passive:true});
+ document.addEventListener("pointercancel",onCancel,{passive:true});
+ window.poRunNavigationTransition=animateMutation;
 })();
 </script>
 
@@ -5597,6 +5634,36 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
   #profileInfoHelpPanel.po-nested-enter{will-change:auto}
 }
 </style>
-<!-- Nested navigation history is independent from the bottom-bar lens interaction. -->
+<script id="poNestedNavigationMotion">
+(function(){
+ if(window.__poNestedNavigationMotionInstalled)return;
+ window.__poNestedNavigationMotionInstalled=true;
+ const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+ const profileSelector='.profile-hub-row[data-profile-open],#profileInfoHelpBack,.profile-info-back,[data-profile-back]';
+ let sequence=0;
+ function animateDestination(direction){
+  const dashboard=document.getElementById("profileDashboard");
+  const help=document.getElementById("profileInfoHelpPanel");
+  const target=help&&!help.hidden?help:dashboard;
+  if(!target||reduced()||typeof target.animate!=="function")return;
+  const run=++sequence;
+  target.classList.add("po-nested-enter");
+  const animation=target.animate(
+   direction<0
+    ?[{opacity:.72,transform:"translate3d(18px,0,0)"},{opacity:1,transform:"translate3d(0,0,0)"}]
+    :[{opacity:.72,transform:"translate3d(-18px,0,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
+   {duration:245,easing:"cubic-bezier(.22,.72,.22,1)",fill:"both"}
+  );
+  animation.onfinish=()=>{if(run===sequence)target.classList.remove("po-nested-enter")};
+  animation.oncancel=()=>{if(run===sequence)target.classList.remove("po-nested-enter")};
+ }
+ document.addEventListener("click",function(event){
+  const control=event.target instanceof Element?event.target.closest(profileSelector):null;
+  if(!control)return;
+  const isBack=control.id==="profileInfoHelpBack"||control.classList.contains("profile-info-back")||control.hasAttribute("data-profile-back");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>animateDestination(isBack?1:-1)));
+ },true);
+})();
+</script>
 
 </body></html>
