@@ -5506,9 +5506,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const x=e.clientX,w=innerWidth,idx=pages.indexOf(currentPage());
   if(idx<0||x>=w-24)return;
   const isNested=nested(),isEdge=x>=24&&x<=58;
-  if(isNested&&!isEdge)return;
-  if(!isNested&&x<58)return;
-  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:isNested?"back":"tabs",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
+  // Primary tabs are tap-only destinations. Keep edge-swipe exclusively for
+  // returning from nested screens (profile sections, help, and chat threads).
+  if(!isNested||!isEdge)return;
+  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:"back",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
  }
  function onMove(e){
   const g=gesture;if(!g||e.pointerId!==g.id)return;
