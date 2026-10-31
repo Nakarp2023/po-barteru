@@ -13,7 +13,7 @@ on:
       base_url:
         description: "Render Preview URL"
         required: false
-        default: "https://po-barteru-stable-navigation-preview.onrender.com"
+        default: "https://po-barteru-simple-navigation-preview.onrender.com"
 
 permissions:
   contents: read
@@ -35,7 +35,7 @@ jobs:
         env:
           BASE_URL: ${{ inputs.base_url }}
         run: |
-          url="${BASE_URL:-https://po-barteru-stable-navigation-preview.onrender.com}"
+          url="${BASE_URL:-https://po-barteru-simple-navigation-preview.onrender.com}"
           for attempt in $(seq 1 60); do
             if curl -fsSL "$url" | grep -Fq 'data-navigation-build="simple-nav-v1-20261031-01"'; then
               echo "Render Preview contains the expected navigation build."
