@@ -5495,9 +5495,12 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   }
   return false;
  }
- function excluded(target){
+ function excluded(target,nested=false){
   if(!(target instanceof Element))return true;
-  return !!target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop,.profile-info-topic,details');
+  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
+  // Vertical content areas may still start a nested back swipe. touch-action:pan-y
+  // and the direction lock keep ordinary scrolling native.
+  return !nested&&!!target.closest('#chatMessages,.chat-message,.profile-info-topic,details');
  }
  function clearAnimation(){
   if(watchdog){clearTimeout(watchdog);watchdog=0}
@@ -5554,11 +5557,11 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   animateTo(()=>{},g.dx,210);
  }
  function onDown(e){
-  if(gesture||transitioning||hasOverlay()||!e.isPrimary||e.button>0||!app.contains(e.target)||excluded(e.target))return;
+  const nested=isNested();
+  if(gesture||transitioning||hasOverlay()||!e.isPrimary||e.button>0||!app.contains(e.target)||excluded(e.target,nested))return;
   const x=e.clientX,w=window.innerWidth||app.clientWidth,idx=pages.indexOf(currentPage());
   const safeInset=Math.min(28,Math.max(22,Math.round(w*.045)));
   if(idx<0||x<safeInset||x>w-safeInset)return;
-  const nested=isNested();
   const backMode=nested&&x<=Math.min(w-safeInset,safeInset+52);
   if(nested&&!backMode)return;
   gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:backMode?"back":"tabs",index:idx,direction:0,started:performance.now(),target:e.target};
