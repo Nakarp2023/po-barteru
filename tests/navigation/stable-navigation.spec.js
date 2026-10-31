@@ -9,7 +9,7 @@ test('screen stage is isolated from the app shell and fixed navigation', async (
   await expect(page.locator('main.app > header.top')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toHaveCount(1);
-  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-07');
+  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-08');
   await expect(page.locator('body > nav.bottom')).toBeVisible();
 
   const structure = await page.evaluate(() => ({
