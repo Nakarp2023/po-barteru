@@ -3922,7 +3922,7 @@ setInterval(()=>{if(currentUser&&db)loadMonetizationOrders()},30000);
 async function loadActiveSubscription(){
  const previousPlanCode=activePlanCode;
  const el=$("subscriptionStatus");
- if(!currentUser||!db){activePlanCode="free";if(el)el.hidden=true;return}
+ if(!currentUser||!db){activePlanCode="free";if(el)el.hidden=true;if(previousPlanCode!=="free")loadRemoteListings();return}
  const now=new Date().toISOString();
  const {data:rows,error}=await db.from("user_subscriptions").select("plan_code,starts_at,ends_at,status").eq("user_id",currentUser.id).eq("status","active").lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(10);
  if(error){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Обнови профиль позже.</div></article>'}if(previousPlanCode!=="free")loadRemoteListings();return}
