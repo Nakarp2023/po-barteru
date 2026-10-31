@@ -9,7 +9,7 @@ test('screen stage is isolated from the app shell and fixed navigation', async (
   await expect(page.locator('main.app > header.top')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toHaveCount(1);
-  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-05');
+  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-06');
   await expect(page.locator('body > nav.bottom')).toBeVisible();
 
   const structure = await page.evaluate(() => ({
@@ -24,6 +24,35 @@ test('screen stage is isolated from the app shell and fixed navigation', async (
   expect(structure.diagnostics?.installed).toBe(true);
   expect(structure.diagnostics?.stage).toBe('poScreenStage');
   expect(errors).toEqual([]);
+});
+
+test('tab changes use captured old and new screen surfaces when supported', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const support = await page.evaluate(() => ({
+    api: typeof document.startViewTransition === 'function',
+    name: getComputedStyle(document.querySelector('#poScreenStage')).viewTransitionName,
+  }));
+  expect(support.name).toBe('po-screen');
+  if (!support.api) test.skip();
+  await page.evaluate(() => {
+    const native = document.startViewTransition.bind(document);
+    window.__poViewTransitionCalls = 0;
+    document.startViewTransition = callback => {
+      window.__poViewTransitionCalls += 1;
+      return native(callback);
+    };
+  });
+  await page.locator('.bottom .nav[data-page="favorites"]').click();
+  await expect.poll(async () => page.evaluate(() => window.__poViewTransitionCalls)).toBe(1);
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
+  const clean = await page.evaluate(() => ({
+    transform: document.querySelector('#poScreenStage').style.transform,
+    directionClasses: document.documentElement.classList.contains('po-nav-next') || document.documentElement.classList.contains('po-nav-prev'),
+  }));
+  expect(clean.transform).toBe('');
+  expect(clean.directionClasses).toBe(false);
 });
 
 test('tab navigation and browser Back restore the previous screen', async ({ page }) => {
