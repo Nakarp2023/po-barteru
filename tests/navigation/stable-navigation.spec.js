@@ -9,7 +9,7 @@ test('screen stage is isolated from the app shell and fixed navigation', async (
   await expect(page.locator('main.app > header.top')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toHaveCount(1);
-  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-02');
+  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-03');
   await expect(page.locator('body > nav.bottom')).toBeVisible();
 
   const structure = await page.evaluate(() => ({
@@ -113,4 +113,35 @@ test('lost focus cancels an active drag without leaving the screen displaced', a
   expect(recovered.diagnostics?.transitioning).toBe(false);
   expect(recovered.inlineTransform).toBe('');
   await page.mouse.up();
+});
+
+test('nested profile back swipe works when it starts over scrollable help content', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.locator('.bottom .nav[data-page="profile"]').click();
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('profile');
+  await page.evaluate(() => {
+    const dashboard = document.querySelector('#profileDashboard');
+    const help = document.querySelector('#profileInfoHelpPanel');
+    if (dashboard) {
+      dashboard.hidden = false;
+      dashboard.classList.add('profile-show-settings');
+    }
+    if (help) help.hidden = false;
+  });
+  const details = page.locator('#profileInfoHelpPanel details').first();
+  await details.scrollIntoViewIfNeeded();
+  const box = await details.boundingBox();
+  expect(box).not.toBeNull();
+  const x = Math.max(24, Math.min(72, box.x + 16));
+  const y = box.y + box.height * 0.5;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 125, y, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().nested)).toBe(false);
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
+  const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
+  expect(diagnostics?.currentPage).toBe('profile');
+  expect(diagnostics?.gestureActive).toBe(false);
 });
