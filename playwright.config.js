@@ -6,7 +6,7 @@ export default defineConfig({
   retries: 1,
   reporter: 'list',
   use: {
-    baseURL: process.env.BASE_URL || 'https://po-barteru-stable-navigation-preview.onrender.com',
+    baseURL: process.env.BASE_URL || 'https://po-barteru-simple-navigation-preview.onrender.com',
     headless: true,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
