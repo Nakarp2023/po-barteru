@@ -5385,6 +5385,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     }
    }else if(snapshot().chatOpen)closeChatToInbox();
    window.scrollTo({top:target.scrollY||0,left:0,behavior:"instant"});
+   const surface=target.chatOpen?thread:(target.helpOpen?help:(target.page==="profile"?dashboard:(target.page==="chats"?$("chatInbox"):null)));
+   if(surface)requestAnimationFrame(()=>window.poAnimateSurface?.(surface));
   }finally{
    restoring=false;
    lastSnapshot=snapshot();
@@ -5534,7 +5536,6 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  }
  function settle(g,commit){
   if(!g.claimed)return;
-  const width=Math.max(1,window.innerWidth||app.clientWidth||390);
   if(commit){
    if(g.kind==="back"){
     const handled=window.poNavigateBack?.();
@@ -5604,12 +5605,6 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(reduced()){app.style.transform="";app.style.willChange="";return}
   settle(g,false);
  }
- document.addEventListener("click",event=>{
-  const control=event.target instanceof Element?event.target.closest('.profile-hub-row[data-profile-open],#profileInfoHelpBack,.profile-info-back,[data-profile-back]'):null;
-  if(!control)return;
-  const isBack=control.id==="profileInfoHelpBack"||control.classList.contains("profile-info-back")||control.hasAttribute("data-profile-back");
-  requestAnimationFrame(()=>animateTo(()=>{},isBack?18:-18,230));
- },true);
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
