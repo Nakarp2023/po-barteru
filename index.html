@@ -5311,13 +5311,14 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const before=snapshot();
   if(!restoring&&before.page!==nextPage&&typeof window.poRunNavigationTransition==="function"&&!window.__poNavTransitionMutating){
    const from=pagesForMotion(before.page),to=pagesForMotion(nextPage),direction=to>=from?-1:1;
-   const animated=window.poRunNavigationTransition(()=>{window.__poNavTransitionMutating=true;try{originalSetPage(nextPage)}finally{window.__poNavTransitionMutating=false}},direction,false);
-   if(animated){
+   const animated=window.poRunNavigationTransition(()=>{
+    window.__poNavTransitionMutating=true;
+    try{originalSetPage(nextPage)}finally{window.__poNavTransitionMutating=false}
     stack.length=0;
     lastSnapshot=snapshot();
     writeHistorySnapshot(lastSnapshot);
-    return;
-   }
+   },direction,false);
+   if(animated)return;
    // If another transition is still settling, never drop the user's tab change.
   }
   const result=originalSetPage(nextPage);
@@ -5516,7 +5517,7 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
  function clearAnimation(){
   if(watchdog){clearTimeout(watchdog);watchdog=0}
   if(animation){try{animation.cancel()}catch(_){}animation=null}
-  viewTransition=null;
+  if(viewTransition){try{viewTransition.skipTransition()}catch(_){}viewTransition=null}
   document.documentElement.classList.remove("po-nav-next","po-nav-prev");
   app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
   app.classList.remove("po-nav-moving");transitioning=false;
