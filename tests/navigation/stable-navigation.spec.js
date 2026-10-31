@@ -155,7 +155,7 @@ test('reverse horizontal swipe returns from favorites to home without a tab tap'
   await page.locator('.bottom .nav[data-page="favorites"]').click();
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
-  const heading = await page.locator('#favoritesPage').boundingBox();
+  const heading = await page.locator('#poScreenStage').boundingBox();
   expect(heading).not.toBeNull();
   const x = Math.max(100, Math.min(heading.x + heading.width * 0.75, 330));
   const y = Math.max(150, Math.min(heading.y + 90, 700));
@@ -202,7 +202,7 @@ test('swipe navigation is bidirectional across consecutive gestures', async ({ p
   await drag('#homeHero h1', -130);
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
-  await drag('#favoritesPage', 130);
+  await drag('#poScreenStage', 130);
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('home');
   const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
   expect(diagnostics?.transitioning).toBe(false);
