@@ -5527,7 +5527,9 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
  function setPageDirect(value){
   const previous=window.__poNavTransitionMutating;
   window.__poNavTransitionMutating=true;
-  try{window.setPage(value)}finally{window.__poNavTransitionMutating=previous||false}
+  try{window.setPage(value);return true}
+  catch(error){console.error("Navigation page change failed:",error);return false}
+  finally{window.__poNavTransitionMutating=previous||false}
  }
  function targetFor(g){
   if(g.kind==="back")return null;
@@ -5538,12 +5540,12 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   if(!g.claimed)return;
   if(commit){
    if(g.kind==="back"){
-    const handled=window.poNavigateBack?.();
-    if(!handled){animateTo(()=>{},0,180);return}
+    let handled=false;
+    try{handled=!!window.poNavigateBack?.()}catch(error){console.error("Navigation back failed:",error)}
+    if(!handled){animateTo(()=>{},g.dx,210);return}
    }else{
     const target=targetFor(g);
-    if(!target){animateTo(()=>{},0,180);return}
-    setPageDirect(target);
+    if(!target||!setPageDirect(target)){animateTo(()=>{},g.dx,210);return}
     window.poCommitNavigationHistory?.();
    }
    animateTo(()=>{},g.dx,280);
@@ -5594,21 +5596,33 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
    ?g.dx>Math.min(112,(window.innerWidth||390)*.28)||(g.dx>38&&velocity>.48)
    :Math.abs(g.dx)>threshold||(Math.abs(g.dx)>38&&velocity>.48);
   if(reduced()){
-   if(commit){if(g.kind==="back")window.poNavigateBack?.();else{setPageDirect(targetFor(g));window.poCommitNavigationHistory?.()}}
+   if(commit){
+    if(g.kind==="back"){try{window.poNavigateBack?.()}catch(error){console.error("Navigation back failed:",error)}}
+    else{const target=targetFor(g);if(target&&setPageDirect(target))window.poCommitNavigationHistory?.()}
+   }
    app.style.transform="";app.style.willChange="";return;
   }
   settle(g,commit);
  }
- function onCancel(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
+ function cancelActiveGesture(expectedPointerId=null){
+  const g=gesture;if(!g||(expectedPointerId!==null&&g.id!==expectedPointerId))return;
+  gesture=null;
+  try{if(app.hasPointerCapture(g.id))app.releasePointerCapture(g.id)}catch(_){}
   if(!g.claimed)return;
   if(reduced()){app.style.transform="";app.style.willChange="";return}
   settle(g,false);
  }
+ function onCancel(e){cancelActiveGesture(e.pointerId)}
+ function onLostPointerCapture(e){cancelActiveGesture(e.pointerId)}
+ function onWindowBlur(){cancelActiveGesture();if(transitioning)clearAnimation()}
+ function onVisibilityChange(){if(document.hidden){cancelActiveGesture();if(transitioning)clearAnimation()}}
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
  document.addEventListener("pointercancel",onCancel,{passive:true});
+ app.addEventListener("lostpointercapture",onLostPointerCapture);
+ window.addEventListener("blur",onWindowBlur);
+ document.addEventListener("visibilitychange",onVisibilityChange);
  window.poRunNavigationTransition=(mutator,direction)=>animateTo(mutator,(direction<0?1:-1)*22,245);
  window.poNavigationDiagnostics=()=>({installed:true,stage:app.id,transitioning,gestureActive:!!gesture,pointerId:gesture?.id??null,currentPage:currentPage(),nested:isNested(),historyLength:window.history.length,reducedMotion:reduced()});
 })();
