@@ -109,15 +109,6 @@ This is an inventory of migration records currently present in production. It is
 | 20261029065605 | notify_exchange_terms_changes_server_side |
 | 20261029184414 | create_support_tickets |
 | 20261029184427 | restrict_support_ticket_grants |
-| 20261029045731 | cancel_exchange_deal |
-| 20261029050049 | exchange_confirmation_timeout |
-| 20261029053340 | hide_permanently_deleted_exchange_listings |
-| 20261029055414 | enable_exchange_proposal_realtime |
-| 20261029065136 | close_chat_after_exchange_and_remind_contacts |
-| 20261029065219 | require_live_exchange_for_chat_messages |
-| 20261029065605 | notify_exchange_terms_changes_server_side |
-| 20261029184414 | create_support_tickets |
-| 20261029184427 | restrict_support_ticket_grants |
 
 ## Repository source-file reconciliation
 
@@ -129,7 +120,7 @@ This is an inventory of migration records currently present in production. It is
 - Production versions without an exact matching SQL filename: **82**.
 - Repository SQL versions absent from production history: **4**.
 
-The four repository files whose version prefixes are not present in production are not automatically considered deployable. Two have production counterparts under different versions (`cancel_exchange_deal` and `exchange_confirmation_timeout`); the support-ticket files also have production counterparts under different versions. Their SQL content and deployed definitions must be compared before classifying them as duplicates, renamed versions, or divergent sources. Do not apply them.
+The four repository files whose version prefixes are not present in production are not automatically considered deployable. They have production counterparts under different versions (`cancel_exchange_deal`, `exchange_confirmation_timeout`, `create_support_tickets`, and `restrict_support_ticket_grants`). Their SQL content and deployed definitions must be compared before classifying them as duplicates, renamed versions, or divergent sources. Do not apply them.
 
 The missing files below are source-recovery work items only. **Do not recreate SQL from migration names, replay these migrations, or run `supabase db push` as a way to reconcile them.** Recover originals from a trusted backup/commit/archive where available; otherwise document each as unavailable. Production remains the authority for current live state, not for the missing original source text.
 
@@ -208,6 +199,15 @@ The missing files below are source-recovery work items only. **Do not recreate S
 | 20261028171618 | add_listing_subcategory |
 | 20261028173006 | add_listing_region |
 | 20261029031858 | allow_business_team_invite_notifications |
+| 20261029045731 | cancel_exchange_deal |
+| 20261029050049 | exchange_confirmation_timeout |
+| 20261029053340 | hide_permanently_deleted_exchange_listings |
+| 20261029055414 | enable_exchange_proposal_realtime |
+| 20261029065136 | close_chat_after_exchange_and_remind_contacts |
+| 20261029065219 | require_live_exchange_for_chat_messages |
+| 20261029065605 | notify_exchange_terms_changes_server_side |
+| 20261029184414 | create_support_tickets |
+| 20261029184427 | restrict_support_ticket_grants |
 
 ## Bootstrap schema warning
 
