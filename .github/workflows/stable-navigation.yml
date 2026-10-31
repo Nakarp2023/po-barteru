@@ -31,6 +31,21 @@ jobs:
         run: npm install --no-save --package-lock=false @playwright/test
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+      - name: Wait for the matching Render Preview commit
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          url="${BASE_URL:-https://po-barteru-stable-navigation-preview.onrender.com}"
+          for attempt in $(seq 1 60); do
+            if curl -fsSL "$url" | grep -Fq 'data-navigation-build="nav-stage-v1-20261031-01"'; then
+              echo "Render Preview contains the expected navigation build."
+              exit 0
+            fi
+            echo "Waiting for Render Preview deployment ($attempt/60)..."
+            sleep 5
+          done
+          echo "Render Preview did not expose the expected build marker in time."
+          exit 1
       - name: Run navigation tests
         env:
           BASE_URL: ${{ inputs.base_url }}
