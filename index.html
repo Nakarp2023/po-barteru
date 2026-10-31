@@ -1812,7 +1812,7 @@ button:active,.pill:active,.chip:active,.offer:active{
 @media(max-width:600px){
  .bottom{left:10px!important;right:10px!important;min-height:70px!important;padding:5px!important;border-radius:26px!important}
  .bottom::before{left:5px;top:5px;bottom:5px;width:calc((100% - 10px)/5);border-radius:21px}
- .bottom .nav{min-height:58px!important;height:58px!important;gap:4px!important;padding:4px 1px!important;font-size:9.5px!important}
+ .bottom .nav{min-height:58px!important;height:58px!important;gap:4px!important;padding:4px 1px!important;font-size:clamp(8px,2.25vw,9px)!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:keep-all!important;letter-spacing:-.045em!important}
  .bottom .nav .nav-symbol,.bottom .nav .nav-icon-wrap{width:24px;height:24px;flex-basis:24px}
  .bottom .nav .nav-symbol svg,.bottom .nav .nav-icon-wrap svg{width:23px;height:23px}
 }
