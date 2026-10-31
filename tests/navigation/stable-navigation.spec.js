@@ -185,3 +185,26 @@ test('first swipe after a fresh load is handled before any tab interaction', asy
   await page.mouse.up();
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
 });
+
+test('swipe navigation is bidirectional across consecutive gestures', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const drag = async (selector, deltaX) => {
+    const box = await page.locator(selector).boundingBox();
+    expect(box).not.toBeNull();
+    const x = Math.max(100, Math.min(box.x + box.width * 0.78, 330));
+    const y = Math.max(160, Math.min(box.y + box.height * 0.5, 720));
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x + deltaX, y, { steps: 8 });
+    await page.mouse.up();
+  };
+  await drag('#homeHero h1', -130);
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
+  await drag('#favoritesPage', 130);
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('home');
+  const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
+  expect(diagnostics?.transitioning).toBe(false);
+  expect(diagnostics?.gestureActive).toBe(false);
+});
