@@ -3920,19 +3920,21 @@ async function loadMonetizationOrders(){
 }
 setInterval(()=>{if(currentUser&&db)loadMonetizationOrders()},30000);
 async function loadActiveSubscription(){
+ const previousPlanCode=activePlanCode;
  const el=$("subscriptionStatus");
  if(!currentUser||!db){activePlanCode="free";if(el)el.hidden=true;return}
  const now=new Date().toISOString();
  const {data:rows,error}=await db.from("user_subscriptions").select("plan_code,starts_at,ends_at,status").eq("user_id",currentUser.id).eq("status","active").lte("starts_at",now).gt("ends_at",now).order("ends_at",{ascending:false}).limit(10);
- if(error){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Обнови профиль позже.</div></article>'}return}
+ if(error){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Обнови профиль позже.</div></article>'}if(previousPlanCode!=="free")loadRemoteListings();return}
  const rank={business:3,pro_plus:2,pro:1,free:0};
  const data=(rows||[]).sort((a,b)=>(rank[b.plan_code]||0)-(rank[a.plan_code]||0)||new Date(b.ends_at)-new Date(a.ends_at))[0]||null;
- if(!data){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Ваш тариф: Free</b><div class="category" style="margin-top:6px">До 3 активных объявлений. Платный тариф можно подключить ниже.</div></article>'}return}
+ if(!data){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Ваш тариф: Free</b><div class="category" style="margin-top:6px">До 3 активных объявлений. Платный тариф можно подключить ниже.</div></article>'}if(previousPlanCode!=="free")loadRemoteListings();return}
  activePlanCode=data.plan_code||"free";
  const names={pro:"PRO",pro_plus:"PRO+",business:"Business"};
  const until=new Date(data.ends_at).toLocaleDateString("ru-RU");
  const endDate=new Date(data.ends_at);const today=new Date();const endDay=Date.UTC(endDate.getFullYear(),endDate.getMonth(),endDate.getDate());const todayDay=Date.UTC(today.getFullYear(),today.getMonth(),today.getDate());const days=Math.max(0,Math.round((endDay-todayDay)/86400000));
  if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px;border-color:#d7efaa"><b>Ваш тариф: '+esc(names[data.plan_code]||data.plan_code)+'</b><div class="category" style="margin-top:6px">Активен до '+esc(until)+' · осталось '+days+' дн.</div></article>'}
+ if(previousPlanCode!==activePlanCode)loadRemoteListings();
 }
 function choosePromotionListing(listings){
  return new Promise(resolve=>{
