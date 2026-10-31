@@ -3449,13 +3449,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:480px){.notification-head{display:flex;flex-wrap:nowrap;align-items:center}.notification-head-tools{flex:0 0 auto}.notification-head h2{font-size:clamp(20px,5vw,24px)}.notification-actions .chip{white-space:normal;max-width:150px}}
 </style>
 <style id="poSimpleNavigationStyles">
-/* Simple, deterministic tab navigation: selection follows taps, never drag gestures. */
-.bottom{touch-action:manipulation!important;--lens-stretch:1!important;--lens-origin:50%!important}
-.bottom .nav{touch-action:manipulation!important;transition:color .16s ease,background-color .16s ease!important}
-.bottom.nav-dragging .nav,.bottom .nav.nav-following{transform:none!important}
-.bottom.nav-dragging .nav.active{background:transparent!important;box-shadow:none!important}
+/* Keep tap navigation deterministic; horizontal page gestures belong to the screen stage. */
+.bottom{touch-action:manipulation!important}
+.bottom .nav{touch-action:manipulation!important}
 </style></head><body>
-<main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><div class="po-screen-stage" id="poScreenStage" data-navigation-build="simple-nav-v1-20261031-01"><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
+<main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><div class="po-screen-stage" id="poScreenStage" data-navigation-build="liquid-swipe-v2-20261031-01"><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
     <div class="hero-product hero-product-headphones"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt=""></div>
@@ -5497,18 +5495,236 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
 @media(prefers-reduced-motion:reduce){::view-transition-group(po-screen){animation-duration:1ms!important}html.po-nav-next::view-transition-old(po-screen),html.po-nav-next::view-transition-new(po-screen),html.po-nav-prev::view-transition-old(po-screen),html.po-nav-prev::view-transition-new(po-screen){animation-duration:1ms!important}}
 @media(prefers-reduced-motion:reduce){.po-screen-stage.po-nav-moving{will-change:auto}}
 </style>
-<script id="poSimpleTabNavigation">
-/* Primary navigation is tap-only: no horizontal page swipes or draggable tab lens. */
+<script id="poPrimaryTabSwipeNavigation">
+/* Unified navigation interaction layer: one gesture owner and one transition engine. */
 (function(){
- const nav=document.querySelector(".bottom");
- const tabs=[...(nav?.querySelectorAll(".nav[data-page]")||[])];
- window.poNavigationDiagnostics=()=>({
-  installed:!!nav,
-  mode:"tap-only",
-  gestureActive:false,
-  currentPage:nav?.querySelector(".nav.active")?.dataset.page||"home",
-  tabs:tabs.map(tab=>tab.dataset.page)
- });
+ if(window.__poUnifiedNavigationInstalled)return;
+ const app=document.querySelector("#poScreenStage"),nav=document.querySelector(".bottom");
+ if(!app||!nav||typeof window.setPage!=="function")return;
+ const tabs=[...nav.querySelectorAll(".nav[data-page]")],pages=tabs.map(t=>t.dataset.page);
+ if(pages.length<2)return;
+ window.__poUnifiedNavigationInstalled=true;
+ const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+ const $=id=>document.getElementById(id);
+ const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
+ const easing="cubic-bezier(.2,.78,.22,1)";
+ let gesture=null,transitioning=false,animation=null,viewTransition=null,watchdog=0;
+ const currentPage=()=>nav.querySelector(".nav.active")?.dataset.page||(typeof page!=="undefined"&&pages.includes(page)?page:pages[0]);
+ function isNested(){
+  const d=$("profileDashboard"),thread=$("chatThread"),help=$("profileInfoHelpPanel");
+  return !!(d&&(d.classList.contains("listings-only")||nestedClasses.some(c=>d.classList.contains(c))))||
+   !!(help&&!help.hidden)||!!(thread&&!thread.hidden);
+ }
+ function hasOverlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open,.delete-confirm-overlay.visible")}
+ function scrollableConflict(target,dx){
+  for(let n=target;n&&n!==app;n=n.parentElement){
+   const cs=getComputedStyle(n),horizontal=(cs.overflowX==="auto"||cs.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+4;
+   if(horizontal){
+    const atStart=n.scrollLeft<=0,atEnd=n.scrollLeft+n.clientWidth>=n.scrollWidth-2;
+    if((dx>0&&!atStart)||(dx<0&&!atEnd))return true;
+   }
+  }
+  return false;
+ }
+ function excluded(target,nested=false){
+  if(!(target instanceof Element))return true;
+  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
+  // Vertical content areas may still start a nested back swipe. touch-action:pan-y
+  // and the direction lock keep ordinary scrolling native.
+  return !nested&&!!target.closest('#chatMessages,.chat-message,.profile-info-topic,details');
+ }
+ function clearAnimation(){
+  if(watchdog){clearTimeout(watchdog);watchdog=0}
+  if(animation){try{animation.cancel()}catch(_){}animation=null}
+  if(viewTransition){try{viewTransition.skipTransition()}catch(_){}viewTransition=null}
+  document.documentElement.classList.remove("po-nav-next","po-nav-prev");
+  app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
+  app.classList.remove("po-nav-moving");transitioning=false;
+ }
+ function animateTo(mutator,fromX,duration=280){
+  if(transitioning)return false;
+  if(reduced()){try{mutator();return true}catch(error){console.error("Navigation mutation failed:",error);return false}}
+  transitioning=true;
+  const direction=fromX<0?-1:1;
+  const root=document.documentElement;
+  const motionClass=direction<0?"po-nav-next":"po-nav-prev";
+  const finish=()=>{
+   if(watchdog){clearTimeout(watchdog);watchdog=0}
+   if(animation){try{animation.cancel()}catch(_){}animation=null}
+   viewTransition=null;
+   root.classList.remove("po-nav-next","po-nav-prev");
+   app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
+   app.classList.remove("po-nav-moving");
+   transitioning=false;
+  };
+  if(typeof document.startViewTransition==="function"){
+   try{
+    root.classList.remove("po-nav-next","po-nav-prev");
+    root.classList.add(motionClass);
+    let mutationError=null;
+    viewTransition=document.startViewTransition(()=>{
+     try{mutator()}catch(error){mutationError=error}
+     app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
+     app.classList.remove("po-nav-moving");
+    });
+    watchdog=setTimeout(finish,duration+500);
+    viewTransition.finished.then(()=>{
+     if(mutationError)console.error("Navigation mutation failed:",mutationError);
+     finish();
+    },error=>{
+     if(mutationError)console.error("Navigation mutation failed:",mutationError);
+     else console.warn("Screen transition finished with fallback:",error);
+     finish();
+    });
+    return true;
+   }catch(error){
+    root.classList.remove("po-nav-next","po-nav-prev");
+    viewTransition=null;
+    console.warn("View Transition API unavailable; using fallback:",error);
+   }
+  }
+  try{mutator()}catch(error){transitioning=false;console.error("Navigation mutation failed:",error);return false}
+  app.classList.add("po-nav-moving");
+  app.style.willChange="transform";
+  try{
+   animation=app.animate(
+    [{transform:"translate3d("+fromX+"px,0,0)"},{transform:"translate3d(0,0,0)"}],
+    {duration,easing,fill:"both"}
+   );
+  }catch(error){console.warn("Navigation animation unavailable:",error);finish();return true}
+  watchdog=setTimeout(finish,duration+180);
+  animation.finished.then(finish,finish);
+  return true;
+ }
+ function setPageDirect(value){
+  const previous=window.__poNavTransitionMutating;
+  window.__poNavTransitionMutating=true;
+  try{window.setPage(value);return true}
+  catch(error){console.error("Navigation page change failed:",error);return false}
+  finally{window.__poNavTransitionMutating=previous||false}
+ }
+ function targetFor(g){
+  if(g.kind==="back")return null;
+  const next=g.index+(g.direction<0?1:-1);
+  return pages[next]||null;
+ }
+ function settle(g,commit){
+  if(!g.claimed)return;
+  if(commit){
+   if(g.kind==="back"){
+    if(!window.poCanNavigateBack?.()){animateTo(()=>{},g.dx,210);return}
+    animateTo(()=>{try{window.poNavigateBack?.()}catch(error){console.error("Navigation back failed:",error)}},g.dx,280);
+   }else{
+    const target=targetFor(g);
+    if(!target){animateTo(()=>{},g.dx,210);return}
+    animateTo(()=>{
+     if(setPageDirect(target))window.poCommitNavigationHistory?.();
+    },g.dx,280);
+   }
+   return;
+  }
+  animateTo(()=>{},g.dx,210);
+ }
+ function onDown(e){
+  const nested=isNested();
+  if(gesture||transitioning||hasOverlay()||!e.isPrimary||e.button>0||!app.contains(e.target)||excluded(e.target,nested))return;
+  const x=e.clientX,w=window.innerWidth||app.clientWidth,idx=pages.indexOf(currentPage());
+  const edgeInset=Math.min(28,Math.max(22,Math.round(w*.045)));
+  if(idx<0)return;
+  // The app owns horizontal navigation even when a gesture starts at the screen edge.
+  // iOS Safari otherwise treats that gesture as browser history navigation and slides
+  // two complete document snapshots (including the header and bottom bar) side by side.
+  const backMode=nested&&x<=Math.min(w-edgeInset,edgeInset+52);
+  if(nested&&!backMode)return;
+  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:backMode?"back":"tabs",index:idx,direction:0,started:performance.now(),target:e.target};
+ }
+ function onMove(e){
+  const g=gesture;if(!g||e.pointerId!==g.id)return;
+  const dx=e.clientX-g.x,dy=e.clientY-g.y;
+  if(!g.claimed){
+   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
+   if(Math.abs(dy)>Math.abs(dx)*1.12){gesture=null;return}
+   if(g.kind==="back"&&dx<=0){gesture=null;return}
+   if(scrollableConflict(g.target,dx)){gesture=null;return}
+   const dir=dx<0?-1:1;
+   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1)<0||g.index+(dir<0?1:-1)>=pages.length)){gesture=null;return}
+   g.claimed=true;g.direction=dir;
+   try{app.setPointerCapture(e.pointerId)}catch(_){}
+  }
+  if(e.cancelable)e.preventDefault();
+  g.dx=dx;g.dy=dy;
+  const width=Math.max(1,window.innerWidth||app.clientWidth);
+  let visual=dx;
+  if(g.kind==="back")visual=Math.max(0,dx);
+  else if((g.index+(dx<0?1:-1)<0)||(g.index+(dx<0?1:-1)>=pages.length))visual=dx*.28;
+  app.style.willChange="transform";
+  app.style.transform="translate3d("+visual+"px,0,0)";
+ }
+ function onUp(e){
+  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
+  if(g.claimed){try{app.releasePointerCapture(e.pointerId)}catch(_){}}
+  if(!g.claimed)return;
+  g.dx=e.clientX-g.x;
+  const elapsed=Math.max(1,performance.now()-g.started),velocity=Math.abs(g.dx)/elapsed;
+  const threshold=Math.max(68,(window.innerWidth||390)*.18);
+  const commit=g.kind==="back"
+   ?g.dx>Math.min(112,(window.innerWidth||390)*.28)||(g.dx>38&&velocity>.48)
+   :Math.abs(g.dx)>threshold||(Math.abs(g.dx)>38&&velocity>.48);
+  if(reduced()){
+   if(commit){
+    if(g.kind==="back"){try{window.poNavigateBack?.()}catch(error){console.error("Navigation back failed:",error)}}
+    else{const target=targetFor(g);if(target&&setPageDirect(target))window.poCommitNavigationHistory?.()}
+   }
+   app.style.transform="";app.style.willChange="";return;
+  }
+  settle(g,commit);
+ }
+ function cancelActiveGesture(expectedPointerId=null){
+  const g=gesture;if(!g||(expectedPointerId!==null&&g.id!==expectedPointerId))return;
+  gesture=null;
+  try{if(app.hasPointerCapture(g.id))app.releasePointerCapture(g.id)}catch(_){}
+  if(!g.claimed)return;
+  if(reduced()){app.style.transform="";app.style.willChange="";return}
+  settle(g,false);
+ }
+ function onCancel(e){cancelActiveGesture(e.pointerId)}
+ function onLostPointerCapture(e){cancelActiveGesture(e.pointerId)}
+ function onWindowBlur(){cancelActiveGesture();if(transitioning)clearAnimation()}
+ function onVisibilityChange(){if(document.hidden){cancelActiveGesture();if(transitioning)clearAnimation()}}
+ // Safari's interactive browser-back gesture takes precedence at the screen edge.
+ // Cancel only edge-originating horizontal touches inside the app; keep vertical scrolling native.
+ let edgeTouch=null;
+ app.addEventListener("touchstart",e=>{
+  if(e.touches.length!==1)return;
+  const t=e.touches[0],w=window.innerWidth||app.clientWidth;
+  if(t.clientX<=24||t.clientX>=w-24){
+   edgeTouch={id:t.identifier,x:t.clientX,y:t.clientY};
+   // WebKit may begin its browser-history animation before pointermove can claim
+   // the gesture. Cancel that default only in the narrow 24px edge strip.
+   if(e.cancelable)e.preventDefault();
+  }else edgeTouch=null;
+ },{capture:true,passive:false});
+ app.addEventListener("touchmove",e=>{
+  if(!edgeTouch)return;
+  const t=[...e.changedTouches].find(x=>x.identifier===edgeTouch.id);
+  if(!t)return;
+  const dx=t.clientX-edgeTouch.x,dy=t.clientY-edgeTouch.y;
+  if(Math.abs(dx)>7&&Math.abs(dx)>Math.abs(dy)*1.12){
+   if(e.cancelable)e.preventDefault();
+  }else if(Math.abs(dy)>Math.abs(dx)*1.12)edgeTouch=null;
+ },{capture:true,passive:false});
+ const clearEdgeTouch=()=>{edgeTouch=null};
+ app.addEventListener("touchend",clearEdgeTouch,{capture:true,passive:true});
+ app.addEventListener("touchcancel",clearEdgeTouch,{capture:true,passive:true});
+ document.addEventListener("pointerdown",onDown,{passive:true});
+ document.addEventListener("pointermove",onMove,{passive:false});
+ document.addEventListener("pointerup",onUp,{passive:true});
+ document.addEventListener("pointercancel",onCancel,{passive:true});
+ app.addEventListener("lostpointercapture",onLostPointerCapture);
+ window.addEventListener("blur",onWindowBlur);
+ document.addEventListener("visibilitychange",onVisibilityChange);
+ window.poRunNavigationTransition=(mutator,direction)=>animateTo(mutator,(direction<0?1:-1)*22,245);
+ window.poNavigationDiagnostics=()=>({installed:true,stage:app.id,transitioning,gestureActive:!!gesture,pointerId:gesture?.id??null,currentPage:currentPage(),nested:isNested(),historyLength:window.history.length,reducedMotion:reduced()});
 })();
 </script>
 
