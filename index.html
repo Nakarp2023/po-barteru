@@ -3448,8 +3448,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .notification-menu[hidden],.notification-menu-wrap[hidden]{display:none!important}
 @media(max-width:480px){.notification-head{display:flex;flex-wrap:nowrap;align-items:center}.notification-head-tools{flex:0 0 auto}.notification-head h2{font-size:clamp(20px,5vw,24px)}.notification-actions .chip{white-space:normal;max-width:150px}}
 </style>
-</head><body>
-<main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><div class="po-screen-stage" id="poScreenStage" data-navigation-build="nav-stage-v1-20261031-08"><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
+<style id="poSimpleNavigationStyles">
+/* Simple, deterministic tab navigation: selection follows taps, never drag gestures. */
+.bottom{touch-action:manipulation!important;--lens-stretch:1!important;--lens-origin:50%!important}
+.bottom .nav{touch-action:manipulation!important;transition:color .16s ease,background-color .16s ease!important}
+.bottom.nav-dragging .nav,.bottom .nav.nav-following{transform:none!important}
+.bottom.nav-dragging .nav.active{background:transparent!important;box-shadow:none!important}
+</style></head><body>
+<main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><div class="po-screen-stage" id="poScreenStage" data-navigation-build="simple-nav-v1-20261031-01"><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
     <div class="hero-product hero-product-headphones"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt=""></div>
@@ -3891,17 +3897,31 @@ function renderImagePreview(){
   else{selectedNewImageFiles.splice(index,1);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files}
   updatePhotoPickerState();renderImagePreview();
  }));
-}["addTop","heroAdd"].forEach(id=>{const button=$(id);if(button){button.type="button";button.addEventListener("click",event=>{event.preventDefault();openForm()})}});$("cancel").onclick=closeForm;$("modal").onclick=e=>{if(e.target===$("modal"))closeForm()};$("form").onsubmit=async e=>{e.preventDefault();const submitButton=$("listingSubmit");if(submitButton.disabled)return;submitButton.disabled=true;const originalButtonText=submitButton.textContent;submitButton.textContent="Сохраняем…";try{const f=new FormData(e.target),categoryValue=String(f.get("category")||"Другое"),files=categoryValue==="Услуги"?[]:Array.from($("listingImages").files||[]);if(files.length>5||editingImageUrls.length+files.length>5){toast("В объявлении может быть не больше 5 фотографий. Удали лишние или выбери меньше новых.");return}if(files.some(file=>!file.type.startsWith("image/"))){toast("Выбери именно фотографии в формате изображения");return}if(files.some(file=>file.size>5*1024*1024)){toast("Каждая фотография должна быть не больше 5 МБ. Уменьши размер фото и попробуй снова.");return}const newItem={id:editingListingId||Date.now(),title:capitalizeInitial(f.get("title")),category:categoryValue,subcategory:String(f.get("subcategory")||""),want:capitalizeInitial(f.get("want")),city:(cityByLabel(f.get("city"))?.name||String(f.get("city")||"").trim()),region:(cityByLabel(f.get("city"))?.region?.fullname||cityByLabel(f.get("city"))?.region?.name||""),price:Number(f.get("price"))||0,emoji:"🔄",desc:f.get("description"),image_urls:editingImageUrls.slice()};if(currentUser&&db&&files.length){const urls=[];for(let i=0;i<files.length;i++){const file=files[i],ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("listing-images").upload(path,file,{contentType:file.type,upsert:false});if(error){toast("Не удалось загрузить фото: "+error.message);return}urls.push(db.storage.from("listing-images").getPublicUrl(path).data.publicUrl)}newItem.image_urls=editingListingId?editingImageUrls.concat(urls).slice(-5):urls}else if(files.length){toast("Чтобы фотографии были видны всем, сначала войди в профиль.");return}if(editingListingId){if(!currentUser||!db){toast("Войди в аккаунт, чтобы редактировать объявление");return}const {data:updatedListing,error}=await db.from("listings").update({title:newItem.title,description:newItem.desc||"",category:newItem.category,subcategory:newItem.subcategory||null,city:newItem.city,region:newItem.region||null,want:newItem.want,estimated_value:newItem.price||null,image_urls:newItem.image_urls,status:editingListingStatus}).eq("id",editingListingId).eq("user_id",currentUser.id).select("id").maybeSingle();if(error){toast("Не удалось сохранить изменения: "+error.message);$("backendNote").textContent=error.message;return}if(!updatedListing){toast("Объявление не найдено или у вас нет прав на изменение.");return}items=items.map(x=>String(x.id)===String(editingListingId)?{...x,...newItem,remote:true}:x);persist();editingListingId=null;editingImageUrls=[];closeForm();await loadRemoteListings();profileBusy=false;await loadProfileDashboard();setPage("my-listings");toast("Изменения сохранены")}else{if(currentUser){const saved=await saveListing(newItem);if(!saved)return;closeForm()}else{items.unshift(newItem);persist();closeForm();toast("Сохранено на устройстве. Войди в профиле для публикации для всех.")};page="home";category="Все";document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page==="home"));renderFilters();render();if(currentUser)toast("Объявление опубликовано для всех");else toast("Объявление добавлено")}}catch(err){console.error("Listing save failed",err);toast("Не удалось сохранить: "+(err?.message||"неизвестная ошибка"));}finally{submitButton.disabled=false;submitButton.textContent=originalButtonText}};function updateImageField(){const isService=$("form").elements.category.value==="Услуги";$("listingImagesField").hidden=isService;if(isService){selectedNewImageFiles=[];$("listingImages").value="";$("imagePreview").innerHTML="";updatePhotoPickerState()}}$("form").addEventListener("change",event=>{if(event.target?.name==="category"){updateSubcategoryOptions();updateImageField()}});$("form").elements.category.addEventListener("input",()=>{updateSubcategoryOptions();updateImageField()});$("listingImages").addEventListener("click",event=>{if(editingImageUrls.length+selectedNewImageFiles.length>=5){event.preventDefault();toast("Уже добавлено 5 фотографий. Удали одну, чтобы выбрать другую.")}});$("listingImages").addEventListener("change",()=>{const chosen=Array.from($("listingImages").files||[])[0];if(!chosen){renderImagePreview();return}if(editingImageUrls.length+selectedNewImageFiles.length>=5){toast("Можно добавить не больше 5 фотографий");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(!chosen.type.startsWith("image/")){toast("Выбери файл изображения");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(chosen.size>5*1024*1024){toast("Каждая фотография должна быть не больше 5 МБ");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}selectedNewImageFiles.push(chosen);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview()});let searchRenderTimer=null;const runSearch=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=setTimeout(()=>{searchRenderTimer=null;render()},140)};$("searchBtn").onclick=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()};$("q").oninput=runSearch;$("q").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()}};$("advancedCity").oninput=render;$("advancedMinPrice").oninput=render;$("advancedMaxPrice").oninput=render;$("resetAdvancedSearch").onclick=()=>{filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("filterCityOnly").checked=false;$("advancedCity").value="";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";render()};$("saveMatchingSearch").onclick=async()=>{if(!currentUser||!db){toast("Войди в аккаунт, чтобы сохранять поиск.");return}if(!["pro","pro_plus","business"].includes(activePlanCode)){toast("Сохранённые поиски доступны на тарифе PRO и выше.");return}const queryText=$("q").value.trim(),city=$("advancedCity").value.trim(),minRaw=$("advancedMinPrice").value,maxRaw=$("advancedMaxPrice").value,min=minRaw===""?null:Number(minRaw),max=maxRaw===""?null:Number(maxRaw);if((min!==null&&min<0)||(max!==null&&max<0)||(min!==null&&max!==null&&min>max)){toast("Проверь диапазон цены.");return}const {error}=await db.from("saved_searches").insert({user_id:currentUser.id,name:[queryText||"Все предложения",category==="Все"?"Все категории":category,city||"Все города"].join(" · "),query_text:queryText||null,category:category==="Все"?null:category,city:city||null,min_price:min,max_price:max,is_active:true});if(error){toast("Не удалось сохранить поиск: "+error.message);return}toast("Поиск сохранён. Новые совпадения появятся в уведомлениях.");};$("backHome").onclick=()=>setPage("home");function setPage(p){document.querySelectorAll("#profileDashboard.listings-only #myListings .my-actions-menu[open]").forEach(menu=>menu.removeAttribute("open"));if($("modal")?.classList.contains("open"))closeForm();const profileDashboard=$("profileDashboard");if(profileDashboard&&p!=="profile"){profileDashboard.classList.remove("profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history")}page=p;const tabs=navTabs();const selected=tabs.findIndex(n=>n.dataset.page===p);const bar=document.querySelector(".bottom");tabs.forEach((n,i)=>{n.classList.toggle("active",n.dataset.page===p);const proximity=selected<0?0:Math.max(0,1-Math.abs(i-selected));n.style.setProperty("--lens-scale",String(1+proximity*.16));n.style.setProperty("--lens-y",String(proximity*-1.5)+"px")});if(bar&&selected>=0){bar.style.setProperty("--active-index",String(selected));if(!navDrag)bar.style.setProperty("--drag-index",String(selected));}if(p==="chats"||p==="notifications")refreshNotificationCount();render()}const bottomNav=document.querySelector(".bottom");let navDrag=null,suppressNavClick=false;const navTabs=()=>[...document.querySelectorAll(".bottom .nav")];function navSetDrag(value,dragging=true){if(!bottomNav)return;const tabs=navTabs(),max=Math.max(0,tabs.length-1);value=Math.max(0,Math.min(max,value));bottomNav.style.setProperty("--drag-index",String(value));bottomNav.classList.toggle("nav-dragging",dragging);if(!dragging){bottomNav.style.setProperty("--lens-stretch","1");bottomNav.style.setProperty("--lens-origin","50%")}const nearest=Math.max(0,Math.min(tabs.length-1,Math.round(value)));tabs.forEach((tab,i)=>{const proximity=Math.max(0,1-Math.abs(i-value));tab.style.setProperty("--lens-scale",String(1+proximity*.12));tab.style.setProperty("--lens-y",String(proximity*-1.5)+"px");tab.classList.toggle("nav-following",dragging&&i===nearest)})}function navPositionFromX(clientX){const tabs=navTabs(),rect=bottomNav.getBoundingClientRect(),slot=rect.width/Math.max(1,tabs.length);return Math.max(0,Math.min(tabs.length-1,(clientX-rect.left)/slot-.5))}
-function resetNavGesture(){if(!bottomNav)return;const idx=navTabs().findIndex(n=>n.dataset.page===page);navDrag=null;bottomNav.classList.remove("nav-dragging");if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));navSetDrag(idx,false)}suppressNavClick=false}
-bottomNav?.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;const tabs=navTabs();if(!tabs.length)return;const position=navPositionFromX(e.clientX);navDrag={id:e.pointerId,startX:e.clientX,startY:e.clientY,lastPosition:position,position,moved:false};navSetDrag(position,false);},{passive:true});
-function moveNavDrag(e){if(!navDrag||e.pointerId!==navDrag.id)return;const dx=e.clientX-navDrag.startX,dy=e.clientY-navDrag.startY;if(!navDrag.moved&&Math.abs(dx)>6&&Math.abs(dx)>Math.abs(dy)*1.05){navDrag.moved=true;suppressNavClick=true;bottomNav.classList.add("nav-dragging")}if(!navDrag.moved)return;const raw=navPositionFromX(e.clientX),now=performance.now(),delta=raw-navDrag.position,dt=Math.max(1,now-(navDrag.lastAt||now-16)),speed=Math.abs(delta)/dt;navDrag.position=raw;navDrag.lastPosition=raw;navDrag.lastAt=now;const stretch=1+Math.min(.34,speed*5.5);bottomNav.style.setProperty("--lens-stretch",String(stretch));bottomNav.style.setProperty("--lens-origin",delta>=0?"0%":"100%");navSetDrag(raw,true);if(e.cancelable)e.preventDefault()}
-function finishNavDrag(e){if(!navDrag||e.pointerId!==navDrag.id)return;const drag=navDrag;navDrag=null;bottomNav.classList.remove("nav-dragging");if(!drag.moved){const idx=navTabs().findIndex(n=>n.dataset.page===page);if(idx>=0)navSetDrag(idx,false);return}const tabs=navTabs();const target=Math.round(navPositionFromX(e.clientX));if(tabs[target])setPage(tabs[target].dataset.page);bottomNav.style.setProperty("--active-index",String(target));bottomNav.style.setProperty("--drag-index",String(target));navSetDrag(target,false);window.setTimeout(()=>{suppressNavClick=false},500)}
-function cancelNavDrag(e){if(!navDrag||e.pointerId!==navDrag.id)return;resetNavGesture()}
-document.addEventListener("pointermove",moveNavDrag,{passive:false});
-document.addEventListener("pointerup",finishNavDrag);
-document.addEventListener("pointercancel",cancelNavDrag);
-bottomNav?.addEventListener("lostpointercapture",cancelNavDrag);
-bottomNav?.addEventListener("click",e=>{const tab=e.target.closest(".bottom .nav");if(suppressNavClick){e.preventDefault();e.stopImmediatePropagation();suppressNavClick=false;return}if(tab){e.preventDefault();e.stopImmediatePropagation();const target=tab.dataset.page;if(target==="profile"){const dashboard=$("profileDashboard");dashboard?.classList.remove("listings-only","profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history");const helpPanel=$("profileInfoHelpPanel");if(helpPanel)helpPanel.hidden=true;const hub=$("profileHub");if(hub)hub.hidden=false;}if(target&&target!==page)setPage(target);if(target&&target!==page){window.scrollTo({top:0,left:0,behavior:"instant"});setPage(target);}else if(target==="profile"){window.scrollTo({top:0,left:0,behavior:"instant"});}const idx=navTabs().findIndex(n=>n.dataset.page===target);if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));navSetDrag(idx,false);bottomNav.style.setProperty("--drag-index",String(idx))}}},true);$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
+}["addTop","heroAdd"].forEach(id=>{const button=$(id);if(button){button.type="button";button.addEventListener("click",event=>{event.preventDefault();openForm()})}});$("cancel").onclick=closeForm;$("modal").onclick=e=>{if(e.target===$("modal"))closeForm()};$("form").onsubmit=async e=>{e.preventDefault();const submitButton=$("listingSubmit");if(submitButton.disabled)return;submitButton.disabled=true;const originalButtonText=submitButton.textContent;submitButton.textContent="Сохраняем…";try{const f=new FormData(e.target),categoryValue=String(f.get("category")||"Другое"),files=categoryValue==="Услуги"?[]:Array.from($("listingImages").files||[]);if(files.length>5||editingImageUrls.length+files.length>5){toast("В объявлении может быть не больше 5 фотографий. Удали лишние или выбери меньше новых.");return}if(files.some(file=>!file.type.startsWith("image/"))){toast("Выбери именно фотографии в формате изображения");return}if(files.some(file=>file.size>5*1024*1024)){toast("Каждая фотография должна быть не больше 5 МБ. Уменьши размер фото и попробуй снова.");return}const newItem={id:editingListingId||Date.now(),title:capitalizeInitial(f.get("title")),category:categoryValue,subcategory:String(f.get("subcategory")||""),want:capitalizeInitial(f.get("want")),city:(cityByLabel(f.get("city"))?.name||String(f.get("city")||"").trim()),region:(cityByLabel(f.get("city"))?.region?.fullname||cityByLabel(f.get("city"))?.region?.name||""),price:Number(f.get("price"))||0,emoji:"🔄",desc:f.get("description"),image_urls:editingImageUrls.slice()};if(currentUser&&db&&files.length){const urls=[];for(let i=0;i<files.length;i++){const file=files[i],ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;const {error}=await db.storage.from("listing-images").upload(path,file,{contentType:file.type,upsert:false});if(error){toast("Не удалось загрузить фото: "+error.message);return}urls.push(db.storage.from("listing-images").getPublicUrl(path).data.publicUrl)}newItem.image_urls=editingListingId?editingImageUrls.concat(urls).slice(-5):urls}else if(files.length){toast("Чтобы фотографии были видны всем, сначала войди в профиль.");return}if(editingListingId){if(!currentUser||!db){toast("Войди в аккаунт, чтобы редактировать объявление");return}const {data:updatedListing,error}=await db.from("listings").update({title:newItem.title,description:newItem.desc||"",category:newItem.category,subcategory:newItem.subcategory||null,city:newItem.city,region:newItem.region||null,want:newItem.want,estimated_value:newItem.price||null,image_urls:newItem.image_urls,status:editingListingStatus}).eq("id",editingListingId).eq("user_id",currentUser.id).select("id").maybeSingle();if(error){toast("Не удалось сохранить изменения: "+error.message);$("backendNote").textContent=error.message;return}if(!updatedListing){toast("Объявление не найдено или у вас нет прав на изменение.");return}items=items.map(x=>String(x.id)===String(editingListingId)?{...x,...newItem,remote:true}:x);persist();editingListingId=null;editingImageUrls=[];closeForm();await loadRemoteListings();profileBusy=false;await loadProfileDashboard();setPage("my-listings");toast("Изменения сохранены")}else{if(currentUser){const saved=await saveListing(newItem);if(!saved)return;closeForm()}else{items.unshift(newItem);persist();closeForm();toast("Сохранено на устройстве. Войди в профиле для публикации для всех.")};page="home";category="Все";document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page==="home"));renderFilters();render();if(currentUser)toast("Объявление опубликовано для всех");else toast("Объявление добавлено")}}catch(err){console.error("Listing save failed",err);toast("Не удалось сохранить: "+(err?.message||"неизвестная ошибка"));}finally{submitButton.disabled=false;submitButton.textContent=originalButtonText}};function updateImageField(){const isService=$("form").elements.category.value==="Услуги";$("listingImagesField").hidden=isService;if(isService){selectedNewImageFiles=[];$("listingImages").value="";$("imagePreview").innerHTML="";updatePhotoPickerState()}}$("form").addEventListener("change",event=>{if(event.target?.name==="category"){updateSubcategoryOptions();updateImageField()}});$("form").elements.category.addEventListener("input",()=>{updateSubcategoryOptions();updateImageField()});$("listingImages").addEventListener("click",event=>{if(editingImageUrls.length+selectedNewImageFiles.length>=5){event.preventDefault();toast("Уже добавлено 5 фотографий. Удали одну, чтобы выбрать другую.")}});$("listingImages").addEventListener("change",()=>{const chosen=Array.from($("listingImages").files||[])[0];if(!chosen){renderImagePreview();return}if(editingImageUrls.length+selectedNewImageFiles.length>=5){toast("Можно добавить не больше 5 фотографий");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(!chosen.type.startsWith("image/")){toast("Выбери файл изображения");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}if(chosen.size>5*1024*1024){toast("Каждая фотография должна быть не больше 5 МБ");const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview();return}selectedNewImageFiles.push(chosen);const transfer=new DataTransfer();selectedNewImageFiles.forEach(file=>transfer.items.add(file));$("listingImages").files=transfer.files;renderImagePreview()});let searchRenderTimer=null;const runSearch=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=setTimeout(()=>{searchRenderTimer=null;render()},140)};$("searchBtn").onclick=()=>{if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()};$("q").oninput=runSearch;$("q").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(searchRenderTimer!==null)clearTimeout(searchRenderTimer);searchRenderTimer=null;render();$("q").blur()}};$("advancedCity").oninput=render;$("advancedMinPrice").oninput=render;$("advancedMaxPrice").oninput=render;$("resetAdvancedSearch").onclick=()=>{filterCityName="";filterCityRegion="";filterCityOnly=false;filterSortMode="recommended";$("filterCityOnly").checked=false;$("advancedCity").value="";$("advancedMinPrice").value="";$("advancedMaxPrice").value="";render()};$("saveMatchingSearch").onclick=async()=>{if(!currentUser||!db){toast("Войди в аккаунт, чтобы сохранять поиск.");return}if(!["pro","pro_plus","business"].includes(activePlanCode)){toast("Сохранённые поиски доступны на тарифе PRO и выше.");return}const queryText=$("q").value.trim(),city=$("advancedCity").value.trim(),minRaw=$("advancedMinPrice").value,maxRaw=$("advancedMaxPrice").value,min=minRaw===""?null:Number(minRaw),max=maxRaw===""?null:Number(maxRaw);if((min!==null&&min<0)||(max!==null&&max<0)||(min!==null&&max!==null&&min>max)){toast("Проверь диапазон цены.");return}const {error}=await db.from("saved_searches").insert({user_id:currentUser.id,name:[queryText||"Все предложения",category==="Все"?"Все категории":category,city||"Все города"].join(" · "),query_text:queryText||null,category:category==="Все"?null:category,city:city||null,min_price:min,max_price:max,is_active:true});if(error){toast("Не удалось сохранить поиск: "+error.message);return}toast("Поиск сохранён. Новые совпадения появятся в уведомлениях.");};$("backHome").onclick=()=>setPage("home");function setPage(p){document.querySelectorAll("#profileDashboard.listings-only #myListings .my-actions-menu[open]").forEach(menu=>menu.removeAttribute("open"));if($("modal")?.classList.contains("open"))closeForm();const profileDashboard=$("profileDashboard");if(profileDashboard&&p!=="profile"){profileDashboard.classList.remove("profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history")}page=p;const tabs=navTabs();const selected=tabs.findIndex(n=>n.dataset.page===p);const bar=document.querySelector(".bottom");tabs.forEach((n,i)=>{n.classList.toggle("active",n.dataset.page===p);const proximity=selected<0?0:Math.max(0,1-Math.abs(i-selected));n.style.setProperty("--lens-scale",String(1+proximity*.16));n.style.setProperty("--lens-y",String(proximity*-1.5)+"px")});if(bar&&selected>=0){bar.style.setProperty("--active-index",String(selected));bar.style.setProperty("--drag-index",String(selected));}if(p==="chats"||p==="notifications")refreshNotificationCount();render()}const bottomNav=document.querySelector(".bottom");
+const navTabs=()=>[...document.querySelectorAll(".bottom .nav")];
+bottomNav?.addEventListener("click",e=>{
+ const tab=e.target.closest(".bottom .nav");
+ if(!tab)return;
+ e.preventDefault();
+ e.stopImmediatePropagation();
+ const target=tab.dataset.page;
+ if(!target)return;
+ if(target==="profile"){
+  const dashboard=$("profileDashboard");
+  dashboard?.classList.remove("listings-only","profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history");
+  const helpPanel=$("profileInfoHelpPanel");if(helpPanel)helpPanel.hidden=true;
+  const hub=$("profileHub");if(hub)hub.hidden=false;
+ }
+ if(target!==page){
+  setPage(target);
+  window.scrollTo({top:0,left:0,behavior:"instant"});
+ }else if(target==="profile"){
+  window.scrollTo({top:0,left:0,behavior:"instant"});
+ }
+ const idx=navTabs().findIndex(n=>n.dataset.page===target);
+ if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));bottomNav.style.setProperty("--drag-index",String(idx))}
+},true);
+$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
 
 
 
@@ -5477,236 +5497,18 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
 @media(prefers-reduced-motion:reduce){::view-transition-group(po-screen){animation-duration:1ms!important}html.po-nav-next::view-transition-old(po-screen),html.po-nav-next::view-transition-new(po-screen),html.po-nav-prev::view-transition-old(po-screen),html.po-nav-prev::view-transition-new(po-screen){animation-duration:1ms!important}}
 @media(prefers-reduced-motion:reduce){.po-screen-stage.po-nav-moving{will-change:auto}}
 </style>
-<script id="poPrimaryTabSwipeNavigation">
-/* Unified navigation interaction layer: one gesture owner and one transition engine. */
+<script id="poSimpleTabNavigation">
+/* Primary navigation is tap-only: no horizontal page swipes or draggable tab lens. */
 (function(){
- if(window.__poUnifiedNavigationInstalled)return;
- const app=document.querySelector("#poScreenStage"),nav=document.querySelector(".bottom");
- if(!app||!nav||typeof window.setPage!=="function")return;
- const tabs=[...nav.querySelectorAll(".nav[data-page]")],pages=tabs.map(t=>t.dataset.page);
- if(pages.length<2)return;
- window.__poUnifiedNavigationInstalled=true;
- const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
- const $=id=>document.getElementById(id);
- const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
- const easing="cubic-bezier(.2,.78,.22,1)";
- let gesture=null,transitioning=false,animation=null,viewTransition=null,watchdog=0;
- const currentPage=()=>nav.querySelector(".nav.active")?.dataset.page||(typeof page!=="undefined"&&pages.includes(page)?page:pages[0]);
- function isNested(){
-  const d=$("profileDashboard"),thread=$("chatThread"),help=$("profileInfoHelpPanel");
-  return !!(d&&(d.classList.contains("listings-only")||nestedClasses.some(c=>d.classList.contains(c))))||
-   !!(help&&!help.hidden)||!!(thread&&!thread.hidden);
- }
- function hasOverlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open,.delete-confirm-overlay.visible")}
- function scrollableConflict(target,dx){
-  for(let n=target;n&&n!==app;n=n.parentElement){
-   const cs=getComputedStyle(n),horizontal=(cs.overflowX==="auto"||cs.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+4;
-   if(horizontal){
-    const atStart=n.scrollLeft<=0,atEnd=n.scrollLeft+n.clientWidth>=n.scrollWidth-2;
-    if((dx>0&&!atStart)||(dx<0&&!atEnd))return true;
-   }
-  }
-  return false;
- }
- function excluded(target,nested=false){
-  if(!(target instanceof Element))return true;
-  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
-  // Vertical content areas may still start a nested back swipe. touch-action:pan-y
-  // and the direction lock keep ordinary scrolling native.
-  return !nested&&!!target.closest('#chatMessages,.chat-message,.profile-info-topic,details');
- }
- function clearAnimation(){
-  if(watchdog){clearTimeout(watchdog);watchdog=0}
-  if(animation){try{animation.cancel()}catch(_){}animation=null}
-  if(viewTransition){try{viewTransition.skipTransition()}catch(_){}viewTransition=null}
-  document.documentElement.classList.remove("po-nav-next","po-nav-prev");
-  app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
-  app.classList.remove("po-nav-moving");transitioning=false;
- }
- function animateTo(mutator,fromX,duration=280){
-  if(transitioning)return false;
-  if(reduced()){try{mutator();return true}catch(error){console.error("Navigation mutation failed:",error);return false}}
-  transitioning=true;
-  const direction=fromX<0?-1:1;
-  const root=document.documentElement;
-  const motionClass=direction<0?"po-nav-next":"po-nav-prev";
-  const finish=()=>{
-   if(watchdog){clearTimeout(watchdog);watchdog=0}
-   if(animation){try{animation.cancel()}catch(_){}animation=null}
-   viewTransition=null;
-   root.classList.remove("po-nav-next","po-nav-prev");
-   app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
-   app.classList.remove("po-nav-moving");
-   transitioning=false;
-  };
-  if(typeof document.startViewTransition==="function"){
-   try{
-    root.classList.remove("po-nav-next","po-nav-prev");
-    root.classList.add(motionClass);
-    let mutationError=null;
-    viewTransition=document.startViewTransition(()=>{
-     try{mutator()}catch(error){mutationError=error}
-     app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
-     app.classList.remove("po-nav-moving");
-    });
-    watchdog=setTimeout(finish,duration+500);
-    viewTransition.finished.then(()=>{
-     if(mutationError)console.error("Navigation mutation failed:",mutationError);
-     finish();
-    },error=>{
-     if(mutationError)console.error("Navigation mutation failed:",mutationError);
-     else console.warn("Screen transition finished with fallback:",error);
-     finish();
-    });
-    return true;
-   }catch(error){
-    root.classList.remove("po-nav-next","po-nav-prev");
-    viewTransition=null;
-    console.warn("View Transition API unavailable; using fallback:",error);
-   }
-  }
-  try{mutator()}catch(error){transitioning=false;console.error("Navigation mutation failed:",error);return false}
-  app.classList.add("po-nav-moving");
-  app.style.willChange="transform";
-  try{
-   animation=app.animate(
-    [{transform:"translate3d("+fromX+"px,0,0)"},{transform:"translate3d(0,0,0)"}],
-    {duration,easing,fill:"both"}
-   );
-  }catch(error){console.warn("Navigation animation unavailable:",error);finish();return true}
-  watchdog=setTimeout(finish,duration+180);
-  animation.finished.then(finish,finish);
-  return true;
- }
- function setPageDirect(value){
-  const previous=window.__poNavTransitionMutating;
-  window.__poNavTransitionMutating=true;
-  try{window.setPage(value);return true}
-  catch(error){console.error("Navigation page change failed:",error);return false}
-  finally{window.__poNavTransitionMutating=previous||false}
- }
- function targetFor(g){
-  if(g.kind==="back")return null;
-  const next=g.index+(g.direction<0?1:-1);
-  return pages[next]||null;
- }
- function settle(g,commit){
-  if(!g.claimed)return;
-  if(commit){
-   if(g.kind==="back"){
-    if(!window.poCanNavigateBack?.()){animateTo(()=>{},g.dx,210);return}
-    animateTo(()=>{try{window.poNavigateBack?.()}catch(error){console.error("Navigation back failed:",error)}},g.dx,280);
-   }else{
-    const target=targetFor(g);
-    if(!target){animateTo(()=>{},g.dx,210);return}
-    animateTo(()=>{
-     if(setPageDirect(target))window.poCommitNavigationHistory?.();
-    },g.dx,280);
-   }
-   return;
-  }
-  animateTo(()=>{},g.dx,210);
- }
- function onDown(e){
-  const nested=isNested();
-  if(gesture||transitioning||hasOverlay()||!e.isPrimary||e.button>0||!app.contains(e.target)||excluded(e.target,nested))return;
-  const x=e.clientX,w=window.innerWidth||app.clientWidth,idx=pages.indexOf(currentPage());
-  const edgeInset=Math.min(28,Math.max(22,Math.round(w*.045)));
-  if(idx<0)return;
-  // The app owns horizontal navigation even when a gesture starts at the screen edge.
-  // iOS Safari otherwise treats that gesture as browser history navigation and slides
-  // two complete document snapshots (including the header and bottom bar) side by side.
-  const backMode=nested&&x<=Math.min(w-edgeInset,edgeInset+52);
-  if(nested&&!backMode)return;
-  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:backMode?"back":"tabs",index:idx,direction:0,started:performance.now(),target:e.target};
- }
- function onMove(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;
-  const dx=e.clientX-g.x,dy=e.clientY-g.y;
-  if(!g.claimed){
-   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
-   if(Math.abs(dy)>Math.abs(dx)*1.12){gesture=null;return}
-   if(g.kind==="back"&&dx<=0){gesture=null;return}
-   if(scrollableConflict(g.target,dx)){gesture=null;return}
-   const dir=dx<0?-1:1;
-   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1)<0||g.index+(dir<0?1:-1)>=pages.length)){gesture=null;return}
-   g.claimed=true;g.direction=dir;
-   try{app.setPointerCapture(e.pointerId)}catch(_){}
-  }
-  if(e.cancelable)e.preventDefault();
-  g.dx=dx;g.dy=dy;
-  const width=Math.max(1,window.innerWidth||app.clientWidth);
-  let visual=dx;
-  if(g.kind==="back")visual=Math.max(0,dx);
-  else if((g.index+(dx<0?1:-1)<0)||(g.index+(dx<0?1:-1)>=pages.length))visual=dx*.28;
-  app.style.willChange="transform";
-  app.style.transform="translate3d("+visual+"px,0,0)";
- }
- function onUp(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
-  if(g.claimed){try{app.releasePointerCapture(e.pointerId)}catch(_){}}
-  if(!g.claimed)return;
-  g.dx=e.clientX-g.x;
-  const elapsed=Math.max(1,performance.now()-g.started),velocity=Math.abs(g.dx)/elapsed;
-  const threshold=Math.max(68,(window.innerWidth||390)*.18);
-  const commit=g.kind==="back"
-   ?g.dx>Math.min(112,(window.innerWidth||390)*.28)||(g.dx>38&&velocity>.48)
-   :Math.abs(g.dx)>threshold||(Math.abs(g.dx)>38&&velocity>.48);
-  if(reduced()){
-   if(commit){
-    if(g.kind==="back"){try{window.poNavigateBack?.()}catch(error){console.error("Navigation back failed:",error)}}
-    else{const target=targetFor(g);if(target&&setPageDirect(target))window.poCommitNavigationHistory?.()}
-   }
-   app.style.transform="";app.style.willChange="";return;
-  }
-  settle(g,commit);
- }
- function cancelActiveGesture(expectedPointerId=null){
-  const g=gesture;if(!g||(expectedPointerId!==null&&g.id!==expectedPointerId))return;
-  gesture=null;
-  try{if(app.hasPointerCapture(g.id))app.releasePointerCapture(g.id)}catch(_){}
-  if(!g.claimed)return;
-  if(reduced()){app.style.transform="";app.style.willChange="";return}
-  settle(g,false);
- }
- function onCancel(e){cancelActiveGesture(e.pointerId)}
- function onLostPointerCapture(e){cancelActiveGesture(e.pointerId)}
- function onWindowBlur(){cancelActiveGesture();if(transitioning)clearAnimation()}
- function onVisibilityChange(){if(document.hidden){cancelActiveGesture();if(transitioning)clearAnimation()}}
- // Safari's interactive browser-back gesture takes precedence at the screen edge.
- // Cancel only edge-originating horizontal touches inside the app; keep vertical scrolling native.
- let edgeTouch=null;
- app.addEventListener("touchstart",e=>{
-  if(e.touches.length!==1)return;
-  const t=e.touches[0],w=window.innerWidth||app.clientWidth;
-  if(t.clientX<=24||t.clientX>=w-24){
-   edgeTouch={id:t.identifier,x:t.clientX,y:t.clientY};
-   // WebKit may begin its browser-history animation before pointermove can claim
-   // the gesture. Cancel that default only in the narrow 24px edge strip.
-   if(e.cancelable)e.preventDefault();
-  }else edgeTouch=null;
- },{capture:true,passive:false});
- app.addEventListener("touchmove",e=>{
-  if(!edgeTouch)return;
-  const t=[...e.changedTouches].find(x=>x.identifier===edgeTouch.id);
-  if(!t)return;
-  const dx=t.clientX-edgeTouch.x,dy=t.clientY-edgeTouch.y;
-  if(Math.abs(dx)>7&&Math.abs(dx)>Math.abs(dy)*1.12){
-   if(e.cancelable)e.preventDefault();
-  }else if(Math.abs(dy)>Math.abs(dx)*1.12)edgeTouch=null;
- },{capture:true,passive:false});
- const clearEdgeTouch=()=>{edgeTouch=null};
- app.addEventListener("touchend",clearEdgeTouch,{capture:true,passive:true});
- app.addEventListener("touchcancel",clearEdgeTouch,{capture:true,passive:true});
- document.addEventListener("pointerdown",onDown,{passive:true});
- document.addEventListener("pointermove",onMove,{passive:false});
- document.addEventListener("pointerup",onUp,{passive:true});
- document.addEventListener("pointercancel",onCancel,{passive:true});
- app.addEventListener("lostpointercapture",onLostPointerCapture);
- window.addEventListener("blur",onWindowBlur);
- document.addEventListener("visibilitychange",onVisibilityChange);
- window.poRunNavigationTransition=(mutator,direction)=>animateTo(mutator,(direction<0?1:-1)*22,245);
- window.poNavigationDiagnostics=()=>({installed:true,stage:app.id,transitioning,gestureActive:!!gesture,pointerId:gesture?.id??null,currentPage:currentPage(),nested:isNested(),historyLength:window.history.length,reducedMotion:reduced()});
+ const nav=document.querySelector(".bottom");
+ const tabs=[...(nav?.querySelectorAll(".nav[data-page]")||[])];
+ window.poNavigationDiagnostics=()=>({
+  installed:!!nav,
+  mode:"tap-only",
+  gestureActive:false,
+  currentPage:nav?.querySelector(".nav.active")?.dataset.page||"home",
+  tabs:tabs.map(tab=>tab.dataset.page)
+ });
 })();
 </script>
 
