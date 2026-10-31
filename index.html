@@ -3449,7 +3449,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:480px){.notification-head{display:flex;flex-wrap:nowrap;align-items:center}.notification-head-tools{flex:0 0 auto}.notification-head h2{font-size:clamp(20px,5vw,24px)}.notification-actions .chip{white-space:normal;max-width:150px}}
 </style>
 </head><body>
-<main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><div class="po-screen-stage" id="poScreenStage" data-navigation-build="nav-stage-v1-20261031-06"><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
+<main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><div class="po-screen-stage" id="poScreenStage" data-navigation-build="nav-stage-v1-20261031-07"><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
     <div class="hero-product hero-product-headphones"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=85" alt=""></div>
@@ -5462,6 +5462,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 <style id="poTabSwipeStyles">
+html,body{overscroll-behavior-x:none}
 .po-screen-stage{touch-action:pan-y;overscroll-behavior-x:contain;view-transition-name:po-screen}
 .po-screen-stage.po-nav-moving{will-change:transform,opacity}
 ::view-transition-group(po-screen){animation-duration:280ms}
@@ -5610,9 +5611,12 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
   const nested=isNested();
   if(gesture||transitioning||hasOverlay()||!e.isPrimary||e.button>0||!app.contains(e.target)||excluded(e.target,nested))return;
   const x=e.clientX,w=window.innerWidth||app.clientWidth,idx=pages.indexOf(currentPage());
-  const safeInset=Math.min(28,Math.max(22,Math.round(w*.045)));
-  if(idx<0||x<safeInset||x>w-safeInset)return;
-  const backMode=nested&&x<=Math.min(w-safeInset,safeInset+52);
+  const edgeInset=Math.min(28,Math.max(22,Math.round(w*.045)));
+  if(idx<0)return;
+  // The app owns horizontal navigation even when a gesture starts at the screen edge.
+  // iOS Safari otherwise treats that gesture as browser history navigation and slides
+  // two complete document snapshots (including the header and bottom bar) side by side.
+  const backMode=nested&&x<=Math.min(w-edgeInset,edgeInset+52);
   if(nested&&!backMode)return;
   gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:backMode?"back":"tabs",index:idx,direction:0,started:performance.now(),target:e.target};
  }
@@ -5669,6 +5673,27 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
  function onLostPointerCapture(e){cancelActiveGesture(e.pointerId)}
  function onWindowBlur(){cancelActiveGesture();if(transitioning)clearAnimation()}
  function onVisibilityChange(){if(document.hidden){cancelActiveGesture();if(transitioning)clearAnimation()}}
+ // Safari's interactive browser-back gesture takes precedence at the screen edge.
+ // Cancel only edge-originating horizontal touches inside the app; keep vertical scrolling native.
+ let edgeTouch=null;
+ app.addEventListener("touchstart",e=>{
+  if(e.touches.length!==1)return;
+  const t=e.touches[0],w=window.innerWidth||app.clientWidth;
+  if(t.clientX<=28||t.clientX>=w-28)edgeTouch={id:t.identifier,x:t.clientX,y:t.clientY};
+  else edgeTouch=null;
+ },{capture:true,passive:true});
+ app.addEventListener("touchmove",e=>{
+  if(!edgeTouch)return;
+  const t=[...e.changedTouches].find(x=>x.identifier===edgeTouch.id);
+  if(!t)return;
+  const dx=t.clientX-edgeTouch.x,dy=t.clientY-edgeTouch.y;
+  if(Math.abs(dx)>7&&Math.abs(dx)>Math.abs(dy)*1.12){
+   if(e.cancelable)e.preventDefault();
+  }else if(Math.abs(dy)>Math.abs(dx)*1.12)edgeTouch=null;
+ },{capture:true,passive:false});
+ const clearEdgeTouch=()=>{edgeTouch=null};
+ app.addEventListener("touchend",clearEdgeTouch,{capture:true,passive:true});
+ app.addEventListener("touchcancel",clearEdgeTouch,{capture:true,passive:true});
  document.addEventListener("pointerdown",onDown,{passive:true});
  document.addEventListener("pointermove",onMove,{passive:false});
  document.addEventListener("pointerup",onUp,{passive:true});
