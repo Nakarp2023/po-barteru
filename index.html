@@ -5385,7 +5385,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     }
    }else if(snapshot().chatOpen)closeChatToInbox();
    window.scrollTo({top:target.scrollY||0,left:0,behavior:"instant"});
-   const surface=target.chatOpen?thread:(target.helpOpen?help:(target.page==="profile"?dashboard:(target.page==="chats"?$("chatInbox"):null)));
+   const surface=target.chatOpen?$("chatThread"):(target.helpOpen?help:(target.page==="profile"?dashboard:(target.page==="chats"?$("chatInbox"):null)));
    if(surface)requestAnimationFrame(()=>window.poAnimateSurface?.(surface));
   }finally{
    restoring=false;
