@@ -233,6 +233,7 @@ test('swipe navigation is bidirectional across consecutive gestures', async ({ p
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
   await drag('#poScreenStage', 130);
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('home');
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
   const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
   expect(diagnostics?.transitioning).toBe(false);
   expect(diagnostics?.gestureActive).toBe(false);
