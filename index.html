@@ -5245,7 +5245,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   }
  }
 
- const detachedListings=$("myListingsPanel");if(detachedListings){const other=$("other");if(other&&other.parentNode===app)other.insertAdjacentElement("afterend",detachedListings);else app.appendChild(detachedListings)}
+ const detachedListings=document.getElementById("myListingsPanel");if(detachedListings){const other=document.getElementById("other");if(other&&other.parentNode===app)other.insertAdjacentElement("afterend",detachedListings);else app.appendChild(detachedListings)}
  const originalSetPage=window.setPage;
  const stack=[];
  const MAX_STACK=40;
