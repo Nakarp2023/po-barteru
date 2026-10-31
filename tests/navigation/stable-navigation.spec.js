@@ -9,7 +9,7 @@ test('screen stage is isolated from the app shell and fixed navigation', async (
   await expect(page.locator('main.app > header.top')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toHaveCount(1);
-  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-04');
+  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-05');
   await expect(page.locator('body > nav.bottom')).toBeVisible();
 
   const structure = await page.evaluate(() => ({
@@ -147,4 +147,41 @@ test('nested profile back swipe works when it starts over scrollable help conten
   const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
   expect(diagnostics?.currentPage).toBe('profile');
   expect(diagnostics?.gestureActive).toBe(false);
+});
+
+test('reverse horizontal swipe returns from favorites to home without a tab tap', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.locator('.bottom .nav[data-page="favorites"]').click();
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
+  const heading = await page.locator('#favoritesPage').boundingBox();
+  expect(heading).not.toBeNull();
+  const x = Math.max(100, Math.min(heading.x + heading.width * 0.75, 330));
+  const y = Math.max(150, Math.min(heading.y + 90, 700));
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 130, y, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('home');
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
+  const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
+  expect(diagnostics?.gestureActive).toBe(false);
+});
+
+test('first swipe after a fresh load is handled before any tab interaction', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const initial = await page.evaluate(() => window.poNavigationDiagnostics?.());
+  expect(initial?.installed).toBe(true);
+  expect(initial?.currentPage).toBe('home');
+  const heading = await page.locator('#homeHero h1').boundingBox();
+  expect(heading).not.toBeNull();
+  const x = heading.x + heading.width * 0.82;
+  const y = heading.y + heading.height * 0.5;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x - 130, y, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
 });
