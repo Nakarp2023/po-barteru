@@ -37,7 +37,7 @@ jobs:
         run: |
           url="${BASE_URL:-https://po-barteru-simple-navigation-preview.onrender.com}"
           for attempt in $(seq 1 60); do
-            if curl -fsSL "$url" | grep -Fq 'data-navigation-build="simple-nav-v1-20261031-01"'; then
+            if curl -fsSL "$url" | grep -Fq 'data-navigation-build="liquid-swipe-v2-20261031-01"'; then
               echo "Render Preview contains the expected navigation build."
               exit 0
             fi
