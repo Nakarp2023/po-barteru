@@ -52,3 +52,39 @@ test('navigation never creates cloned screen snapshots', async ({ page }) => {
   expect(await page.locator('.po-nav-snapshot-viewport').count()).toBe(0);
   expect(await page.locator('#poScreenStage').count()).toBe(1);
 });
+
+test('horizontal pointer swipe changes one adjacent tab and releases the transition lock', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const heading = await page.locator('#homeHero h1').boundingBox();
+  expect(heading).not.toBeNull();
+  const x = heading.x + heading.width * 0.82;
+  const y = heading.y + heading.height * 0.5;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x - 125, y, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
+  const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
+  expect(diagnostics?.gestureActive).toBe(false);
+  expect(diagnostics?.pointerId).toBeNull();
+});
+
+test('vertical pointer movement does not trigger horizontal page navigation', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const heading = await page.locator('#homeHero h1').boundingBox();
+  expect(heading).not.toBeNull();
+  const x = heading.x + heading.width * 0.82;
+  const y = heading.y + heading.height * 0.5;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x, y + 110, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
+  expect(diagnostics?.currentPage).toBe('home');
+  expect(diagnostics?.transitioning).toBe(false);
+  expect(diagnostics?.gestureActive).toBe(false);
+});
