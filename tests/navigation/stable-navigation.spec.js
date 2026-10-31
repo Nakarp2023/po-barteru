@@ -9,7 +9,7 @@ test('screen stage is isolated from the app shell and fixed navigation', async (
   await expect(page.locator('main.app > header.top')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toHaveCount(1);
-  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-03');
+  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-04');
   await expect(page.locator('body > nav.bottom')).toBeVisible();
 
   const structure = await page.evaluate(() => ({
@@ -120,6 +120,7 @@ test('nested profile back swipe works when it starts over scrollable help conten
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.locator('.bottom .nav[data-page="profile"]').click();
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('profile');
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
   await page.evaluate(() => {
     const dashboard = document.querySelector('#profileDashboard');
     const help = document.querySelector('#profileInfoHelpPanel');
@@ -129,8 +130,10 @@ test('nested profile back swipe works when it starts over scrollable help conten
     }
     if (help) help.hidden = false;
   });
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().nested)).toBe(true);
   const details = page.locator('#profileInfoHelpPanel details').first();
-  await details.scrollIntoViewIfNeeded();
+  await expect(details).toBeVisible();
+  await details.evaluate(el => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
   const box = await details.boundingBox();
   expect(box).not.toBeNull();
   const x = Math.max(24, Math.min(72, box.x + 16));
