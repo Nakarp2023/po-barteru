@@ -1,7 +1,7 @@
 # Supabase production migration inventory
 
 **Project:** `qxsnjksepzmpsifpxyea`  
-**Last checked:** 2026-10-29 (UTC; reconciled against 90 production records)  
+**Last checked:** 2026-10-31 (UTC; reconciled against 99 production records)  
 **Source:** live Supabase migration history returned by the Supabase migration-list API.
 
 This is an inventory of migration records currently present in production. It is **not** a claim that every historical migration has a corresponding SQL file in this repository, nor is it a reconstruction of missing SQL. The production history contains records for which no separate migration file was found in the prior repository audit. Keep this inventory updated when migrations are applied.
@@ -100,16 +100,27 @@ This is an inventory of migration records currently present in production. It is
 | 20261028222902 | protect_listing_promotion_and_report_history |
 | 20261029020904 | run_listing_history_guard_as_definer |
 | 20261029031858 | allow_business_team_invite_notifications |
+| 20261029045731 | cancel_exchange_deal |
+| 20261029050049 | exchange_confirmation_timeout |
+| 20261029053340 | hide_permanently_deleted_exchange_listings |
+| 20261029055414 | enable_exchange_proposal_realtime |
+| 20261029065136 | close_chat_after_exchange_and_remind_contacts |
+| 20261029065219 | require_live_exchange_for_chat_messages |
+| 20261029065605 | notify_exchange_terms_changes_server_side |
+| 20261029184414 | create_support_tickets |
+| 20261029184427 | restrict_support_ticket_grants |
 
 ## Repository source-file reconciliation
 
-**Checked:** 2026-10-29 against the live production migration history and the complete GitHub `supabase/migrations/` directory listing.
+**Checked:** 2026-10-31 against the live production migration history and the complete GitHub `supabase/migrations/` directory listing.
 
-- Production migration records: **90**.
-- SQL migration files currently present in the repository: **17**.
-- Production versions with a matching SQL filename: **17**.
-- Production versions without a matching SQL file: **73**.
-- Repository SQL versions absent from production history: **0**.
+- Production migration records: **99**.
+- SQL migration files currently present in the repository: **21**.
+- Production versions with an exact matching SQL filename: **17**.
+- Production versions without an exact matching SQL filename: **82**.
+- Repository SQL versions absent from production history: **4**.
+
+The four repository files whose version prefixes are not present in production are not automatically considered deployable. They have production counterparts under different versions (`cancel_exchange_deal`, `exchange_confirmation_timeout`, `create_support_tickets`, and `restrict_support_ticket_grants`). Their SQL content and deployed definitions must be compared before classifying them as duplicates, renamed versions, or divergent sources. Do not apply them.
 
 The missing files below are source-recovery work items only. **Do not recreate SQL from migration names, replay these migrations, or run `supabase db push` as a way to reconcile them.** Recover originals from a trusted backup/commit/archive where available; otherwise document each as unavailable. Production remains the authority for current live state, not for the missing original source text.
 
@@ -188,6 +199,15 @@ The missing files below are source-recovery work items only. **Do not recreate S
 | 20261028171618 | add_listing_subcategory |
 | 20261028173006 | add_listing_region |
 | 20261029031858 | allow_business_team_invite_notifications |
+| 20261029045731 | cancel_exchange_deal |
+| 20261029050049 | exchange_confirmation_timeout |
+| 20261029053340 | hide_permanently_deleted_exchange_listings |
+| 20261029055414 | enable_exchange_proposal_realtime |
+| 20261029065136 | close_chat_after_exchange_and_remind_contacts |
+| 20261029065219 | require_live_exchange_for_chat_messages |
+| 20261029065605 | notify_exchange_terms_changes_server_side |
+| 20261029184414 | create_support_tickets |
+| 20261029184427 | restrict_support_ticket_grants |
 
 ## Bootstrap schema warning
 
