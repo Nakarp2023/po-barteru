@@ -5480,6 +5480,10 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 <style id="poTabSwipeStyles">
+/* Reserve horizontal gestures inside the tab bar for the glass lens.
+   Vertical page scrolling remains native on iPhone. */
+.bottom,.bottom .nav{touch-action:pan-y!important;-webkit-user-select:none;user-select:none}
+.bottom .nav{-webkit-user-drag:none}
 html,body{overscroll-behavior-x:none}
 .po-screen-stage{touch-action:pan-y;overscroll-behavior-x:contain;view-transition-name:po-screen}
 .po-screen-stage.po-nav-moving{will-change:transform,opacity}
@@ -5530,6 +5534,9 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
   function onDown(e){
     if(!e.isPrimary||e.button!==0||!e.target.closest(".nav[data-page]"))return;
     pointer={id:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,dragging:false};
+    /* Capture from the initial touch: iOS Safari can otherwise hand the gesture
+       to the button's native manipulation behavior before horizontal moves arrive. */
+    try{bar.setPointerCapture(e.pointerId)}catch(_){}
   }
   function onMove(e){
     if(!pointer||e.pointerId!==pointer.id)return;
@@ -5538,7 +5545,6 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
       if(Math.abs(dx)<6&&Math.abs(dy)<6)return;
       if(Math.abs(dy)>Math.abs(dx)*1.15){pointer=null;return;}
       pointer.dragging=true;
-      try{bar.setPointerCapture(e.pointerId)}catch(_){}
       bar.classList.add("nav-dragging");
     }
     if(e.cancelable)e.preventDefault();
