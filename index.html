@@ -5496,235 +5496,86 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
 @media(prefers-reduced-motion:reduce){.po-screen-stage.po-nav-moving{will-change:auto}}
 </style>
 <script id="poPrimaryTabSwipeNavigation">
-/* Unified navigation interaction layer: one gesture owner and one transition engine. */
+/* Bottom-bar-only Liquid Glass lens tracking. No screen swipes or page drag navigation. */
 (function(){
- if(window.__poUnifiedNavigationInstalled)return;
- const app=document.querySelector("#poScreenStage"),nav=document.querySelector(".bottom");
- if(!app||!nav||typeof window.setPage!=="function")return;
- const tabs=[...nav.querySelectorAll(".nav[data-page]")],pages=tabs.map(t=>t.dataset.page);
- if(pages.length<2)return;
- window.__poUnifiedNavigationInstalled=true;
- const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
- const $=id=>document.getElementById(id);
- const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
- const easing="cubic-bezier(.2,.78,.22,1)";
- let gesture=null,transitioning=false,animation=null,viewTransition=null,watchdog=0;
- const currentPage=()=>nav.querySelector(".nav.active")?.dataset.page||(typeof page!=="undefined"&&pages.includes(page)?page:pages[0]);
- function isNested(){
-  const d=$("profileDashboard"),thread=$("chatThread"),help=$("profileInfoHelpPanel");
-  return !!(d&&(d.classList.contains("listings-only")||nestedClasses.some(c=>d.classList.contains(c))))||
-   !!(help&&!help.hidden)||!!(thread&&!thread.hidden);
- }
- function hasOverlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open,.delete-confirm-overlay.visible")}
- function scrollableConflict(target,dx){
-  for(let n=target;n&&n!==app;n=n.parentElement){
-   const cs=getComputedStyle(n),horizontal=(cs.overflowX==="auto"||cs.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+4;
-   if(horizontal){
-    const atStart=n.scrollLeft<=0,atEnd=n.scrollLeft+n.clientWidth>=n.scrollWidth-2;
-    if((dx>0&&!atStart)||(dx<0&&!atEnd))return true;
-   }
+  if(window.__poBottomLensNavigationInstalled)return;
+  const bar=document.querySelector(".bottom");
+  if(!bar)return;
+  const tabs=[...bar.querySelectorAll(".nav[data-page]")];
+  if(tabs.length<2)return;
+  window.__poBottomLensNavigationInstalled=true;
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  let pointer=null,suppressClick=false,suppressTimer=0;
+  function selectedIndex(){
+    const active=tabs.findIndex(tab=>tab.classList.contains("active"));
+    return active>=0?active:0;
   }
-  return false;
- }
- function excluded(target,nested=false){
-  if(!(target instanceof Element))return true;
-  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
-  // Vertical content areas may still start a nested back swipe. touch-action:pan-y
-  // and the direction lock keep ordinary scrolling native.
-  return !nested&&!!target.closest('#chatMessages,.chat-message,.profile-info-topic,details');
- }
- function clearAnimation(){
-  if(watchdog){clearTimeout(watchdog);watchdog=0}
-  if(animation){try{animation.cancel()}catch(_){}animation=null}
-  if(viewTransition){try{viewTransition.skipTransition()}catch(_){}viewTransition=null}
-  document.documentElement.classList.remove("po-nav-next","po-nav-prev");
-  app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
-  app.classList.remove("po-nav-moving");transitioning=false;
- }
- function animateTo(mutator,fromX,duration=280){
-  if(transitioning)return false;
-  if(reduced()){try{mutator();return true}catch(error){console.error("Navigation mutation failed:",error);return false}}
-  transitioning=true;
-  const direction=fromX<0?-1:1;
-  const root=document.documentElement;
-  const motionClass=direction<0?"po-nav-next":"po-nav-prev";
-  const finish=()=>{
-   if(watchdog){clearTimeout(watchdog);watchdog=0}
-   if(animation){try{animation.cancel()}catch(_){}animation=null}
-   viewTransition=null;
-   root.classList.remove("po-nav-next","po-nav-prev");
-   app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
-   app.classList.remove("po-nav-moving");
-   transitioning=false;
-  };
-  if(typeof document.startViewTransition==="function"){
-   try{
-    root.classList.remove("po-nav-next","po-nav-prev");
-    root.classList.add(motionClass);
-    let mutationError=null;
-    viewTransition=document.startViewTransition(()=>{
-     try{mutator()}catch(error){mutationError=error}
-     app.style.transform="";app.style.opacity="";app.style.removeProperty("will-change");
-     app.classList.remove("po-nav-moving");
+  function paint(index,dragging){
+    const value=clamp(index,0,tabs.length-1);
+    bar.style.setProperty("--drag-index",String(value));
+    tabs.forEach((tab,i)=>{
+      const proximity=Math.max(0,1-Math.abs(i-value));
+      tab.style.setProperty("--lens-scale",String(1+proximity*.20));
+      tab.style.setProperty("--lens-y",String(proximity*-2.4)+"px");
     });
-    watchdog=setTimeout(finish,duration+500);
-    viewTransition.finished.then(()=>{
-     if(mutationError)console.error("Navigation mutation failed:",mutationError);
-     finish();
-    },error=>{
-     if(mutationError)console.error("Navigation mutation failed:",mutationError);
-     else console.warn("Screen transition finished with fallback:",error);
-     finish();
-    });
-    return true;
-   }catch(error){
-    root.classList.remove("po-nav-next","po-nav-prev");
-    viewTransition=null;
-    console.warn("View Transition API unavailable; using fallback:",error);
-   }
+    bar.classList.toggle("nav-dragging",!!dragging);
   }
-  try{mutator()}catch(error){transitioning=false;console.error("Navigation mutation failed:",error);return false}
-  app.classList.add("po-nav-moving");
-  app.style.willChange="transform";
-  try{
-   animation=app.animate(
-    [{transform:"translate3d("+fromX+"px,0,0)"},{transform:"translate3d(0,0,0)"}],
-    {duration,easing,fill:"both"}
-   );
-  }catch(error){console.warn("Navigation animation unavailable:",error);finish();return true}
-  watchdog=setTimeout(finish,duration+180);
-  animation.finished.then(finish,finish);
-  return true;
- }
- function setPageDirect(value){
-  const previous=window.__poNavTransitionMutating;
-  window.__poNavTransitionMutating=true;
-  try{window.setPage(value);return true}
-  catch(error){console.error("Navigation page change failed:",error);return false}
-  finally{window.__poNavTransitionMutating=previous||false}
- }
- function targetFor(g){
-  if(g.kind==="back")return null;
-  const next=g.index+(g.direction<0?1:-1);
-  return pages[next]||null;
- }
- function settle(g,commit){
-  if(!g.claimed)return;
-  if(commit){
-   if(g.kind==="back"){
-    if(!window.poCanNavigateBack?.()){animateTo(()=>{},g.dx,210);return}
-    animateTo(()=>{try{window.poNavigateBack?.()}catch(error){console.error("Navigation back failed:",error)}},g.dx,280);
-   }else{
-    const target=targetFor(g);
-    if(!target){animateTo(()=>{},g.dx,210);return}
-    animateTo(()=>{
-     if(setPageDirect(target))window.poCommitNavigationHistory?.();
-    },g.dx,280);
-   }
-   return;
+  function indexAt(clientX){
+    const rect=bar.getBoundingClientRect();
+    const inset=parseFloat(getComputedStyle(bar).paddingLeft)||7;
+    const usable=Math.max(1,rect.width-inset*2);
+    const slot=usable/tabs.length;
+    return clamp((clientX-rect.left-inset)/slot-.5,0,tabs.length-1);
   }
-  animateTo(()=>{},g.dx,210);
- }
- function onDown(e){
-  const nested=isNested();
-  if(gesture||transitioning||hasOverlay()||!e.isPrimary||e.button>0||!app.contains(e.target)||excluded(e.target,nested))return;
-  const x=e.clientX,w=window.innerWidth||app.clientWidth,idx=pages.indexOf(currentPage());
-  const edgeInset=Math.min(28,Math.max(22,Math.round(w*.045)));
-  if(idx<0)return;
-  // The app owns horizontal navigation even when a gesture starts at the screen edge.
-  // iOS Safari otherwise treats that gesture as browser history navigation and slides
-  // two complete document snapshots (including the header and bottom bar) side by side.
-  const backMode=nested&&x<=Math.min(w-edgeInset,edgeInset+52);
-  if(nested&&!backMode)return;
-  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:backMode?"back":"tabs",index:idx,direction:0,started:performance.now(),target:e.target};
- }
- function onMove(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;
-  const dx=e.clientX-g.x,dy=e.clientY-g.y;
-  if(!g.claimed){
-   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
-   if(Math.abs(dy)>Math.abs(dx)*1.12){gesture=null;return}
-   if(g.kind==="back"&&dx<=0){gesture=null;return}
-   if(scrollableConflict(g.target,dx)){gesture=null;return}
-   const dir=dx<0?-1:1;
-   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1)<0||g.index+(dir<0?1:-1)>=pages.length)){gesture=null;return}
-   g.claimed=true;g.direction=dir;
-   try{app.setPointerCapture(e.pointerId)}catch(_){}
+  function onDown(e){
+    if(!e.isPrimary||e.button!==0||!e.target.closest(".nav[data-page]"))return;
+    pointer={id:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,dragging:false};
   }
-  if(e.cancelable)e.preventDefault();
-  g.dx=dx;g.dy=dy;
-  const width=Math.max(1,window.innerWidth||app.clientWidth);
-  let visual=dx;
-  if(g.kind==="back")visual=Math.max(0,dx);
-  else if((g.index+(dx<0?1:-1)<0)||(g.index+(dx<0?1:-1)>=pages.length))visual=dx*.28;
-  app.style.willChange="transform";
-  app.style.transform="translate3d("+visual+"px,0,0)";
- }
- function onUp(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
-  if(g.claimed){try{app.releasePointerCapture(e.pointerId)}catch(_){}}
-  if(!g.claimed)return;
-  g.dx=e.clientX-g.x;
-  const elapsed=Math.max(1,performance.now()-g.started),velocity=Math.abs(g.dx)/elapsed;
-  const threshold=Math.max(68,(window.innerWidth||390)*.18);
-  const commit=g.kind==="back"
-   ?g.dx>Math.min(112,(window.innerWidth||390)*.28)||(g.dx>38&&velocity>.48)
-   :Math.abs(g.dx)>threshold||(Math.abs(g.dx)>38&&velocity>.48);
-  if(reduced()){
-   if(commit){
-    if(g.kind==="back"){try{window.poNavigateBack?.()}catch(error){console.error("Navigation back failed:",error)}}
-    else{const target=targetFor(g);if(target&&setPageDirect(target))window.poCommitNavigationHistory?.()}
-   }
-   app.style.transform="";app.style.willChange="";return;
+  function onMove(e){
+    if(!pointer||e.pointerId!==pointer.id)return;
+    const dx=e.clientX-pointer.startX,dy=e.clientY-pointer.startY;
+    if(!pointer.dragging){
+      if(Math.abs(dx)<6&&Math.abs(dy)<6)return;
+      if(Math.abs(dy)>Math.abs(dx)*1.15){pointer=null;return;}
+      pointer.dragging=true;
+      try{bar.setPointerCapture(e.pointerId)}catch(_){}
+      bar.classList.add("nav-dragging");
+    }
+    if(e.cancelable)e.preventDefault();
+    pointer.lastX=e.clientX;
+    paint(indexAt(e.clientX),true);
   }
-  settle(g,commit);
- }
- function cancelActiveGesture(expectedPointerId=null){
-  const g=gesture;if(!g||(expectedPointerId!==null&&g.id!==expectedPointerId))return;
-  gesture=null;
-  try{if(app.hasPointerCapture(g.id))app.releasePointerCapture(g.id)}catch(_){}
-  if(!g.claimed)return;
-  if(reduced()){app.style.transform="";app.style.willChange="";return}
-  settle(g,false);
- }
- function onCancel(e){cancelActiveGesture(e.pointerId)}
- function onLostPointerCapture(e){cancelActiveGesture(e.pointerId)}
- function onWindowBlur(){cancelActiveGesture();if(transitioning)clearAnimation()}
- function onVisibilityChange(){if(document.hidden){cancelActiveGesture();if(transitioning)clearAnimation()}}
- // Safari's interactive browser-back gesture takes precedence at the screen edge.
- // Cancel only edge-originating horizontal touches inside the app; keep vertical scrolling native.
- let edgeTouch=null;
- app.addEventListener("touchstart",e=>{
-  if(e.touches.length!==1)return;
-  const t=e.touches[0],w=window.innerWidth||app.clientWidth;
-  if(t.clientX<=24||t.clientX>=w-24){
-   edgeTouch={id:t.identifier,x:t.clientX,y:t.clientY};
-   // WebKit may begin its browser-history animation before pointermove can claim
-   // the gesture. Cancel that default only in the narrow 24px edge strip.
-   if(e.cancelable)e.preventDefault();
-  }else edgeTouch=null;
- },{capture:true,passive:false});
- app.addEventListener("touchmove",e=>{
-  if(!edgeTouch)return;
-  const t=[...e.changedTouches].find(x=>x.identifier===edgeTouch.id);
-  if(!t)return;
-  const dx=t.clientX-edgeTouch.x,dy=t.clientY-edgeTouch.y;
-  if(Math.abs(dx)>7&&Math.abs(dx)>Math.abs(dy)*1.12){
-   if(e.cancelable)e.preventDefault();
-  }else if(Math.abs(dy)>Math.abs(dx)*1.12)edgeTouch=null;
- },{capture:true,passive:false});
- const clearEdgeTouch=()=>{edgeTouch=null};
- app.addEventListener("touchend",clearEdgeTouch,{capture:true,passive:true});
- app.addEventListener("touchcancel",clearEdgeTouch,{capture:true,passive:true});
- document.addEventListener("pointerdown",onDown,{passive:true});
- document.addEventListener("pointermove",onMove,{passive:false});
- document.addEventListener("pointerup",onUp,{passive:true});
- document.addEventListener("pointercancel",onCancel,{passive:true});
- app.addEventListener("lostpointercapture",onLostPointerCapture);
- window.addEventListener("blur",onWindowBlur);
- document.addEventListener("visibilitychange",onVisibilityChange);
- window.poRunNavigationTransition=(mutator,direction)=>animateTo(mutator,(direction<0?1:-1)*22,245);
- window.poNavigationDiagnostics=()=>({installed:true,stage:app.id,transitioning,gestureActive:!!gesture,pointerId:gesture?.id??null,currentPage:currentPage(),nested:isNested(),historyLength:window.history.length,reducedMotion:reduced()});
+  function finish(e,cancelled){
+    if(!pointer||e.pointerId!==pointer.id)return;
+    const state=pointer;pointer=null;
+    try{if(bar.hasPointerCapture(e.pointerId))bar.releasePointerCapture(e.pointerId)}catch(_){}
+    if(!state.dragging){bar.classList.remove("nav-dragging");return;}
+    const targetIndex=cancelled?selectedIndex():Math.round(indexAt(e.clientX));
+    paint(targetIndex,false);
+    if(!cancelled){
+      suppressClick=true;
+      clearTimeout(suppressTimer);
+      suppressTimer=setTimeout(()=>{suppressClick=false},450);
+      tabs[targetIndex]?.click();
+    }
+  }
+  bar.addEventListener("pointerdown",onDown,{passive:true});
+  bar.addEventListener("pointermove",onMove,{passive:false});
+  bar.addEventListener("pointerup",e=>finish(e,false),{passive:true});
+  bar.addEventListener("pointercancel",e=>finish(e,true),{passive:true});
+  bar.addEventListener("lostpointercapture",e=>finish(e,true),{passive:true});
+  document.addEventListener("click",e=>{
+    if(!suppressClick||e.detail===0)return;
+    suppressClick=false;clearTimeout(suppressTimer);
+    if(bar.contains(e.target)){e.preventDefault();e.stopImmediatePropagation();}
+  },true);
+  const sync=()=>paint(selectedIndex(),false);
+  sync();
+  window.poNavigationDiagnostics=()=>({
+    installed:true,mode:"tap-and-bottom-bar-lens-drag",screenSwipe:false,
+    lensIndex:Number(bar.style.getPropertyValue("--drag-index"))||0,
+    gestureActive:!!pointer,currentPage:tabs[selectedIndex()]?.dataset.page||"home"
+  });
 })();
 </script>
 
@@ -5740,6 +5591,6 @@ html.po-nav-prev::view-transition-new(po-screen){animation:po-screen-enter-left 
   #profileInfoHelpPanel.po-nested-enter{will-change:auto}
 }
 </style>
-<!-- Nested navigation motion is owned by poPrimaryTabSwipeNavigation. -->
+<!-- Nested navigation history is independent from the bottom-bar lens interaction. -->
 
 </body></html>
