@@ -9,7 +9,7 @@ test('screen stage is isolated from the app shell and fixed navigation', async (
   await expect(page.locator('main.app > header.top')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toHaveCount(1);
-  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-06');
+  await expect(page.locator('#poScreenStage')).toHaveAttribute('data-navigation-build', 'nav-stage-v1-20261031-07');
   await expect(page.locator('body > nav.bottom')).toBeVisible();
 
   const structure = await page.evaluate(() => ({
@@ -100,6 +100,30 @@ test('horizontal pointer swipe changes one adjacent tab and releases the transit
   const diagnostics = await page.evaluate(() => window.poNavigationDiagnostics?.());
   expect(diagnostics?.gestureActive).toBe(false);
   expect(diagnostics?.pointerId).toBeNull();
+});
+
+test('edge-originating swipe stays inside app instead of browser history navigation', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const box = await page.locator('#poScreenStage').boundingBox();
+  expect(box).not.toBeNull();
+  const x = Math.max(1, box.x + 3);
+  const y = Math.max(box.y + 40, Math.min(box.y + 160, box.y + box.height - 20));
+  const hit = await page.evaluate(({ x, y }) => !!document.querySelector('#poScreenStage')?.contains(document.elementFromPoint(x, y)), { x, y });
+  expect(hit).toBe(true);
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 125, y, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
+  await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().transitioning)).toBe(false);
+  const geometry = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    transform: document.querySelector('#poScreenStage')?.style.transform,
+  }));
+  expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.viewport + 1);
+  expect(geometry.transform).toBe('');
 });
 
 test('vertical pointer movement does not trigger horizontal page navigation', async ({ page }) => {
