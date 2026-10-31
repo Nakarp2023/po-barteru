@@ -26,6 +26,7 @@ test('screen stage is isolated from the app shell and fixed navigation', async (
 });
 
 test('tab navigation and browser Back restore the previous screen', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.locator('.bottom .nav[data-page="favorites"]').click();
   await expect.poll(async () => page.evaluate(() => window.poNavigationDiagnostics?.().currentPage)).toBe('favorites');
