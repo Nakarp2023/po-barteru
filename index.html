@@ -4538,6 +4538,7 @@ function applyCatalogServerFilters(query){
 }
 async function loadRemoteListings(){
  const requestId=++catalogRequestId;
+ loadingMoreRemoteListings=false;
  const status=$("catalogStatus");
  if(!db){if(status){status.hidden=false;status.classList.add("is-error");status.textContent="Каталог временно недоступен: клиент базы данных не загрузился.";}return}
  if(status){status.hidden=false;status.classList.remove("is-error");status.textContent="Обновляем предложения…";}
@@ -4576,6 +4577,7 @@ async function loadRemoteListings(){
 }
 async function loadMoreRemoteListings(){
  if(!db||!hasMoreRemoteListings||loadingMoreRemoteListings)return;
+ const requestId=catalogRequestId;
  loadingMoreRemoteListings=true;render();
  try{
   const cursor=remoteCatalogCursor;
@@ -4583,6 +4585,7 @@ async function loadMoreRemoteListings(){
   query=applyCatalogServerFilters(query);
   if(cursor)query=query.or("created_at.lt."+cursor.created_at+",and(created_at.eq."+cursor.created_at+",id.lt."+cursor.id+")");
   const {data,error}=await query.order("created_at",{ascending:false}).order("id",{ascending:false}).limit(100);
+  if(requestId!==catalogRequestId)return;
   if(error)throw error;
   const rows=data||[];
   if(rows.length)remoteCatalogCursor=rows[rows.length-1];
@@ -4601,7 +4604,7 @@ async function loadMoreRemoteListings(){
   toast("Не удалось загрузить следующие объявления. Попробуй ещё раз.");
   console.warn("Catalog pagination failed:",error?.message||error);
  }finally{
-  loadingMoreRemoteListings=false;render();
+  if(requestId===catalogRequestId){loadingMoreRemoteListings=false;render();}
  }
 }
 $("loadMoreListings").onclick=loadMoreRemoteListings;
