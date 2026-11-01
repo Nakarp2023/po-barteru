@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111713"><title>ПО БАРТЕРУ — тест поддержки</title>
+<style>
+:root{color-scheme:dark;--bg:#111713;--panel:#1b241e;--line:#344139;--text:#f2f5f1;--muted:#aab5ac;--green:#78c99a;--danger:#ff9b91}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:24px 16px calc(32px + env(safe-area-inset-bottom))}
+main{max-width:560px;margin:0 auto}.brand{font-size:13px;letter-spacing:.14em;color:var(--green);font-weight:700;margin:10px 0 24px}h1{font-size:28px;letter-spacing:-.04em;margin:0 0 8px}p{color:var(--muted);line-height:1.5}.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;margin:18px 0}label{display:block;font-size:13px;color:var(--muted);margin:14px 0 7px}input,textarea,select{width:100%;background:#111713;border:1px solid var(--line);border-radius:12px;padding:13px;color:var(--text);font:inherit;outline:none}textarea{min-height:110px;resize:vertical}button{border:0;border-radius:13px;padding:13px 17px;background:var(--green);color:#102016;font-weight:700;font-size:15px;margin:12px 8px 0 0}button.secondary{background:#29362d;color:var(--text);border:1px solid var(--line)}button:disabled{opacity:.5}.status{font-size:13px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px}.ticket{border-top:1px solid var(--line);padding:14px 0}.ticket strong{display:block;margin-bottom:5px}.pill{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:3px 9px;color:var(--green);font-size:12px}.hidden{display:none}.hint{font-size:12px;color:var(--muted)}a{color:var(--green)}
+</style>
+</head>
+<body><main>
+<div class="brand">ПО БАРТЕРУ · STAGING</div>
+<h1>Проверка поддержки</h1>
+<p>Изолированная тестовая страница. Работает только с тестовой базой Supabase <b>po-barteru-staging</b>. Не использует аккаунты и обращения Production.</p>
+<section class="panel" id="authPanel">
+<h2>Тестовый аккаунт</h2>
+<label for="email">Email</label><input id="email" type="email" autocomplete="email" placeholder="test@example.com">
+<label for="password">Пароль (не менее 8 символов)</label><input id="password" type="password" autocomplete="current-password" placeholder="Пароль">
+<button id="signup">Создать аккаунт</button><button class="secondary" id="signin">Войти</button>
+<div class="status" id="authStatus" role="status"></div>
+</section>
+<section class="panel hidden" id="ticketPanel">
+<div><span class="pill" id="accountLabel">Подключено</span> <button class="secondary" id="signout">Выйти</button></div>
+<h2>Новое тестовое обращение</h2>
+<label for="category">Категория</label><select id="category"><option value="technical">Техническая проблема</option><option value="account">Аккаунт и вход</option><option value="listing">Объявление</option><option value="exchange">Обмен или сделка</option><option value="payment">Оплата и услуги</option><option value="safety">Безопасность или жалоба</option><option value="other">Другой вопрос</option></select>
+<label for="subject">Тема</label><input id="subject" maxlength="120" value="Тест Telegram-поддержки">
+<label for="message">Сообщение</label><textarea id="message" maxlength="5000">Тестовое обращение. Проверьте доставку в Telegram и ответ через Reply.</textarea>
+<button id="send">Отправить тестовое обращение</button>
+<div class="status" id="ticketStatus" role="status"></div>
+<h2>Мои обращения</h2><div id="tickets"><p>Загрузка…</p></div>
+</section>
+<p class="hint">Тестируй только на этой странице. Не отправляй сюда реальные персональные данные. Поддержка: <a href="https://t.me/Jakc_vorobeiy" target="_blank" rel="noopener">@Jakc_vorobeiy</a>.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+const SUPABASE_URL = "https://noiryqvoohqrfmemfnne.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ZQysYhUfU2mNnM2Ce1jzIw_CWFj5AM_";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const say = (id, text) => { $(id).textContent = text || ""; };
+let busy = false;
+async function withBusy(button, task) {
+ if (busy) return; busy = true; button.disabled = true;
+ try { await task(); } catch(e) { say("ticketStatus", e.message || "Не удалось выполнить операцию"); }
+ finally { busy = false; button.disabled = false; }
+}
+async function refresh() {
+ const {data:{user}} = await db.auth.getUser();
+ $("authPanel").classList.toggle("hidden", !!user);
+ $("ticketPanel").classList.toggle("hidden", !user);
+ if (!user) return;
+ $("accountLabel").textContent = user.email || "Тестовый аккаунт";
+ const {data,error} = await db.from("support_tickets").select("id,category,subject,message,status,support_reply,created_at,replied_at").order("created_at",{ascending:false}).limit(20);
+ if (error) { $("tickets").textContent = "Не удалось загрузить обращения: " + error.message; return; }
+ $("tickets").replaceChildren();
+ if (!data.length) { $("tickets").innerHTML = "<p>Обращений пока нет.</p>"; return; }
+ data.forEach(t => {
+   const item=document.createElement("div"); item.className="ticket";
+   const title=document.createElement("strong"); title.textContent=t.subject; item.append(title);
+   const meta=document.createElement("div"); meta.className="hint"; meta.textContent=new Date(t.created_at).toLocaleString("ru-RU")+" · "+t.status+" · "+t.id; item.append(meta);
+   const msg=document.createElement("p"); msg.textContent=t.message; item.append(msg);
+   if(t.support_reply){const reply=document.createElement("p");reply.textContent="Ответ поддержки: "+t.support_reply;item.append(reply);}
+   $("tickets").append(item);
+ });
+}
+$("signup").onclick=()=>withBusy($("signup"),async()=>{
+ say("authStatus","Создаём тестовый аккаунт…");
+ const {data,error}=await db.auth.signUp({email:$("email").value.trim(),password:$("password").value});
+ if(error) throw error;
+ if(!data.session) say("authStatus","Аккаунт создан. Если подтверждение email включено, подтверди адрес по письму, затем нажми «Войти».");
+ else say("authStatus","Аккаунт создан и выполнен вход.");
+ await refresh();
+});
+$("signin").onclick=()=>withBusy($("signin"),async()=>{
+ const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+ if(error) throw error; say("authStatus","Вход выполнен."); await refresh();
+});
+$("signout").onclick=async()=>{await db.auth.signOut();say("authStatus","Вы вышли.");await refresh();};
+$("send").onclick=()=>withBusy($("send"),async()=>{
+ say("ticketStatus","Сохраняем обращение в тестовой базе…");
+ const {data:{user}}=await db.auth.getUser(); if(!user) throw new Error("Сначала войдите в тестовый аккаунт.");
+ const payload={user_id:user.id,category:$("category").value,subject:$("subject").value.trim(),message:$("message").value.trim()};
+ const {data:ticket,error}=await db.from("support_tickets").insert(payload).select("id").single();
+ if(error) throw error;
+ say("ticketStatus","Обращение сохранено. Отправляем уведомление в Telegram…");
+ const {error:notifyError}=await db.functions.invoke("support-telegram-notify",{body:{ticket_id:ticket.id}});
+ if(notifyError) say("ticketStatus","Обращение сохранено в Staging, но Telegram-уведомление не отправлено: "+notifyError.message+". Проверь секреты Edge Function.");
+ else say("ticketStatus","Уведомление успешно передано Telegram. Ответь на сообщение бота через Reply — ответ появится ниже после обновления.");
+ await refresh();
+});
+db.auth.onAuthStateChange(()=>{refresh().catch(e=>say("authStatus",e.message));});
+refresh().catch(e=>say("authStatus",e.message));
+})();
+</script></body></html>
