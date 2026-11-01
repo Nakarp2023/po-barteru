@@ -1,4 +1,4 @@
-import { chromium, devices } from 'playwright';
+import { chromium } from 'playwright';
 
 const baseURL = process.env.BASE_URL || 'https://po-barteru-no-gestures-staging.onrender.com/';
 const failures = [];
@@ -41,6 +41,29 @@ async function checkViewport(name, viewport, isMobile = false) {
     failures.push(`${name}: horizontal overflow (viewport ${metrics.width}px, document ${metrics.documentWidth}px, body ${metrics.bodyWidth}px)`);
   }
   for (const error of pageErrors) failures.push(`${name}: uncaught browser error: ${error}`);
+
+  // Exercise the listing form without authentication or database writes.
+  const addButton = page.locator('#addTop');
+  if (await addButton.count()) {
+    await addButton.click({ timeout: 10000 }).catch(() => {});
+    const form = page.locator('#modal.open #form');
+    try {
+      await form.waitFor({ state: 'visible', timeout: 5000 });
+      for (const selector of ['[name="title"]', '[name="category"]', '[name="want"]', '[name="city"]', '#listingImages', '#listingSubmit']) {
+        if (!(await form.locator(selector).count())) failures.push(`${name}: listing form is missing ${selector}`);
+      }
+      const imageInput = form.locator('#listingImages');
+      if ((await imageInput.getAttribute('accept')) !== 'image/*') failures.push(`${name}: listing photo input does not restrict selection to images`);
+      const imageHint = await imageInput.locator('xpath=following-sibling::small').textContent().catch(() => '');
+      if (!imageHint?.includes('5 МБ')) failures.push(`${name}: listing photo size guidance is missing`);
+      await page.locator('#cancel').click({ timeout: 5000 });
+      if (await page.locator('#modal.open').count()) failures.push(`${name}: listing form did not close after Cancel`);
+    } catch (error) {
+      failures.push(`${name}: listing form did not open correctly: ${error.message}`);
+    }
+  } else {
+    failures.push(`${name}: top-level add-listing button was not found`);
+  }
 
   await page.screenshot({ path: `artifacts/${name}.png`, fullPage: true }).catch(() => {});
   console.log(JSON.stringify({ test: name, status: failures.some(x => x.startsWith(name + ':')) ? 'FAIL' : 'PASS', http: response?.status(), title, ...metrics, pageErrors }, null, 2));
