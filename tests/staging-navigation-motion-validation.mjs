@@ -115,7 +115,7 @@ async function checkViewport(name, viewport, isMobile = false) {
         const horizontalAnimations = el.getAnimations().filter(animation => {
           const effect = animation.effect;
           const frames = effect?.getKeyframes?.() || [];
-          return frames.some(frame => typeof frame.transform === 'string' && /translateX|translate3d\\([^,]+px/i.test(frame.transform));
+          return frames.some(frame => typeof frame.transform === 'string' && /translateX|translate3d\([^,]+px/i.test(frame.transform));
         });
         return {
           transform,
