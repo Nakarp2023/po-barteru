@@ -16,7 +16,7 @@ This directory documents the isolated Supabase Staging environment. It is intent
 4. Payment provider Edge Functions, webhook secrets, Vault secrets, VAPID secrets, and push dispatch are intentionally excluded from this baseline.
 5. Real payments and payment-state transitions must remain disabled during Staging tests.
 6. The `delete-listing` Edge Function is deployed to Staging with JWT verification and server-side ownership checks.
-7. The pre-existing `support-telegram-notify`, `support-telegram-webhook`, and `support-telegram-setup` functions are present. Do not invoke support notification or webhook setup during testing until the Telegram secrets and destination are confirmed; the notification function still has an older preview-domain CORS origin.
+7. `support-telegram-notify` now allows only the current Staging and Production web origins and validates the caller's JWT and ticket ownership. `support-telegram-webhook` authenticates Telegram using its secret-token header. `support-telegram-setup` is disabled and JWT-protected; do not re-enable it as a public endpoint. Do not invoke Telegram delivery or webhook setup during tests until the Telegram secrets and destination are confirmed.
 8. Keep the navigation-only PR separate from this branch. The current Staging branch is not a merge candidate for `main`.
 
 ## Schema baseline
@@ -37,6 +37,7 @@ The first two Staging-only bootstrap migrations (`20261101043229` and `202611010
 - The pre-existing Staging support ticket test row is preserved.
 - The public monetization catalog is seeded with plan definitions only; no orders or subscription states are seeded.
 - The Vault-backed VAPID functions and the notification push-dispatch trigger are omitted to prevent external push side effects.
-- The Production cron schedule is not installed in Staging.
+- The unconfirmed-exchange expiry Cron job is installed and active in Staging (`* * * * *`). It calls `expire_unconfirmed_exchange_proposals()`; the worker function is executable only by `service_role`. This job is independent of Production and processes only Staging records.
+- Saved-search notifications are allowed by the `notifications_type_check` constraint via migration `20261101201440_allow_saved_search_match_notifications.sql`.
 
 Before adding a new Staging migration, create and review the SQL file here, then apply it to Staging only. Compare schema and security advisors after each change.
