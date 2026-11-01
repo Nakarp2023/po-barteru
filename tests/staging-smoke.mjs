@@ -42,6 +42,25 @@ async function checkViewport(name, viewport, isMobile = false) {
   }
   for (const error of pageErrors) failures.push(`${name}: uncaught browser error: ${error}`);
 
+  // Check the authentication controls without sending emails or changing account state.
+  const authChecks = [
+    '#authEmail',
+    '#authPassword',
+    '#authPasswordLogin',
+    '#authPasswordSignup',
+    '#authPasswordReset',
+    '#authSend'
+  ];
+  for (const selector of authChecks) {
+    if (!(await page.locator(selector).count())) failures.push(`${name}: authentication control is missing ${selector}`);
+  }
+  if (await page.locator('#authEmail').getAttribute('type') !== 'email') {
+    failures.push(`${name}: email field is not typed as email`);
+  }
+  if (await page.locator('#authPassword').getAttribute('type') !== 'password') {
+    failures.push(`${name}: password field is not masked`);
+  }
+
   // Exercise the listing form without authentication or database writes.
   const addButton = page.locator('#addTop');
   if (await addButton.count()) {
