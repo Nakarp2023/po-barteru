@@ -1,0 +1,7 @@
+# Supabase Staging project configuration
+# Use this file for all Staging-only CLI, schema inspection, and migration work.
+# Never use the root supabase/project-connection.txt for Staging: it points to Production.
+SUPABASE_URL=https://noiryqvoohqrfmemfnne.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_ZQysYhUfU2mNnM2Ce1jzIw_CWFj5AM_
+
+# This publishable key is intended for client-side use. Never add a secret or service_role key here.
