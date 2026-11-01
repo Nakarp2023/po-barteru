@@ -130,3 +130,20 @@
 - [ ] Следующий технический шаг: подготовить проверяемые миграции из каталога Production с сохранением всех ограничений, индексов, политик и функций. До готовности миграций не запускать сценарии сделок, CRUD объявлений или платежей в Staging.
 - [ ] Отдельно получить исходники всех trigger/RPC функций, ACL/EXECUTE grants, extensions, Storage bucket/policies и проверить hardcoded endpoints. Особенно важно исключить Production push URL и реальные платёжные credentials в тестовом контуре.
 
+
+
+## Аудит интеграций и внешних эффектов (2026-11-01, read-only)
+
+- [x] Повторно проверен Render Preview для коммита `370e1df`: deployment `dep-dbjgjvp5efls73dvo830` имеет статус `live`.
+- [x] Сверены Edge Functions Production и Staging. Production: 8 функций; Staging: 3 support-функции. Production payment/push/delete-функции в Staging не переносились.
+- [x] Проверены исходники ключевых Edge Functions без вызова их endpoint-ов и без отправки Telegram/push/payment-запросов.
+- [ ] **Блокер изоляции push:** Production trigger `dispatch_push_for_notification()` жёстко вызывает `https://qxsnjksepzmpsifpxyea.supabase.co/functions/v1/send-push` и читает Vault secret `push_trigger_secret`. В Staging нельзя создавать аналогичный trigger до отдельной staging-функции, staging URL и отдельного секрета. В противном случае тестовые уведомления могут уйти в Production.
+- [ ] **Блокер изоляции оплаты:** `create-yookassa-payment` проверяет `YOOKASSA_MODE=test`, но redirect `return_url` сейчас жёстко задан на Production-сайт `https://po-barteru.onrender.com/`. Для Staging требуется отдельный разрешённый return URL и проверка, что тестовые credentials не являются боевыми. До этого payment functions в Staging не разворачивать.
+- [ ] **Блокер поддержки:** Production `support-telegram-notify` задаёт CORS origin Production-домена. Перед переносом в Staging требуется явно разрешить только Preview-домен, не использовать wildcard без необходимости. Telegram credentials и webhook secret должны быть отдельными staging secrets; webhook Staging уже существует, но его настройки отдельно не раскрывались и не менялись.
+- [x] Production Storage: bucket `listing-images` public-read, лимит 5 MiB; политики ограничивают upload/update/delete собственными объектами пользователя. Staging Storage buckets отсутствуют. Нужно восстановить bucket и policies после проверки точных folder-path выражений; не создавать публичную запись без этих ограничений.
+- [x] Production extensions инвентаризированы: `pg_cron`, `pg_net`, `pg_stat_statements`, `pgcrypto`, `plpgsql`, `supabase_vault`, `uuid-ossp`. Для Staging определить минимально необходимый набор; не включать cron/net-trigger до адаптации внешних endpoint-ов.
+- [x] Production RLS включён на всех 22 public tables; `FORCE ROW LEVEL SECURITY` выключен. Это зафиксировано как фактическое состояние, а не как рекомендация автоматически менять его.
+- [ ] Staging пока не содержит Storage buckets; edge functions ограничены support-набором. Сценарии загрузки изображений, push и оплаты не готовы к интеграционным тестам.
+- [ ] При чтении исходников выявлены внешние зависимости и environment variables. Секреты не выводились и не копировались. Не выполнялись платежные запросы, Telegram-сообщения, push-вызовы и изменения данных.
+
+**Контроль перед любым интеграционным тестом:** проверить домен назначения, Supabase project ref, тип credentials (test/live), отдельность секретов и фактический endpoint. Проверка статического кода не заменяет безопасный end-to-end тест.
