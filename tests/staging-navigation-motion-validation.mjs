@@ -39,6 +39,7 @@ async function checkViewport(name, viewport, isMobile = false) {
   const profileSyncStart = appScripts.indexOf('async function syncProfile', exchangesStart);
   const exchangesSource = exchangesStart >= 0 && profileSyncStart > exchangesStart ? appScripts.slice(exchangesStart, profileSyncStart) : '';
   if (!exchangesSource.includes('expire_exchange_proposal_if_needed')) failures.push(`${name}: expired accepted offers are not recovered from the exchange list`);
+  if (!exchangesSource.includes('expiredCount') || !exchangesSource.includes('refreshNotificationCount')) failures.push(`${name}: automatic expiry does not refresh the notification badge`);
 
   const metrics = await page.evaluate(() => ({
     width: document.documentElement.clientWidth,

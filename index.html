@@ -4612,6 +4612,8 @@ async function loadMyExchanges(){
   const expiryResults=await Promise.all(expiredProposalIds.map(id=>db.rpc("expire_exchange_proposal_if_needed",{p_proposal_id:id})));
   const expiryFailure=expiryResults.find(result=>result.error);
   if(expiryFailure)console.warn("Не удалось автоматически отменить просроченное предложение:",expiryFailure.error.message);
+  const expiredCount=expiryResults.filter(result=>!result.error&&result.data?.expired).length;
+  if(expiredCount){await refreshNotificationCount();toast(expiredCount===1?"Просроченная сделка отменена. Объявления снова доступны.":"Просроченные сделки отменены. Объявления снова доступны.");}
   [outgoingResult,incomingResult]=await fetchProposalRows();
   if(outgoingResult.error||incomingResult.error){el.innerHTML='<p class="category">Не удалось обновить статусы предложений.</p>';return}
   outgoing=outgoingResult.data||[];incoming=incomingResult.data||[];
