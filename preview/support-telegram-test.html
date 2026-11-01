@@ -30,7 +30,7 @@ main{max-width:560px;margin:0 auto}.brand{font-size:13px;letter-spacing:.14em;co
 <div class="status" id="ticketStatus" role="status"></div>
 <h2>Мои обращения</h2><div id="tickets"><p>Загрузка…</p></div>
 </section>
-<p class="hint">Тестируй только на этой странице. Не отправляй сюда реальные персональные данные. Поддержка: <a href="https://t.me/Jakc_vorobeiy" target="_blank" rel="noopener">@Jakc_vorobeiy</a>.</p>
+<p class="hint">Тестируй только на этой странице. Не отправляй сюда реальные персональные данные. Поддержка: <a href="https://t.me/PoBarteruSupportBot" target="_blank" rel="noopener">@PoBarteruSupportBot</a>.</p>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -67,7 +67,7 @@ async function refresh() {
 }
 $("signup").onclick=()=>withBusy($("signup"),async()=>{
  say("authStatus","Создаём тестовый аккаунт…");
- const {data,error}=await db.auth.signUp({email:$("email").value.trim(),password:$("password").value});
+ const {data,error}=await db.auth.signUp({email:$("email").value.trim(),password:$("password").value,options:{emailRedirectTo:window.location.origin+window.location.pathname}});
  if(error) throw error;
  if(!data.session) say("authStatus","Аккаунт создан. Если подтверждение email включено, подтверди адрес по письму, затем нажми «Войти».");
  else say("authStatus","Аккаунт создан и выполнен вход.");
