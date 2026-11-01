@@ -122,6 +122,43 @@ async function checkViewport(name, viewport, isMobile = false) {
     if (afterSwipe !== beforeSwipe) failures.push(`${name}: horizontal touch movement changed the primary section from ${beforeSwipe} to ${afterSwipe}`);
   }
 
+  // Catalog controls: read-only search/filter/sort requests only; never submit or mutate records.
+  const filterToggle = page.locator('#advancedSearchToggle');
+  if (await filterToggle.count()) {
+    await filterToggle.click();
+    const panel = page.locator('#advancedSearchPanel');
+    try {
+      await panel.waitFor({ state: 'visible', timeout: 4000 });
+      for (const selector of ['#advancedCity', '#filterCityOnly', '#filterSort', '#advancedMinPrice', '#advancedMaxPrice', '#resetAdvancedSearch', '#applyFilters']) {
+        if (!(await panel.locator(selector).count())) failures.push(`${name}: catalog filter control is missing ${selector}`);
+      }
+      const sort = panel.locator('#filterSort');
+      await sort.selectOption('newest');
+      await panel.locator('#applyFilters').click();
+      await page.waitForTimeout(900);
+      if (await page.locator('#catalogStatus.is-error').count()) failures.push(`${name}: catalog returned an error after applying newest sort`);
+      await filterToggle.click();
+      await panel.waitFor({ state: 'visible', timeout: 3000 });
+      await panel.locator('#resetAdvancedSearch').click();
+      await page.waitForTimeout(900);
+      if (await page.locator('#catalogStatus.is-error').count()) failures.push(`${name}: catalog returned an error after resetting filters`);
+    } catch (error) {
+      failures.push(`${name}: catalog filters did not operate correctly: ${error.message}`);
+    }
+  } else failures.push(`${name}: catalog filter toggle was not found`);
+
+  const searchInput = page.locator('#q');
+  if (await searchInput.count()) {
+    await searchInput.fill('qa-no-match-2026-smoke');
+    await page.locator('#searchBtn').click();
+    await page.waitForTimeout(900);
+    if (await page.locator('#catalogStatus.is-error').count()) failures.push(`${name}: catalog search returned a server error`);
+    await searchInput.fill('');
+    await page.locator('#searchBtn').click();
+    await page.waitForTimeout(900);
+    if (await page.locator('#catalogStatus.is-error').count()) failures.push(`${name}: catalog failed to reload after clearing search`);
+  } else failures.push(`${name}: catalog search field was not found`);
+
   // Exercise the listing form without authentication or database writes.
   const addButton = page.locator('#addTop');
   if (await addButton.count()) {
