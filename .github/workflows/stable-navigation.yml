@@ -1,0 +1,52 @@
+name: Stable navigation browser tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/stable-navigation.yml"
+      - "playwright.config.js"
+      - "tests/navigation/**"
+      - "index.html"
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Render Preview URL"
+        required: false
+        default: "https://po-barteru-simple-navigation-preview.onrender.com"
+
+permissions:
+  contents: read
+
+jobs:
+  navigation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Playwright
+        run: npm install --no-save --package-lock=false @playwright/test
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Wait for the matching Render Preview commit
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          url="${BASE_URL:-https://po-barteru-simple-navigation-preview.onrender.com}"
+          for attempt in $(seq 1 60); do
+            if curl -fsSL "$url" | grep -Fq 'data-navigation-build="liquid-swipe-v2-20261031-01"'; then
+              echo "Render Preview contains the expected navigation build."
+              exit 0
+            fi
+            echo "Waiting for Render Preview deployment ($attempt/60)..."
+            sleep 5
+          done
+          echo "Render Preview did not expose the expected build marker in time."
+          exit 1
+      - name: Run navigation tests
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: npx playwright test
