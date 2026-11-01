@@ -54,14 +54,20 @@ test('primary tabs switch only by tapping and never slide the screen', async ({ 
   }
 });
 
-test('browser Back restores the previous primary tab after a tab tap', async ({ page }) => {
+test('primary tab taps do not add browser swipe-back history entries', async ({ page }) => {
   await openApp(page);
+  const historyLength = await page.evaluate(() => history.length);
   await expect(page.locator(tab('home'))).toHaveClass(/active/);
   await page.locator(tab('favorites')).click();
   await expect(page.locator(tab('favorites'))).toHaveClass(/active/);
-  await page.evaluate(() => window.history.back());
-  await expect(page.locator(tab('home'))).toHaveClass(/active/);
-  await expect(page.locator('#homeHero')).toBeVisible();
+  await page.locator(tab('profile')).click();
+  await expect(page.locator(tab('profile'))).toHaveClass(/active/);
+  const state = await page.evaluate(() => ({
+    historyLength: history.length,
+    route: history.state?.__poBarterNavigation?.snapshot?.page
+  }));
+  expect(state.historyLength).toBe(historyLength);
+  expect(state.route).toBe('profile');
 });
 
 test('reduced-motion preference does not block tab switching', async ({ page }) => {
