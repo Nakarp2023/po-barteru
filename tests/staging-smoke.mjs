@@ -10,7 +10,7 @@ async function checkViewport(name, viewport, isMobile = false) {
     isMobile,
     deviceScaleFactor: isMobile ? 3 : 1,
     hasTouch: isMobile,
-    reducedMotion: 'reduce'
+    reducedMotion: 'no-preference'
   });
   const page = await context.newPage();
   const pageErrors = [];
@@ -59,6 +59,60 @@ async function checkViewport(name, viewport, isMobile = false) {
   }
   if (await page.locator('#authPassword').getAttribute('type') !== 'password') {
     failures.push(`${name}: password field is not masked`);
+  }
+
+  // Navigation regression: main sections are tap-only, with no horizontal page motion.
+  const tabs = page.locator('.bottom .nav[data-page]');
+  const tabCount = await tabs.count();
+  if (tabCount < 4) failures.push(`${name}: expected primary navigation tabs were not found`);
+  else {
+    for (const target of ['profile', 'chats', 'notifications', 'home']) {
+      const tab = page.locator(`.bottom .nav[data-page="${target}"]`);
+      if (!(await tab.count())) {
+        failures.push(`${name}: missing navigation tab ${target}`);
+        continue;
+      }
+      await tab.click();
+      await page.waitForTimeout(80);
+      if (!(await tab.evaluate(el => el.classList.contains('active')))) {
+        failures.push(`${name}: tap did not activate ${target} tab`);
+      }
+      const motion = await page.locator('.app').evaluate(el => {
+        const style = getComputedStyle(el);
+        const nav = document.querySelector('.bottom');
+        const navStyle = getComputedStyle(nav);
+        const indicator = getComputedStyle(nav, '::before');
+        return {
+          transform: style.transform,
+          transitionDuration: navStyle.transitionDuration,
+          indicatorTransitionDuration: indicator.transitionDuration
+        };
+      });
+      if (motion.transform !== 'none' && motion.transform !== 'matrix(1, 0, 0, 1, 0, 0)') {
+        failures.push(`${name}: app shell is horizontally/visually transformed after ${target} tab tap (${motion.transform})`);
+      }
+      if (motion.transitionDuration.split(',').some(value => parseFloat(value) > 0) ||
+          motion.indicatorTransitionDuration.split(',').some(value => parseFloat(value) > 0)) {
+        failures.push(`${name}: navigation bar still has animated transitions after ${target} tab tap`);
+      }
+    }
+
+    // Synthetic horizontal touch movement on the app shell must not change the active tab.
+    const beforeSwipe = await page.locator('.bottom .nav.active').getAttribute('data-page');
+    await page.locator('.app').evaluate(el => {
+      const makeTouchEvent = (type, x) => {
+        const event = new Event(type, { bubbles: true, cancelable: true });
+        Object.defineProperty(event, 'touches', { value: type === 'touchend' ? [] : [{ clientX: x, clientY: 420 }] });
+        Object.defineProperty(event, 'changedTouches', { value: [{ clientX: x, clientY: 420 }] });
+        return event;
+      };
+      el.dispatchEvent(makeTouchEvent('touchstart', 330));
+      document.dispatchEvent(makeTouchEvent('touchmove', 45));
+      document.dispatchEvent(makeTouchEvent('touchend', 45));
+    });
+    await page.waitForTimeout(100);
+    const afterSwipe = await page.locator('.bottom .nav.active').getAttribute('data-page');
+    if (afterSwipe !== beforeSwipe) failures.push(`${name}: horizontal touch movement changed the primary section from ${beforeSwipe} to ${afterSwipe}`);
   }
 
   // Exercise the listing form without authentication or database writes.
