@@ -7,6 +7,10 @@ const expiryMigrationSource = await readFile(new URL('../supabase/migrations/202
 if (!expiryMigrationSource.includes('cron.schedule(') || !expiryMigrationSource.includes('expire_unconfirmed_exchange_proposals') || !expiryMigrationSource.includes('to service_role')) {
   failures.push('exchange expiry migration must install the minute scheduler and keep the worker service_role-only');
 }
+const expiryIndexMigrationSource = await readFile(new URL('../supabase/migrations/20261101175012_index_unconfirmed_exchange_expiry.sql', import.meta.url), 'utf8').catch(() => '');
+if (!expiryIndexMigrationSource.includes('exchange_proposals_expiry_scan_idx') || !expiryIndexMigrationSource.includes('accepted_at')) {
+  failures.push('exchange expiry migration must include the partial accepted_at scan index');
+}
 const browser = await chromium.launch({ headless: true });
 
 async function checkViewport(name, viewport, isMobile = false) {
