@@ -218,6 +218,40 @@ async function checkViewport(name, viewport, isMobile = false) {
     const form = page.locator('#modal.open #form');
     try {
       await form.waitFor({ state: 'visible', timeout: 5000 });
+      const dialogSemantics = await page.locator('#modal').evaluate(el => ({
+        role: el.getAttribute('role'),
+        modal: el.getAttribute('aria-modal'),
+        labelledby: el.getAttribute('aria-labelledby'),
+        describedby: el.getAttribute('aria-describedby'),
+        hidden: el.getAttribute('aria-hidden')
+      }));
+      if (dialogSemantics.role !== 'dialog' || dialogSemantics.modal !== 'true' || dialogSemantics.labelledby !== 'listingFormTitle' || dialogSemantics.describedby !== 'listingFormDescription' || dialogSemantics.hidden !== 'false') {
+        failures.push(`${name}: listing form dialog semantics are incomplete: ${JSON.stringify(dialogSemantics)}`);
+      }
+      const initialFocus = await page.evaluate(() => document.activeElement?.getAttribute('name') || document.activeElement?.id || '');
+      if (initialFocus !== 'title') failures.push(`${name}: opening listing form did not focus the title field (focused: ${initialFocus})`);
+      const backgroundInert = await page.evaluate(() => ({
+        app: document.querySelector('.app')?.hasAttribute('inert') || false,
+        nav: document.querySelector('.bottom')?.hasAttribute('inert') || false
+      }));
+      if (!backgroundInert.app || !backgroundInert.nav) failures.push(`${name}: background app/navigation remained interactive while listing dialog is open`);
+      await page.keyboard.press('Shift+Tab');
+      const wrappedBackward = await page.evaluate(() => document.activeElement?.id || document.activeElement?.name || '');
+      if (wrappedBackward !== 'listingSubmit') failures.push(`${name}: Shift+Tab did not wrap focus to the last dialog control (focused: ${wrappedBackward})`);
+      await page.keyboard.press('Tab');
+      const wrappedForward = await page.evaluate(() => document.activeElement?.id || document.activeElement?.name || '');
+      if (wrappedForward !== 'title') failures.push(`${name}: Tab did not wrap focus to the first dialog control (focused: ${wrappedForward})`);
+      await page.keyboard.press('Escape');
+      await page.locator('#modal.open').waitFor({ state: 'hidden', timeout: 3000 });
+      const restoredFocus = await page.evaluate(() => document.activeElement?.id || '');
+      if (restoredFocus !== 'addTop') failures.push(`${name}: closing listing dialog did not restore focus to its opener (focused: ${restoredFocus})`);
+      const inertAfterClose = await page.evaluate(() => ({
+        app: document.querySelector('.app')?.hasAttribute('inert') || false,
+        nav: document.querySelector('.bottom')?.hasAttribute('inert') || false
+      }));
+      if (inertAfterClose.app || inertAfterClose.nav) failures.push(`${name}: background remained inert after closing listing dialog`);
+      await page.locator('#addTop').click({ timeout: 5000 });
+      await form.waitFor({ state: 'visible', timeout: 3000 });
       for (const selector of ['[name="title"]', '[name="category"]', '[name="want"]', '[name="city"]', '#listingImages', '#listingSubmit']) {
         if (!(await form.locator(selector).count())) failures.push(`${name}: listing form is missing ${selector}`);
       }
