@@ -176,6 +176,7 @@ async function checkViewport(name, viewport, isMobile = false) {
 
   const searchInput = page.locator('#q');
   if (await searchInput.count()) {
+    await searchInput.click(); // The field is readonly until a real focus, to suppress browser autofill.
     await searchInput.fill('qa-no-match-2026-smoke');
     await page.locator('#searchBtn').click();
     await page.waitForTimeout(900);
