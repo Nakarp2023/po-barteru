@@ -1,14 +1,22 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const cors = {
-  "Access-Control-Allow-Origin": "https://po-barteru.onrender.com",
+const allowedOrigins = new Set([
+  "https://po-barteru-no-gestures-staging.onrender.com",
+  "https://po-barteru.onrender.com",
+]);
+const corsHeaders = (origin: string | null): HeadersInit => ({
+  ...(origin && allowedOrigins.has(origin) ? { "Access-Control-Allow-Origin": origin } : {}),
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400",
   "Vary": "Origin",
-};
-const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
+});
+const json = (origin: string | null, body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
+  });
 const esc = (value: unknown) => String(value ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 const categories: Record<string, string> = {
   account: "Аккаунт и вход", listing: "Объявление", exchange: "Обмен или сделка",
@@ -17,28 +25,30 @@ const categories: Record<string, string> = {
 };
 
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
-  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  const origin = req.headers.get("Origin");
+  if (origin && !allowedOrigins.has(origin)) return new Response("Forbidden", { status: 403, headers: { "Vary": "Origin" } });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(origin) });
+  if (req.method !== "POST") return json(origin, { error: "Method not allowed" }, 405);
   const url = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
   const supportChatId = Deno.env.get("TELEGRAM_SUPPORT_CHAT_ID");
   if (!url || !serviceKey || !botToken || !supportChatId) {
     console.error("Support Telegram integration is missing server configuration");
-    return json({ error: "Support notifications are not configured" }, 503);
+    return json(origin, { error: "Support notifications are not configured" }, 503);
   }
   const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
-  if (!token) return json({ error: "Unauthorized" }, 401);
+  if (!token) return json(origin, { error: "Unauthorized" }, 401);
   const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data: authData, error: authError } = await admin.auth.getUser(token);
-  if (authError || !authData.user) return json({ error: "Unauthorized" }, 401);
+  if (authError || !authData.user) return json(origin, { error: "Unauthorized" }, 401);
   let input: { ticket_id?: string };
-  try { input = await req.json(); } catch { return json({ error: "Invalid JSON" }, 400); }
-  if (!input.ticket_id || !/^[0-9a-f-]{36}$/i.test(input.ticket_id)) return json({ error: "Invalid ticket_id" }, 400);
+  try { input = await req.json(); } catch { return json(origin, { error: "Invalid JSON" }, 400); }
+  if (!input.ticket_id || !/^[0-9a-f-]{36}$/i.test(input.ticket_id)) return json(origin, { error: "Invalid ticket_id" }, 400);
   const { data: ticket, error: ticketError } = await admin.from("support_tickets")
     .select("id,user_id,category,subject,message,created_at")
     .eq("id", input.ticket_id).eq("user_id", authData.user.id).maybeSingle();
-  if (ticketError || !ticket) return json({ error: "Ticket not found" }, 404);
+  if (ticketError || !ticket) return json(origin, { error: "Ticket not found" }, 404);
   const body = [
     "🆕 <b>Новое обращение — ПО БАРТЕРУ</b>",
     "<b>Номер:</b> <code>" + esc(ticket.id) + "</code>",
@@ -54,7 +64,7 @@ Deno.serve(async (req: Request) => {
   const result = await telegramResponse.json().catch(() => ({}));
   if (!telegramResponse.ok || !result.ok) {
     console.error("Telegram support delivery failed", result.error_code || telegramResponse.status);
-    return json({ error: "Could not notify support team" }, 502);
+    return json(origin, { error: "Could not notify support team" }, 502);
   }
-  return json({ ok: true });
+  return json(origin, { ok: true });
 });
