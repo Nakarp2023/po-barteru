@@ -76,7 +76,7 @@ async function checkViewport(name, viewport, isMobile = false) {
       const imageHint = await imageInput.locator('xpath=following-sibling::small').textContent().catch(() => '');
       if (!imageHint?.includes('5 МБ')) failures.push(`${name}: listing photo size guidance is missing`);
       for (const selector of ['[name="title"]', '[name="want"]', '[name="city"]']) {
-        if (!(await form.locator(selector).isRequired())) failures.push(`${name}: required validation is missing for ${selector}`);
+        if ((await form.locator(selector).getAttribute('required')) === null) failures.push(`${name}: required validation is missing for ${selector}`);
       }
       const limits = {
         '[name="title"]': '80',
