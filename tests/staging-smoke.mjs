@@ -66,7 +66,7 @@ async function checkViewport(name, viewport, isMobile = false) {
   const tabCount = await tabs.count();
   if (tabCount < 4) failures.push(`${name}: expected primary navigation tabs were not found`);
   else {
-    for (const target of ['profile', 'chats', 'notifications', 'home']) {
+    for (const target of ['profile', 'chats', 'my-listings', 'favorites', 'home']) {
       const tab = page.locator(`.bottom .nav[data-page="${target}"]`);
       if (!(await tab.count())) {
         failures.push(`${name}: missing navigation tab ${target}`);
@@ -97,7 +97,14 @@ async function checkViewport(name, viewport, isMobile = false) {
       }
     }
 
-    // Synthetic horizontal touch movement on the app shell must not change the active tab.
+    // Notifications are intentionally opened from the top-bar bell, not a bottom tab.
+  const notificationEntry = page.locator('#notificationTop');
+  if (!(await notificationEntry.count())) failures.push(`${name}: top-bar notifications entry is missing`);
+  else if ((await notificationEntry.getAttribute('aria-label')) !== 'Уведомления') {
+    failures.push(`${name}: top-bar notifications entry has an unexpected accessible label`);
+  }
+
+  // Synthetic horizontal touch movement on the app shell must not change the active tab.
     const beforeSwipe = await page.locator('.bottom .nav.active').getAttribute('data-page');
     await page.locator('.app').evaluate(el => {
       const makeTouchEvent = (type, x) => {
