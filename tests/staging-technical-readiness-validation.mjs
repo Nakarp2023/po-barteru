@@ -7,8 +7,14 @@ const html = read("index.html");
 const notificationMigration = read("supabase/migrations/20261101201440_allow_saved_search_match_notifications.sql");
 const supportFunction = read("supabase/functions/support-telegram-notify/index.ts");
 const setupFunction = read("supabase/functions/support-telegram-setup/index.ts");
+const packageJson = JSON.parse(read("package.json"));
+const packageLock = JSON.parse(read("package-lock.json"));
 
 assert.match(notificationMigration, /saved_search_match/, "notification constraint must allow saved-search match events");
+assert.deepEqual(Object.keys(packageJson.dependencies || {}), [], "static Render site must not install unused runtime dependencies");
+assert.deepEqual(Object.keys(packageJson.devDependencies || {}), [], "static Render site must not install unused development dependencies");
+assert.equal(packageLock.lockfileVersion, 3, "static site lockfile must use npm lockfile v3");
+assert.deepEqual(Object.keys(packageLock.packages[""].dependencies || {}), [], "static site lockfile must remain dependency-free");
 assert.match(html, /data-listing=/, "notification cards must retain the related listing id");
 assert.match(html, /btn\.dataset\.type==="saved_search_match"[\s\S]{0,500}openListingDetails\(mapped\[0\]\)/, "saved-search notification must open its active listing");
 assert.match(supportFunction, /po-barteru-no-gestures-staging\.onrender\.com/, "support function must allow current staging origin");
@@ -17,4 +23,4 @@ assert.doesNotMatch(supportFunction, /po-barteru-stable-navigation-preview/, "ob
 assert.match(supportFunction, /auth\.getUser\(token\)/, "support notifications must validate the caller's user token");
 assert.match(setupFunction, /status:\s*410/, "public Telegram webhook setup endpoint must be disabled");
 assert.match(html, /location\.hostname==="po-barteru-no-gestures-staging\.onrender\.com"[\s\S]{0,220}Push-доставка отключена в тестовой среде/, "Staging must not advertise push delivery when the dispatch worker is intentionally absent");
-console.log("Staging technical readiness checks passed (9 assertions).");
+console.log("Staging technical readiness checks passed (13 assertions).");
