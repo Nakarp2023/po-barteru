@@ -16,4 +16,5 @@ assert.match(supportFunction, /po-barteru\.onrender\.com/, "support function mus
 assert.doesNotMatch(supportFunction, /po-barteru-stable-navigation-preview/, "obsolete preview origin must not remain in support CORS");
 assert.match(supportFunction, /auth\.getUser\(token\)/, "support notifications must validate the caller's user token");
 assert.match(setupFunction, /status:\s*410/, "public Telegram webhook setup endpoint must be disabled");
-console.log("Staging technical readiness checks passed (8 assertions).");
+assert.match(html, /location\.hostname==="po-barteru-no-gestures-staging\.onrender\.com"[\s\S]{0,220}Push-доставка отключена в тестовой среде/, "Staging must not advertise push delivery when the dispatch worker is intentionally absent");
+console.log("Staging technical readiness checks passed (9 assertions).");
