@@ -14,7 +14,9 @@ This directory documents the isolated Supabase Staging environment. It is intent
 3. Never copy Production auth users, listings, messages, exchange records, payment orders, webhook events, or storage objects into Staging.
 4. Payment provider Edge Functions, webhook secrets, Vault secrets, VAPID secrets, and push dispatch are intentionally excluded from this baseline.
 5. Real payments and payment-state transitions must remain disabled during Staging tests.
-6. Keep the navigation-only PR separate from this branch. The current Staging branch is not a merge candidate for `main`.
+6. The `delete-listing` Edge Function is deployed to Staging with JWT verification and server-side ownership checks.
+7. The pre-existing `support-telegram-notify`, `support-telegram-webhook`, and `support-telegram-setup` functions are present. Do not invoke support notification or webhook setup during testing until the Telegram secrets and destination are confirmed; the notification function still has an older preview-domain CORS origin.
+8. Keep the navigation-only PR separate from this branch. The current Staging branch is not a merge candidate for `main`.
 
 ## Schema baseline
 
