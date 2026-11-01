@@ -77,7 +77,7 @@ async function checkViewport(name, viewport, isMobile = false) {
       if (!(await tab.evaluate(el => el.classList.contains('active')))) {
         failures.push(`${name}: tap did not activate ${target} tab`);
       }
-      const motion = await page.locator('.app').evaluate(el => {
+      const motion = await page.locator('main.app:not([inert])').evaluate(el => {
         const transform = getComputedStyle(el).transform;
         const values = transform.startsWith('matrix(')
           ? transform.slice(7, -1).split(',').map(Number)
@@ -105,13 +105,13 @@ async function checkViewport(name, viewport, isMobile = false) {
         failures.push(`${name}: Liquid Glass active-tab indicator has no transition`);
       }
       await page.waitForFunction(() => {
-        const el = document.querySelector('.app');
+        const el = document.querySelector('main.app:not([inert])');
         return !el || !el.getAnimations().some(animation => {
           const duration = animation.effect?.getTiming()?.duration;
           return typeof duration === 'number' && duration >= 250 && duration <= 320 && animation.playState === 'running';
         });
       }, null, { timeout: 2500 }).catch(() => {});
-      const settledTransform = await page.locator('.app').evaluate(el => getComputedStyle(el).transform);
+      const settledTransform = await page.locator('main.app:not([inert])').evaluate(el => getComputedStyle(el).transform);
       if (settledTransform !== 'none' && settledTransform !== 'matrix(1, 0, 0, 1, 0, 0)') {
         failures.push(`${name}: app shell did not return to its neutral transform after ${target} tab transition`);
       }
@@ -126,7 +126,7 @@ async function checkViewport(name, viewport, isMobile = false) {
 
   // Synthetic horizontal touch movement on the app shell must not change the active tab.
     const beforeSwipe = await page.locator('.bottom .nav.active').getAttribute('data-page');
-    await page.locator('.app').evaluate(el => {
+    await page.locator('main.app:not([inert])').evaluate(el => {
       const makePointerEvent = (type, x) => new PointerEvent(type, {
         bubbles: true, cancelable: true, pointerId: 77, pointerType: 'touch',
         isPrimary: true, clientX: x, clientY: 420, button: 0
