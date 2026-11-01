@@ -4354,7 +4354,7 @@ async function loadChats(){
   conversationIds.length?db.from("messages").select("id,conversation_id,body,created_at,sender_id,read_at").in("conversation_id",conversationIds).order("created_at",{ascending:false}).limit(2000):Promise.resolve({data:[],error:null}),
   proposalIds.length?db.from("exchange_proposals").select("id,message,status,listing_id").in("id",proposalIds):Promise.resolve({data:[],error:null})
  ]);
- if(profilesResult.error||messagesResult.error||proposalsResult.error){console.warn("Chat list batch query failed",profilesResult.error||messagesResult.error||proposalsResult.error)}
+ if(profilesResult.error||messagesResult.error||proposalsResult.error){const batchError=profilesResult.error||messagesResult.error||proposalsResult.error;console.warn("Chat list batch query failed",batchError);$("chatInbox").innerHTML='<p class="category">Не удалось обновить список переписок. Проверь соединение и повтори попытку.</p>';return}
  const profilesById=new Map((profilesResult.data||[]).map(p=>[String(p.id),p]));
  const proposalsById=new Map((proposalsResult.data||[]).map(p=>[String(p.id),p]));
  const latestByConversation=new Map(),unreadByConversation=new Map();
@@ -4480,8 +4480,17 @@ function chatMessageHTML(m){
  list.addEventListener("touchend",finish,{passive:true});list.addEventListener("touchcancel",()=>{gesture=null},{passive:true});
  list.addEventListener("contextmenu",e=>{const row=e.target.closest("[data-message-row][data-own='1']");if(row){e.preventDefault();row.classList.toggle("reveal-delete")}});
 })();
+async function markConversationReadAndNotifications(conversationId){
+ if(!db||!currentUser||!conversationId)return {ok:false,error:new Error("Нет активной переписки")};
+ const readResult=await db.rpc("mark_conversation_messages_read",{p_conversation_id:conversationId});
+ if(readResult.error){console.warn("Не удалось отметить сообщения прочитанными:",readResult.error.message);return {ok:false,error:readResult.error}}
+ const notificationResult=await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",conversationId).is("read_at",null);
+ if(notificationResult.error){console.warn("Не удалось отметить уведомления прочитанными:",notificationResult.error.message);return {ok:false,error:notificationResult.error}}
+ await refreshNotificationCount();
+ return {ok:true,count:readResult.data||0};
+}
 async function openConversation(id,title){
- if(!currentUser||!db)return;const requestId=++chatOpenRequestId;activeConversationId=id;if(chatReceiptChannel){await db.removeChannel(chatReceiptChannel);if(requestId!==chatOpenRequestId)return;chatReceiptChannel=null}if(dealTermsChannel){await db.removeChannel(dealTermsChannel);if(requestId!==chatOpenRequestId)return;dealTermsChannel=null;dealTermsSubscribedProposalId=null}await db.rpc("mark_conversation_messages_read",{p_conversation_id:id});if(requestId!==chatOpenRequestId)return;await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",id).is("read_at",null);if(requestId!==chatOpenRequestId)return;await refreshNotificationCount();if(requestId!==chatOpenRequestId)return;$("chatThread").hidden=false;$("chatInboxHeader").hidden=true;$("chatInbox").hidden=true;$("refreshChats").hidden=true;requestAnimationFrame(()=>window.poAnimateSurface?.($("chatThread")));$("chatTitle").textContent=title||"Переписка";chatOldestMessage=null;chatHasOlderMessages=false;chatOlderLoading=false;$("loadOlderMessages").hidden=true;$("loadOlderMessages").disabled=false;$("loadOlderMessages").textContent="Загрузить предыдущие сообщения";$("chatMessages").innerHTML='<p class="category">Загружаем сообщения…</p>';
+ if(!currentUser||!db)return;const requestId=++chatOpenRequestId;activeConversationId=id;if(chatReceiptChannel){await db.removeChannel(chatReceiptChannel);if(requestId!==chatOpenRequestId)return;chatReceiptChannel=null}if(dealTermsChannel){await db.removeChannel(dealTermsChannel);if(requestId!==chatOpenRequestId)return;dealTermsChannel=null;dealTermsSubscribedProposalId=null}const readState=await markConversationReadAndNotifications(id);if(requestId!==chatOpenRequestId)return;if(!readState.ok)toast("Не удалось обновить статусы прочтения. Повторим синхронизацию автоматически.");if(requestId!==chatOpenRequestId)return;$("chatThread").hidden=false;$("chatInboxHeader").hidden=true;$("chatInbox").hidden=true;$("refreshChats").hidden=true;requestAnimationFrame(()=>window.poAnimateSurface?.($("chatThread")));$("chatTitle").textContent=title||"Переписка";chatOldestMessage=null;chatHasOlderMessages=false;chatOlderLoading=false;$("loadOlderMessages").hidden=true;$("loadOlderMessages").disabled=false;$("loadOlderMessages").textContent="Загрузить предыдущие сообщения";$("chatMessages").innerHTML='<p class="category">Загружаем сообщения…</p>';
  const {data:msgs,error}=await db.from("messages").select("id,sender_id,body,created_at,delivered_at,read_at").eq("conversation_id",id).order("created_at",{ascending:false}).order("id",{ascending:false}).limit(200);
  if(requestId!==chatOpenRequestId||activeConversationId!==id)return;
  if(error){$("chatMessages").innerHTML='<p class="category">Не удалось загрузить сообщения: '+esc(error.message)+'</p>';return}
@@ -4529,7 +4538,7 @@ async function openConversation(id,title){
    if(mine){const del=document.createElement("button");del.type="button";del.className="chat-message-delete";del.dataset.messageDelete=m.id;del.setAttribute("aria-label","Удалить сообщение");del.textContent="Удалить";del.onclick=async()=>{if(!currentUser||activeConversationId!==id)return;if(!await confirmDeleteAction("Удалить сообщение?","Сообщение будет удалено из переписки."))return;del.disabled=true;const {error}=await db.from("messages").delete().eq("id",m.id).eq("sender_id",currentUser.id).eq("conversation_id",id);if(error){del.disabled=false;toast("Не удалось удалить сообщение.");return}row.remove()};row.appendChild(del)}
    const empty=$("chatMessages").querySelector(".category");if(empty&&/начало переписки|сообщений пока нет/i.test(empty.textContent))empty.remove();
    const nearBottom=window.innerHeight-( $("chatSendForm").getBoundingClientRect().bottom )<180;const messageBox=$("chatMessages");messageBox.appendChild(row);if(nearBottom)requestAnimationFrame(()=> $("chatSendForm").scrollIntoView({block:"end",behavior:"auto"}));
-   if(!mine){await db.rpc("mark_conversation_messages_read",{p_conversation_id:id});await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",id).is("read_at",null);await refreshNotificationCount();loadChats()}
+   if(!mine){const readState=await markConversationReadAndNotifications(id);if(!readState.ok)console.warn("Incoming realtime message remains unread until retry:",readState.error?.message);loadChats()}
    else {loadChats()}
   })
   .on("postgres_changes",{event:"UPDATE",schema:"public",table:"messages",filter:"conversation_id=eq."+id},payload=>{
@@ -4584,7 +4593,7 @@ async function openConversation(id,title){
    // Poll read receipts in case the Realtime UPDATE event was missed.
    const ownRows=orderedLatest.filter(m=>m.sender_id===currentUser.id&&m.read_at);
    ownRows.forEach(m=>{const row=$("chatMessages").querySelector('[data-message-row="'+m.id+'"]');const status=row?.querySelector(".message-status");if(status){status.className="message-status read";status.textContent="✓✓";status.setAttribute("aria-label","Прочитано");status.title="Прочитано"}});
-   if(addedIncoming){await db.rpc("mark_conversation_messages_read",{p_conversation_id:cid});await db.from("notifications").update({read_at:new Date().toISOString()}).eq("user_id",currentUser.id).eq("type","message").eq("conversation_id",cid).is("read_at",null);await refreshNotificationCount();loadChats()}else{await refreshNotificationCount()}
+   if(addedIncoming){const readState=await markConversationReadAndNotifications(cid);if(!readState.ok)console.warn("Fallback read sync will retry:",readState.error?.message);loadChats()}else{await refreshNotificationCount()}
   }catch(e){console.warn("Chat fallback sync failed:",e?.message||e)}finally{chatSyncBusy=false}
  },2500)}
  startDealPanelRefresh(id);
