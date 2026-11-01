@@ -5354,6 +5354,17 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
 .profile-info-help{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
 .profile-info-contact-card{grid-column:1/-1}
 </style>
+<style id="poNoHorizontalNavigationMotion">
+/* Permanent rule: no horizontal motion when changing main sections. */
+.bottom::before,
+.bottom .nav,
+.bottom .nav .nav-symbol,
+.bottom .nav .nav-icon-wrap,
+.bottom .nav .nav-symbol svg,
+.bottom .nav .nav-icon-wrap svg{
+ transition:none!important;
+}
+</style>
 
 
 
