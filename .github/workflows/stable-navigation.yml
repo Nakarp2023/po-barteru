@@ -27,6 +27,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Enforce Preview Supabase isolation
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const html = readFileSync('index.html', 'utf8');
+          const previewRef = 'noiryqvoohqrfmemfnne';
+          const productionRef = 'qxsnjksepzmpsifpxyea';
+          if (!html.includes('https://' + previewRef + '.supabase.co')) throw new Error('Preview must point to Staging Supabase');
+          if (html.includes('const SUPABASE_URL="https://' + productionRef + '.supabase.co"')) throw new Error('Production Supabase URL must not be used as the app client URL in Preview');
+          if (!html.includes('IS_PRODUCTION_HOST&&SUPABASE_PROJECT_REF!=="' + productionRef + '"')) throw new Error('Production host safety guard is missing');
+          console.log('Preview Supabase isolation checks passed.');
+          NODE
       - name: Install Playwright
         run: npm install --no-save --package-lock=false @playwright/test
       - name: Install Chromium
