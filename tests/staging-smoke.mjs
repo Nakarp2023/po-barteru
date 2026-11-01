@@ -75,6 +75,24 @@ async function checkViewport(name, viewport, isMobile = false) {
       if ((await imageInput.getAttribute('accept')) !== 'image/*') failures.push(`${name}: listing photo input does not restrict selection to images`);
       const imageHint = await imageInput.locator('xpath=following-sibling::small').textContent().catch(() => '');
       if (!imageHint?.includes('5 МБ')) failures.push(`${name}: listing photo size guidance is missing`);
+      for (const selector of ['[name="title"]', '[name="want"]', '[name="city"]']) {
+        if (!(await form.locator(selector).isRequired())) failures.push(`${name}: required validation is missing for ${selector}`);
+      }
+      const limits = {
+        '[name="title"]': '80',
+        '[name="want"]': '120',
+        '[name="description"]': '500'
+      };
+      for (const [selector, expected] of Object.entries(limits)) {
+        if ((await form.locator(selector).getAttribute('maxlength')) !== expected) {
+          failures.push(`${name}: unexpected maxlength for ${selector}`);
+        }
+      }
+      if ((await form.locator('[name="price"]').getAttribute('min')) !== '0') {
+        failures.push(`${name}: price field does not prevent negative values`);
+      }
+      const invalidEmptyForm = await form.evaluate(element => !element.checkValidity());
+      if (!invalidEmptyForm) failures.push(`${name}: empty listing form unexpectedly passes browser validation`);
       await page.locator('#cancel').click({ timeout: 5000 });
       if (await page.locator('#modal.open').count()) failures.push(`${name}: listing form did not close after Cancel`);
     } catch (error) {
