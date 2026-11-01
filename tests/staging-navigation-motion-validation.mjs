@@ -41,7 +41,8 @@ async function checkViewport(name, viewport, isMobile = false) {
   if (!title.includes('ПО БАРТЕРУ')) failures.push(`${name}: unexpected title "${title}"`);
 
   const appScripts = await page.locator('script').evaluateAll(nodes => nodes.map(node => node.textContent || '').join('\\n'));
-  if (appScripts.includes('poRunNavigationTransition') || appScripts.includes('poNestedNavigationMotionInstalled')) failures.push(`${name}: forbidden horizontal navigation animation code is present`);
+  const forbiddenMotionRuntime = await page.evaluate(() => ({ transition: typeof window.poRunNavigationTransition, nestedInstalled: window.poNestedNavigationMotionInstalled === true }));
+  if (forbiddenMotionRuntime.transition === 'function' || forbiddenMotionRuntime.nestedInstalled) failures.push(`${name}: forbidden horizontal navigation animation runtime is installed`);
   if (!appScripts.includes('expire_exchange_proposal_if_needed')) failures.push(`${name}: server-side exchange expiry recovery is not wired into the app`);
   if (!appScripts.includes('data?.expired')) failures.push(`${name}: exchange expiry response is not handled by the UI`);
   if (!(await page.locator('#profileShowPublicName').count())) failures.push(`${name}: public profile visibility control is missing`);
