@@ -34,10 +34,12 @@ jobs:
           const html = readFileSync('index.html', 'utf8');
           const previewRef = 'noiryqvoohqrfmemfnne';
           const productionRef = 'qxsnjksepzmpsifpxyea';
-          if (!html.includes('https://' + previewRef + '.supabase.co')) throw new Error('Preview must point to Staging Supabase');
-          if (html.includes('const SUPABASE_URL="https://' + productionRef + '.supabase.co"')) throw new Error('Production Supabase URL must not be used as the app client URL in Preview');
-          if (!html.includes('IS_PRODUCTION_HOST&&SUPABASE_PROJECT_REF!=="' + productionRef + '"')) throw new Error('Production host safety guard is missing');
-          console.log('Preview Supabase isolation checks passed.');
+          if (!html.includes('ref:"' + previewRef + '"')) throw new Error('Staging Supabase config is missing');
+          if (!html.includes('ref:"' + productionRef + '"')) throw new Error('Production Supabase config is missing');
+          if (!html.includes('IS_PRODUCTION_HOST?PRODUCTION_SUPABASE_CONFIG')) throw new Error('Production host must select Production config');
+          if (!html.includes('(IS_PREVIEW_HOST||IS_LOCAL_HOST)?STAGING_SUPABASE_CONFIG')) throw new Error('Preview/local host must select Staging config');
+          if (!html.includes('!ACTIVE_SUPABASE_CONFIG')) throw new Error('Unknown hosts must fail closed');
+          console.log('Environment-specific Supabase isolation checks passed.');
           NODE
       - name: Install Playwright
         run: npm install --no-save --package-lock=false @playwright/test
