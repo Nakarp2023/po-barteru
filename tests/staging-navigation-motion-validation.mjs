@@ -224,6 +224,26 @@ async function checkViewport(name, viewport, isMobile = false) {
       }
       const invalidEmptyForm = await form.evaluate(element => !element.checkValidity());
       if (!invalidEmptyForm) failures.push(`${name}: empty listing form unexpectedly passes browser validation`);
+
+      // Submit an unauthenticated listing: this must stay local to this isolated
+      // browser context and survive reload, without creating a Supabase record.
+      const localListingTitle = `QA_LOCAL_LISTING_${Date.now()}`;
+      await form.locator('[name="title"]').fill(localListingTitle);
+      await form.locator('[name="want"]').fill('QA: любой предмет');
+      await form.locator('[name="city"]').fill('Москва');
+      await form.locator('[name="description"]').fill('Изолированная проверка локального черновика.');
+      await form.locator('#listingSubmit').click();
+      await page.locator('#modal.open').waitFor({ state: 'hidden', timeout: 5000 });
+      const localCard = page.locator('#list').getByText(localListingTitle, { exact: true });
+      if (!(await localCard.count())) failures.push(`${name}: unauthenticated listing was not added to the local catalog`);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(900);
+      if (!(await page.locator('#list').getByText(localListingTitle, { exact: true }).count())) {
+        failures.push(`${name}: local listing did not persist after page reload`);
+      }
+
+      await page.locator('#addTop').click({ timeout: 5000 });
+      await page.locator('#modal.open #form').waitFor({ state: 'visible', timeout: 5000 });
       await page.locator('#cancel').click({ timeout: 5000 });
       if (await page.locator('#modal.open').count()) failures.push(`${name}: listing form did not close after Cancel`);
     } catch (error) {
