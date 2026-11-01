@@ -11,6 +11,7 @@ const packageJson = JSON.parse(read("package.json"));
 const packageLock = JSON.parse(read("package-lock.json"));
 
 assert.match(notificationMigration, /saved_search_match/, "notification constraint must allow saved-search match events");
+assert.doesNotMatch(html, /#homeHero::before\\{[^}]*_jwt=/, "desktop hero must not depend on an expiring signed asset URL");
 assert.deepEqual(Object.keys(packageJson.dependencies || {}), [], "static Render site must not install unused runtime dependencies");
 assert.deepEqual(Object.keys(packageJson.devDependencies || {}), [], "static Render site must not install unused development dependencies");
 assert.equal(packageLock.lockfileVersion, 3, "static site lockfile must use npm lockfile v3");
