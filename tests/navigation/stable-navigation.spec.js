@@ -4,19 +4,19 @@ const tab = pageName => `.bottom .nav[data-page="${pageName}"]`;
 
 async function openApp(page) {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() =>
     typeof window.poCanNavigateBack === 'function' &&
     typeof window.setPage === 'function' &&
     !!document.querySelector('#poScreenStage')
   );
+  return response;
 }
 
 test('navigation shell is stable and the bottom bar is the only primary tab control', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await openApp(page);
-  const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const response = await openApp(page);
   expect(response).not.toBeNull();
   expect(response.status()).toBeLessThan(400);
   await page.waitForFunction(() => typeof window.poCanNavigateBack === 'function');
