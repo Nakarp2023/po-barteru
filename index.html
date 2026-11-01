@@ -1804,10 +1804,6 @@ button:active,.pill:active,.chip:active,.offer:active{
 .bottom .nav.active{color:#174f3e!important;font-weight:750!important}
 .bottom .nav.active .nav-symbol,.bottom .nav.active .nav-icon-wrap{transform:translate3d(0,-1.5px,0) scale(1.1);filter:drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 3px 5px rgba(21,63,53,.18))}
 .bottom .nav.active .nav-symbol svg,.bottom .nav.active .nav-icon-wrap svg{stroke-width:2}
-.bottom.nav-dragging::before{transition:transform .055s linear,background .15s ease,box-shadow .15s ease;border-color:rgba(255,255,255,.98);background:radial-gradient(ellipse at 24% 0%,rgba(255,255,255,.96),rgba(255,255,255,.42) 32%,transparent 70%),radial-gradient(ellipse at 78% 100%,rgba(193,226,194,.32),transparent 65%),linear-gradient(155deg,rgba(255,255,255,.56),rgba(255,255,255,.22) 44%,rgba(224,239,229,.18) 75%,rgba(255,255,255,.32));box-shadow:0 8px 24px rgba(20,45,35,.17),inset 0 1.5px 0 #fff,inset 0 -1.5px 0 rgba(255,255,255,.42),inset 1px 0 0 rgba(255,255,255,.5),inset -1px 0 0 rgba(255,255,255,.3)}
-.bottom.nav-dragging .nav{transition:color .1s ease!important}
-.bottom.nav-dragging .nav.active,.bottom.nav-dragging .nav.nav-following{background:transparent!important;border-color:transparent!important;box-shadow:none!important;color:#174f3e!important;text-shadow:none!important}
-.bottom.nav-dragging .nav .nav-symbol,.bottom.nav-dragging .nav .nav-icon-wrap{filter:none}
 .bottom .nav:active{transform:scale(.97)}
 @media(max-width:600px){
  .bottom{left:10px!important;right:10px!important;min-height:70px!important;padding:5px!important;border-radius:26px!important}
@@ -2553,13 +2549,6 @@ if (Capacitor.isNativePlatform()) {
 
 /* Desktop and mobile: ensure filtered cards stay hidden despite grid layout overrides. */
 #profileDashboard.listings-only #myListings>.my-listing[hidden]{display:none!important}
-
-
-/* Keep the green selected-tab tile attached to the moving glass lens while dragging. */
-.bottom.nav-dragging .nav.active{background:transparent!important;box-shadow:none!important}
-.bottom.nav-dragging .nav.nav-following{background:#e5f3d9!important;color:#175541!important;font-weight:800!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95)!important}
-.bottom.nav-dragging .nav.nav-following .nav-symbol,.bottom.nav-dragging .nav.nav-following .nav-icon-wrap{transform:translate3d(0,-2px,0) scale(1.12)!important}
-.bottom:not(.nav-dragging) .nav.nav-following{background:transparent!important}
 
 
 /* Use the Liquid Glass motion rules defined with the navigation component above. */
@@ -5309,33 +5298,17 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
  }
  lastSnapshot=snapshot();
 
- // One authoritative page transition hook. Tab changes are peers; nested screens
- // are tracked separately and never inferred from tab-bar position.
+ // Main pages change directly through the bottom tab bar; no page-swipe transition engine.
  window.setPage=function(nextPage){
   const before=snapshot();
-  if(!restoring&&before.page!==nextPage&&typeof window.poRunNavigationTransition==="function"&&!window.__poNavTransitionMutating){
-   const from=pagesForMotion(before.page),to=pagesForMotion(nextPage),direction=to>=from?-1:1;
-   const animated=window.poRunNavigationTransition(()=>{window.__poNavTransitionMutating=true;try{originalSetPage(nextPage)}finally{window.__poNavTransitionMutating=false}},direction,false);
-   if(animated){
-    stack.length=0;
-    lastSnapshot=snapshot();
-    return;
-   }
-   // If another transition is still settling, never drop the user's tab change.
-  }
   const result=originalSetPage(nextPage);
   const after=snapshot();
   if(!restoring&&before.page!==after.page){
-   // Main tabs are peer destinations, not entries in the hierarchical back stack.
    stack.length=0;
   }else if(!restoring&&key(before)!==key(after))pushSnapshot(before);
   lastSnapshot=after;
   return result;
  };
- function pagesForMotion(value){
-  const tabs=[...nav.querySelectorAll(".nav[data-page]")];
-  return tabs.findIndex(t=>t.dataset.page===value);
- }
 
  // Capture nested profile/chat transitions even when their existing handlers
  // are local to an IIFE and cannot be wrapped safely from here.
@@ -5432,238 +5405,11 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
  window.poNavigateBack=back;
 
 
- // Pointer gestures are coordinated by poPrimaryTabSwipeNavigation.
  window.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.defaultPrevented){if(back())e.preventDefault()}});
  window.addEventListener("popstate",()=>{back()});
 })();
 </script>
 
-<style id="poTabSwipeStyles">
-.app.po-nav-moving{will-change:transform}
-.po-nav-snapshot-viewport{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5;background:var(--bg,#f5f6f2)}
-.po-nav-snapshot-viewport>.app{position:absolute!important;margin:0!important;max-width:none!important;pointer-events:none!important;will-change:transform!important}
-@media(prefers-reduced-motion:reduce){.app.po-nav-moving{will-change:auto}}
-</style>
-<script id="poPrimaryTabSwipeNavigation">
-(function(){
- if(window.__poPrimaryTabSwipeNavigationInstalled)return;
- window.__poPrimaryTabSwipeNavigationInstalled=true;
- const app=document.querySelector(".app"),nav=document.querySelector(".bottom");
- if(!app||!nav||typeof window.setPage!=="function")return;
- const tabs=[...nav.querySelectorAll(".nav[data-page]")],pages=tabs.map(t=>t.dataset.page);
- if(pages.length<2)return;
- const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
- const $=id=>document.getElementById(id);
- let gesture=null,transitioning=false,activeSnapshot=null;
- const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
- function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
- function nested(){
-  const d=$("profileDashboard"),thread=$("chatThread");
-  return !!(d&&(d.classList.contains("listings-only")||nestedClasses.some(c=>d.classList.contains(c))))||
-   !!($("profileInfoHelpPanel")&&!$("profileInfoHelpPanel").hidden)||
-   !!(thread&&!thread.hidden);
- }
- function overlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open")}
- function excluded(target){
-  if(!(target instanceof Element))return true;
-  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
-  for(let n=target;n&&n!==app;n=n.parentElement){const s=getComputedStyle(n);if((s.overflowX==="auto"||s.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
-  return false;
- }
- function setPageDirect(value){
-  const previous=window.__poNavTransitionMutating;
-  window.__poNavTransitionMutating=true;
-  try{window.setPage(value)}finally{window.__poNavTransitionMutating=previous||false}
- }
- function snapshot(){
-  const rect=app.getBoundingClientRect(),viewport=document.createElement("div"),clone=app.cloneNode(true);
-  const sourceNodes=[app,...app.querySelectorAll("*")],cloneNodes=[clone,...clone.querySelectorAll("*")];
-  // cloneNode copies markup, not live form state or nested scroll positions.
-  // Mirror those properties so the outgoing screen is a faithful visual snapshot.
-  for(let i=0;i<Math.min(sourceNodes.length,cloneNodes.length);i++){
-   const source=sourceNodes[i],copy=cloneNodes[i];
-   if(source instanceof HTMLInputElement){if(source.type!=="file")copy.value=source.value;copy.checked=source.checked;copy.indeterminate=source.indeterminate}
-   else if(source instanceof HTMLTextAreaElement)copy.value=source.value;
-   else if(source instanceof HTMLSelectElement)copy.selectedIndex=source.selectedIndex;
-   else if(source instanceof HTMLDetailsElement)copy.open=source.open;
-   if(source.scrollTop||source.scrollLeft){copy.scrollTop=source.scrollTop;copy.scrollLeft=source.scrollLeft}
-   if(source instanceof HTMLCanvasElement){try{copy.width=source.width;copy.height=source.height;copy.getContext("2d")?.drawImage(source,0,0)}catch(_){}}
-  }
-  viewport.className="po-nav-snapshot-viewport";
-  viewport.setAttribute("aria-hidden","true");
-  clone.inert=true;
-  clone.style.setProperty("top",rect.top+"px","important");
-  clone.style.setProperty("left",rect.left+"px","important");
-  clone.style.setProperty("width",rect.width+"px","important");
-  clone.style.setProperty("height","auto","important");
-  clone.style.setProperty("transform","translate3d(0,0,0)","important");
-  viewport.appendChild(clone);document.body.appendChild(viewport);
-  return {viewport,clone};
- }
- function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
- function finishTransition(s,animationA,animationB){
-  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");if(s)clearSnapshot(s);transitioning=false};
-  Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
- }
- function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
-  app.classList.add("po-nav-moving");
-  const easing="cubic-bezier(.22,.72,.22,1)";
-  const a=s.clone.animate([{transform:"translate3d("+oldFrom+"px,0,0)"},{transform:"translate3d("+oldTo+"px,0,0)"}],{duration,easing,fill:"both"});
-  const b=app.animate([{transform:"translate3d("+newFrom+"px,0,0)"},{transform:"translate3d("+newTo+"px,0,0)"}],{duration,easing,fill:"both"});
-  finishTransition(s,a,b);
- }
- function animateMutation(mutator,direction){
-  if(transitioning)return false;
-  if(reduced()){mutator();return true}
-  transitioning=true;
-  let s;
-  try{
-   s=snapshot();activeSnapshot=s;
-   mutator();
-   const width=Math.max(1,window.innerWidth);
-   app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
-   animatePair(s,0,direction*width,-direction*width,0,280);
-  }catch(e){
-   app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
-   console.error("Navigation transition failed:",e);
-  }
-  return true;
- }
- function settleGesture(g,commit){
-  const s=g.snapshot;if(!s)return;
-  const width=Math.max(1,window.innerWidth),dx=g.dx,dir=g.direction;
-  if(commit){
-   const oldEnd=dir*width,newEnd=0;
-   const oldStart=dx,newStart=-dir*width+dx;
-   animatePair(s,oldStart,oldEnd,newStart,newEnd,Math.max(150,Math.min(280,280*(1-Math.min(.45,Math.abs(dx)/width)))));
-  }else{
-   // Restore the original route behind the outgoing snapshot, then return it
-   // to its exact origin. This makes a cancelled gesture reversible.
-   if(g.kind==="tabs")setPageDirect(g.page);
-   app.style.transform="";
-   app.classList.add("po-nav-moving");
-   const a=s.clone.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
-   finishTransition(s,a,null);
-  }
- }
- function onDown(e){
-  if(gesture||transitioning||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false||!app.contains(e.target)||overlay()||excluded(e.target))return;
-  const x=e.clientX,w=innerWidth,idx=pages.indexOf(currentPage());
-  if(idx<0||x>=w-24)return;
-  const isNested=nested(),isEdge=x>=24&&x<=58;
-  // Main tabs switch only on tap; edge-swipe is reserved for nested back navigation.
-  if(!isNested||!isEdge)return;
-  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:"back",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
- }
- function onMove(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;
-  const dx=e.clientX-g.x,dy=e.clientY-g.y;
-  if(!g.claimed){
-   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
-   if(Math.abs(dy)>Math.abs(dx)*1.08){gesture=null;return}
-   if(g.kind==="back"&&dx<=0){gesture=null;return}
-   const dir=dx<0?-1:1;
-   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))<0){gesture=null;return}
-   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))>=pages.length){gesture=null;return}
-   g.claimed=true;g.direction=dir;
-   if(!reduced()){
-    g.snapshot=snapshot();activeSnapshot=g.snapshot;
-    if(g.kind==="tabs"){
-     const target=pages[g.index+(dir<0?1:-1)];
-     setPageDirect(target);
-    }
-   }
-  }
-  if(e.cancelable)e.preventDefault();
-  g.dx=dx;g.dy=dy;
-  if(g.kind==="back"){
-   app.style.transform="translate3d("+dx+"px,0,0)";
-  }else if(g.snapshot){
-   g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
-   app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-  }
- }
- function onUp(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
-  if(!g.claimed)return;
-  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
-  const threshold=Math.max(64,innerWidth*.16);
-  g.dx=dx;
-  const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
-  if(reduced()){
-   if(commit){if(g.kind==="back")window.poNavigateBack?.();else setPageDirect(pages[g.index+(g.direction<0?1:-1)])}
-   return;
-  }
-  if(g.kind==="back"){
-   if(commit){
-    // Capture the current screen only once the edge gesture is accepted.
-    app.style.transform="";
-    const s=snapshot();activeSnapshot=s;
-    s.clone.style.transform="translate3d("+dx+"px,0,0)";
-    window.poNavigateBack?.();
-    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-    animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
-   }else{
-    app.classList.add("po-nav-moving");
-    const a=app.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
-    finishTransition(null,a,null);
-   }
-   return;
-  }
-  if(!g.snapshot)return;
-  settleGesture(g,commit);
- }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}
- document.addEventListener("pointerdown",onDown,{passive:true});
- document.addEventListener("pointermove",onMove,{passive:false});
- document.addEventListener("pointerup",onUp,{passive:true});
- document.addEventListener("pointercancel",onCancel,{passive:true});
- window.poRunNavigationTransition=animateMutation;
-})();
-</script>
 
-
-<style id="poNestedNavigationMotionStyles">
-/* Consistent, restrained motion for nested profile destinations. */
-#profileDashboard.po-nested-enter,
-#profileInfoHelpPanel.po-nested-enter{
-  will-change:opacity,transform;
-}
-@media(prefers-reduced-motion:reduce){
-  #profileDashboard.po-nested-enter,
-  #profileInfoHelpPanel.po-nested-enter{will-change:auto}
-}
-</style>
-<script id="poNestedNavigationMotion">
-(function(){
- if(window.__poNestedNavigationMotionInstalled)return;
- window.__poNestedNavigationMotionInstalled=true;
- const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
- const profileSelector='.profile-hub-row[data-profile-open],#profileInfoHelpBack,.profile-info-back,[data-profile-back]';
- let sequence=0;
- function animateDestination(direction){
-  const dashboard=document.getElementById("profileDashboard");
-  const help=document.getElementById("profileInfoHelpPanel");
-  const target=help&&!help.hidden?help:dashboard;
-  if(!target||reduced()||typeof target.animate!=="function")return;
-  const run=++sequence;
-  target.classList.add("po-nested-enter");
-  const animation=target.animate(
-   direction<0
-    ?[{opacity:.72,transform:"translate3d(18px,0,0)"},{opacity:1,transform:"translate3d(0,0,0)"}]
-    :[{opacity:.72,transform:"translate3d(-18px,0,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
-   {duration:245,easing:"cubic-bezier(.22,.72,.22,1)",fill:"both"}
-  );
-  animation.onfinish=()=>{if(run===sequence)target.classList.remove("po-nested-enter")};
-  animation.oncancel=()=>{if(run===sequence)target.classList.remove("po-nested-enter")};
- }
- document.addEventListener("click",function(event){
-  const control=event.target instanceof Element?event.target.closest(profileSelector):null;
-  if(!control)return;
-  const isBack=control.id==="profileInfoHelpBack"||control.classList.contains("profile-info-back")||control.hasAttribute("data-profile-back");
-  requestAnimationFrame(()=>requestAnimationFrame(()=>animateDestination(isBack?1:-1)));
- },true);
-})();
-</script>
 
 </body></html>
