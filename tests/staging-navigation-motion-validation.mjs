@@ -1,7 +1,12 @@
 import { chromium } from 'playwright';
+import { readFile } from 'node:fs/promises';
 
 const baseURL = process.env.BASE_URL || 'local';
 const failures = [];
+const expiryMigrationSource = await readFile(new URL('../supabase/migrations/20261101174749_schedule_unconfirmed_exchange_expiry.sql', import.meta.url), 'utf8').catch(() => '');
+if (!expiryMigrationSource.includes('cron.schedule(') || !expiryMigrationSource.includes('expire_unconfirmed_exchange_proposals') || !expiryMigrationSource.includes('to service_role')) {
+  failures.push('exchange expiry migration must install the minute scheduler and keep the worker service_role-only');
+}
 const browser = await chromium.launch({ headless: true });
 
 async function checkViewport(name, viewport, isMobile = false) {
