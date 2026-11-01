@@ -41,6 +41,7 @@ async function checkViewport(name, viewport, isMobile = false) {
   if (!title.includes('ПО БАРТЕРУ')) failures.push(`${name}: unexpected title "${title}"`);
 
   const appScripts = await page.locator('script').evaluateAll(nodes => nodes.map(node => node.textContent || '').join('\\n'));
+  if (appScripts.includes('poRunNavigationTransition') || appScripts.includes('poNestedNavigationMotionInstalled')) failures.push(`${name}: forbidden horizontal navigation animation code is present`);
   if (!appScripts.includes('expire_exchange_proposal_if_needed')) failures.push(`${name}: server-side exchange expiry recovery is not wired into the app`);
   if (!appScripts.includes('data?.expired')) failures.push(`${name}: exchange expiry response is not handled by the UI`);
   if (!(await page.locator('#profileShowPublicName').count())) failures.push(`${name}: public profile visibility control is missing`);
@@ -89,7 +90,7 @@ async function checkViewport(name, viewport, isMobile = false) {
     failures.push(`${name}: password field is not masked`);
   }
 
-  // Navigation regression: main sections are tap-only, with no horizontal page motion.
+  // Navigation regression: tap-only sections with zero horizontal motion or transition.
   const tabs = page.locator('.bottom .nav[data-page]');
   const tabCount = await tabs.count();
   if (tabCount < 4) failures.push(`${name}: expected primary navigation tabs were not found`);
@@ -111,38 +112,30 @@ async function checkViewport(name, viewport, isMobile = false) {
           ? transform.slice(7, -1).split(',').map(Number)
           : [];
         const nav = document.querySelector('.bottom');
-        const pageAnimation = el.getAnimations().some(animation => {
-          const duration = animation.effect?.getTiming()?.duration;
-          return typeof duration === 'number' && duration >= 250 && duration <= 320 && animation.playState === 'running';
+        const horizontalAnimations = el.getAnimations().filter(animation => {
+          const effect = animation.effect;
+          const frames = effect?.getKeyframes?.() || [];
+          return frames.some(frame => typeof frame.transform === 'string' && /translateX|translate3d\\([^,]+px/i.test(frame.transform));
         });
         return {
           transform,
           translateX: values.length === 6 ? values[4] : 0,
-          pageAnimation,
+          horizontalAnimations: horizontalAnimations.length,
           navPosition: getComputedStyle(nav).position,
           indicatorTransitionDuration: getComputedStyle(nav, '::before').transitionDuration
         };
       });
-      if (!motion.pageAnimation || Math.abs(motion.translateX) < 1) {
-        failures.push(`${name}: tap did not start the expected smooth page transition after ${target} tab tap`);
+      if (Math.abs(motion.translateX) > 0.5 || motion.horizontalAnimations > 0) {
+        failures.push(`${name}: horizontal screen movement/animation detected after ${target} tab tap`);
       }
       if (motion.navPosition !== 'fixed') {
-        failures.push(`${name}: bottom navigation is not fixed during the page transition`);
+        failures.push(`${name}: bottom navigation is not fixed after ${target} tab tap`);
       }
-      if (motion.indicatorTransitionDuration.split(',').every(value => parseFloat(value) <= 0)) {
-        failures.push(`${name}: Liquid Glass active-tab indicator has no transition`);
+      if (motion.indicatorTransitionDuration.split(',').some(value => parseFloat(value) > 0)) {
+        failures.push(`${name}: bottom navigation indicator still animates horizontally`);
       }
-      await page.waitForFunction(() => {
-        const el = document.querySelector('main.app:not([inert])');
-        return !el || !el.getAnimations().some(animation => {
-          const duration = animation.effect?.getTiming()?.duration;
-          return typeof duration === 'number' && duration >= 250 && duration <= 320 && animation.playState === 'running';
-        });
-      }, null, { timeout: 2500 }).catch(() => {});
-      const settledTransform = await page.locator('main.app:not([inert])').evaluate(el => getComputedStyle(el).transform);
-      if (settledTransform !== 'none' && settledTransform !== 'matrix(1, 0, 0, 1, 0, 0)') {
-        failures.push(`${name}: app shell did not return to its neutral transform after ${target} tab transition`);
-      }
+      const nestedMotionScripts = await page.locator('#poNavigationMotion, #poNestedNavigationMotion').count();
+      if (nestedMotionScripts) failures.push(`${name}: forbidden horizontal navigation animation script is still present`);
     }
 
     // Notifications are intentionally opened from the top-bar bell, not a bottom tab.
