@@ -49,6 +49,7 @@ jobs:
           python3 -m http.server 4173 --directory . >/tmp/po-barteru-http.log 2>&1 &
           echo "BASE_URL=http://127.0.0.1:4173/" >> "$GITHUB_ENV"
 
+      # Use the live, non-inert app node; transition snapshots are inert siblings.
       - name: Run navigation motion browser tests
         run: |
           mkdir -p artifacts
