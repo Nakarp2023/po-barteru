@@ -49,16 +49,16 @@ jobs:
           python3 -m http.server 4173 --directory . >/tmp/po-barteru-http.log 2>&1 &
           echo "BASE_URL=http://127.0.0.1:4173/" >> "$GITHUB_ENV"
 
-      - name: Run browser smoke tests
+      - name: Run navigation motion browser tests
         run: |
           mkdir -p artifacts
-          node tests/staging-smoke.mjs
+          node tests/staging-navigation-motion-validation.mjs
 
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: staging-smoke-screenshots
+          name: staging-navigation-motion-screenshots
           path: artifacts/
           if-no-files-found: ignore
           retention-days: 7
