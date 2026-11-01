@@ -5614,12 +5614,12 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
   };
   Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
  }
- function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
-  app.classList.add("po-nav-moving");
-  const easing="cubic-bezier(.22,.72,.22,1)";
-  const a=s.clone.animate([{transform:"translate3d("+oldFrom+"px,0,0)"},{transform:"translate3d("+oldTo+"px,0,0)"}],{duration,easing,fill:"both"});
-  const b=app.animate([{transform:"translate3d("+newFrom+"px,0,0)"},{transform:"translate3d("+newTo+"px,0,0)"}],{duration,easing,fill:"both"});
-  finishTransition(s,a,b);
+ function animatePair(s){
+  // Main-section navigation is tap-only; never slide the whole screen horizontally.
+  app.style.transform="";
+  app.classList.remove("po-nav-moving");
+  if(s)clearSnapshot(s);
+  transitioning=false;
  }
  window.poRunNavigationTransition=function(mutator,direction){
   if(transitioning)return false;
