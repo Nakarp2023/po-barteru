@@ -6,6 +6,7 @@ This directory documents the isolated Supabase Staging environment. It is intent
 - Production project ref: `qxsnjksepzmpsifpxyea`
 - Staging frontend branch: `work/integrated-staging-navigation-no-gestures`
 - Staging frontend must use only the Staging project URL and publishable key.
+- Staging CLI and schema work must use `supabase/staging/project-connection.txt`; the root `supabase/project-connection.txt` points to Production and must not be used for Staging operations.
 
 ## Safety rules
 
