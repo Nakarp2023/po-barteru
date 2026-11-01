@@ -4631,6 +4631,35 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
  const message=document.getElementById("profileSupportMessage");
  const refresh=document.getElementById("profileSupportRefresh");
  if(!form||!list)return;
+ let pendingNotificationTicketId=null;
+ let retryNotificationButton=document.getElementById("profileSupportRetryNotification");
+ if(!retryNotificationButton){
+   retryNotificationButton=document.createElement("button");
+   retryNotificationButton.type="button";
+   retryNotificationButton.id="profileSupportRetryNotification";
+   retryNotificationButton.className="profile-support-refresh";
+   retryNotificationButton.textContent="Повторить уведомление команде";
+   retryNotificationButton.hidden=true;
+   status?.insertAdjacentElement("afterend",retryNotificationButton);
+ }
+ retryNotificationButton.addEventListener("click",async()=>{
+   if(!pendingNotificationTicketId||!db||!currentUser)return;
+   retryNotificationButton.disabled=true;
+   retryNotificationButton.textContent="Повторяем отправку…";
+   try{
+     const {error}=await db.functions.invoke("support-telegram-notify",{body:{ticket_id:pendingNotificationTicketId}});
+     if(error)throw error;
+     pendingNotificationTicketId=null;
+     retryNotificationButton.hidden=true;
+     setStatus("Уведомление команде доставлено. Ответ появится в разделе «Мои обращения».");
+   }catch(error){
+     console.error("Support Telegram retry failed",error);
+     setStatus("Обращение сохранено, но Telegram пока недоступен. Попробуйте повторить отправку позже.",true);
+   }finally{
+     retryNotificationButton.disabled=false;
+     retryNotificationButton.textContent="Повторить уведомление команде";
+   }
+ });
  const statusLabels={open:"Ожидает ответа",in_progress:"В работе",answered:"Есть ответ",closed:"Закрыто"};
  const categoryLabels={account:"Аккаунт и вход",listing:"Объявление",exchange:"Обмен или сделка",payment:"Оплата и услуги",safety:"Безопасность или жалоба",technical:"Техническая проблема",other:"Другой вопрос"};
  const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
@@ -4655,8 +4684,16 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
      form.reset();
      await loadTickets();
      const {error:notifyError}=await db.functions.invoke("support-telegram-notify",{body:{ticket_id:ticket.id}});
-     if(notifyError){console.error("Support Telegram notification failed",notifyError);setStatus("Обращение №"+ticket.id.slice(0,8)+" сохранено. Уведомление команде пока не настроено; ответ появится здесь после подключения поддержки.",true)}
-     else setStatus("Обращение №"+ticket.id.slice(0,8)+" отправлено. Ответ появится в разделе «Мои обращения».");
+     if(notifyError){
+       console.error("Support Telegram notification failed",notifyError);
+       pendingNotificationTicketId=ticket.id;
+       retryNotificationButton.hidden=false;
+       setStatus("Обращение №"+ticket.id.slice(0,8)+" сохранено, но уведомление команде не доставлено. Можно повторить отправку — само обращение не потеряно.",true);
+     }else{
+       pendingNotificationTicketId=null;
+       retryNotificationButton.hidden=true;
+       setStatus("Обращение №"+ticket.id.slice(0,8)+" отправлено. Ответ появится в разделе «Мои обращения».");
+     }
    }catch(error){console.error("Support ticket submit failed",error);setStatus(error?.code==="42P01"||error?.code==="PGRST205"?"Раздел поддержки ещё подключается. Попробуйте немного позже.":"Не удалось отправить обращение. Проверьте соединение и попробуйте снова.",true)}
    finally{submit.disabled=false;submit.textContent="Отправить обращение"}
  });
