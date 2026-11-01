@@ -5319,7 +5319,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   const after=snapshot();
   if(!restoring&&before.page!==after.page){
    window.scrollTo({top:0,left:0,behavior:"instant"});
-   stack.length=0;writeHistorySnapshot(after);
+   stack.length=0;writeHistorySnapshot(after,true);
    const stage=$("poScreenStage");
    if(stage&&!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)){
     try{
