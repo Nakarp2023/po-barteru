@@ -76,6 +76,19 @@
 
 **Критерий завершения:** повторяемые переходы и основные действия проходят на iPhone без смещений, пустых экранов и потери состояния.
 
+## Актуальная диагностика среды (2026-11-01)
+
+- [x] Preview опубликован на Render: `https://po-barteru-stable-navigation-preview.onrender.com/`; live HTML проверен, маркер навигации `nav-stage-v2-tabs-only-20261101` присутствует.
+- [x] Preview выбирает Staging Supabase `noiryqvoohqrfmemfnne`; Production host выбирает Production Supabase `qxsnjksepzmpsifpxyea`; неизвестный host блокируется. Проверено по фактически опубликованному HTML.
+- [x] GitHub Actions #60 для коммита `368d87a` завершился success; Render Preview для этого коммита имеет статус live.
+- [ ] Staging сейчас содержит только `public.support_tickets` и две миграции; Production содержит 22 таблицы. Не запускать CRUD/сделочные/платёжные тесты до восстановления схемы.
+- [ ] В клиентском коде найдены обращения к 21 таблице и RPC: `cancel_exchange_deal`, `confirm_exchange_completed`, `confirm_exchange_terms`, `get_my_listing_view_stats`, `invite_business_team_member`, `mark_conversation_messages_read`, `redeem_pro_plus_promotion_credit`, `respond_to_exchange_proposal`, `update_exchange_terms`.
+- [ ] Production Edge Functions: `send-push`, `create-monetization-order`, `yookassa-webhook`, `create-yookassa-payment`, `reconcile-yookassa-payment`, `delete-listing`, `support-telegram-notify`, `support-telegram-webhook`. В Staging сейчас есть только три support Telegram functions. Синхронизировать функции выборочно после аудита секретов и endpoint-ов.
+- [ ] В Production найдена функция `dispatch_push_for_notification`, которая отправляет запрос на Production URL `qxsnjksepzmpsifpxyea`. Не переносить её в Staging без замены endpoint и отдельного staging push secret; иначе тестовые уведомления могут попасть в Production.
+- [ ] Staging Security Advisor сообщает об отключённой проверке скомпрометированных паролей; включить настройку до публичного тестирования.
+- [ ] Полный перенос схемы ещё не выполнен: требуется воспроизвести ограничения, индексы, RLS, private schema helpers, функции, триггеры, Storage и безопасные тестовые данные. Пользовательские данные Production не копировать.
+- [ ] Перед миграциями проверить текущее единственное тестовое обращение в Staging; сохранить его, не очищать таблицы.
+
 ## Этап 6. Техническая готовность
 - [ ] Подготовить полноценную Staging-базу и синхронизировать схему миграциями без копирования пользовательских данных Production.
 - [ ] Проверить RLS-политики всех таблиц и доступы ролей.
