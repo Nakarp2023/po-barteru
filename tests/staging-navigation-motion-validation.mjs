@@ -37,6 +37,9 @@ async function checkViewport(name, viewport, isMobile = false) {
 
   if (metrics.lang !== 'ru') failures.push(`${name}: document language is not ru`);
   if (!metrics.viewport) failures.push(`${name}: viewport meta tag is missing`);
+  if (/maximum-scale\\s*=\\s*1(?:\\.0+)?(?:\\s|,|$)/i.test(metrics.viewport) || /user-scalable\\s*=\\s*no/i.test(metrics.viewport)) {
+    failures.push(`${name}: viewport settings prevent user zoom; keep pinch-to-zoom available for accessibility`);
+  }
   if (metrics.documentWidth > metrics.width + 2 || metrics.bodyWidth > metrics.width + 2) {
     failures.push(`${name}: horizontal overflow (viewport ${metrics.width}px, document ${metrics.documentWidth}px, body ${metrics.bodyWidth}px)`);
   }
