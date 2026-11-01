@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'qa/**'
+      - 'work/integrated-staging-navigation-no-gestures'
   pull_request:
     branches:
       - 'work/integrated-staging-navigation-no-gestures'
