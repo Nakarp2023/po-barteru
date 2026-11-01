@@ -3437,6 +3437,83 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .notification-menu[hidden],.notification-menu-wrap[hidden]{display:none!important}
 @media(max-width:480px){.notification-head{display:flex;flex-wrap:nowrap;align-items:center}.notification-head-tools{flex:0 0 auto}.notification-head h2{font-size:clamp(20px,5vw,24px)}.notification-actions .chip{white-space:normal;max-width:150px}}
 </style>
+
+<style id="poLandscapeNavigationAndHelpSearch">
+/* Landscape iPhone: keep all five destinations evenly distributed across the viewport. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .bottom {
+    position: fixed !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    transform: none !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    box-sizing: border-box !important;
+  }
+  .bottom > .nav {
+    min-width: 0 !important;
+    width: 100% !important;
+    justify-self: stretch !important;
+  }
+}
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 700px) {
+  .bottom {
+    left: 8px !important;
+    right: 8px !important;
+    min-height: 66px !important;
+    padding: 5px !important;
+    border-radius: 23px !important;
+  }
+  .bottom > .nav {
+    min-height: 54px !important;
+    height: 54px !important;
+    font-size: 10px !important;
+  }
+}
+/* Help search uses the same restrained green-and-milk treatment as Home search. */
+.profile-info-search {
+  min-height: 52px !important;
+  padding: 0 14px !important;
+  border: 1px solid #d5e3d1 !important;
+  border-radius: 16px !important;
+  background: rgba(255,255,255,.96) !important;
+  box-shadow: 0 3px 12px rgba(21,63,53,.045), inset 0 1px 0 rgba(255,255,255,.9) !important;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease !important;
+}
+.profile-info-search:focus-within {
+  border-color: #8eaf91 !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 3px rgba(143,181,139,.18), 0 4px 14px rgba(21,63,53,.06) !important;
+}
+.profile-info-search svg {
+  width: 20px !important;
+  height: 20px !important;
+  flex-basis: 20px !important;
+  color: #426b52 !important;
+  stroke: currentColor !important;
+}
+.profile-info-search input {
+  min-height: 50px !important;
+  font-size: 16px !important;
+  color: #203c30 !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.profile-info-search input::placeholder { color: #89958b !important; opacity: 1; }
+.profile-info-search button {
+  flex: 0 0 28px;
+  width: 28px !important;
+  height: 28px !important;
+  background: #edf4e8 !important;
+  color: #315b43 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-info-search { transition: none !important; }
+}
+</style>
+
 </head><body>
 <main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
@@ -3510,7 +3587,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     <div id="profileSupportTickets" class="profile-support-tickets"><p class="profile-support-empty">Войдите в аккаунт, чтобы создавать обращения и смотреть ответы.</p></div>
   </section>
 
-  <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">БЫСТРЫЕ ОТВЕТЫ</p><h4>Помощь по темам</h4></div><span class="profile-info-count" id="profileInfoHelpCount">5 тем</span></div>
+  <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">БЫСТРЫЕ ОТВЕТЫ</p><h4>Помощь по темам</h4></div></div>
   <div class="profile-info-topic-list" id="profileInfoHelpTopics">
     <details class="profile-info-topic" data-help-search="обмены сделки предложение отменить завершить договориться">
       <summary><span class="profile-info-topic-icon">⇄</span><span class="profile-info-topic-copy"><b>Обмены и сделки</b><small>Предложения, договорённости и завершение обмена</small></span><span class="profile-info-chevron">›</span></summary>
