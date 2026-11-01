@@ -3904,10 +3904,10 @@ bottomNav?.addEventListener("click",e=>{
   const helpPanel=$("profileInfoHelpPanel");if(helpPanel)helpPanel.hidden=true;
   const hub=$("profileHub");if(hub)hub.hidden=false;
  }
- if(target&&target!==page){setPage(target);window.scrollTo({top:0,left:0,behavior:"instant"});}
+ if(target&&target!==page){window.setPage(target);window.scrollTo({top:0,left:0,behavior:"instant"});}
  const idx=navTabs().findIndex(n=>n.dataset.page===target);
  if(idx>=0){bottomNav.style.setProperty("--active-index",String(idx));bottomNav.style.setProperty("--drag-index",String(idx));bottomNav.classList.remove("nav-dragging");}
-},true);;$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
+},true);$("notificationTop").onclick=()=>setPage("notifications");$("notificationMenuTrigger")?.addEventListener("click",()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(!menu||!trigger)return;menu.hidden=!menu.hidden;trigger.setAttribute("aria-expanded",String(!menu.hidden))});document.addEventListener("click",e=>{const wrap=$("notificationMenuWrap"),menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(wrap&&!wrap.contains(e.target)&&menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false")}});document.addEventListener("keydown",e=>{if(e.key==="Escape"){const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu&&!menu.hidden){menu.hidden=true;trigger?.setAttribute("aria-expanded","false");trigger?.focus()}}});$("deleteAllNotifications")?.addEventListener("click",async()=>{const menu=$("notificationMenu"),trigger=$("notificationMenuTrigger");if(menu)menu.hidden=true;if(trigger)trigger.setAttribute("aria-expanded","false");if(!db||!currentUser)return;const btn=$("deleteAllNotifications");if(!await confirmDeleteAction("Удалить все уведомления?","Сообщения в переписках останутся без изменений.","Удалить все"))return;btn.disabled=true;const {data:deletedRows,error}=await db.from("notifications").delete().eq("user_id",currentUser.id).select("id");btn.disabled=false;if(error){toast("Не удалось удалить уведомления. Попробуй ещё раз.");return}await refreshNotificationCount();await loadNotifications();toast("Уведомления очищены. Сообщения в чатах сохранены.");});renderFilters();render();
 
 
 
@@ -5212,8 +5212,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
   lastRun=now;
   node.classList.add("po-motion-surface");
   const animation=node.animate(
-   [{opacity:.68,transform:"translate3d(0,7px,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
-   {duration:230,easing:"cubic-bezier(.22,.61,.36,1)",fill:"both"}
+   [{opacity:.78},{opacity:1}],
+   {duration:170,easing:"ease-out",fill:"both"}
   );
   animation.onfinish=()=>node.classList.remove("po-motion-surface");
   animation.oncancel=()=>node.classList.remove("po-motion-surface");
@@ -5325,8 +5325,8 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
     try{
      if(tabFadeAnimation)tabFadeAnimation.cancel();
      tabFadeAnimation=stage.animate(
-      [{opacity:.94,transform:"translate3d(0,4px,0)"},{opacity:1,transform:"translate3d(0,0,0)"}],
-      {duration:190,easing:"cubic-bezier(.2,.72,.25,1)"}
+      [{opacity:.82},{opacity:1}],
+      {duration:150,easing:"ease-out"}
      );
      tabFadeAnimation.onfinish=()=>{tabFadeAnimation=null};
      tabFadeAnimation.oncancel=()=>{tabFadeAnimation=null};
