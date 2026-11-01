@@ -95,7 +95,7 @@
 ## Журнал выполнения
 | Этап | Статус | Результат / ссылка на проверку |
 |---|---|---|
-| 1. Поддержка и Telegram | В работе | Бот @PoBarteruSupportBot создан и аватар установлен; ссылка на бота добавлена в интерфейс рабочей ветки. Нужно проверить Preview и настроить/проверить bot token, support chat ID, webhook secret, staff IDs и полный цикл ответов. |
+| 1. Поддержка и Telegram | В работе | Бот @PoBarteruSupportBot создан, аватар установлен, Privacy Mode отключён; ссылка на бота добавлена в интерфейс рабочей ветки. В отдельном Supabase staging-проекте создана таблица support_tickets с RLS и индексом; развёрнуты support-telegram-notify и support-telegram-webhook (notify CORS ограничен Preview-доменом). Нужно добавить staging secrets, определить chat ID/staff ID, зарегистрировать webhook и проверить полный цикл. |
 | 2. Основные сценарии | Не начат | |
 | 3. Поиск и AI | Не начат | |
 | 4. Монетизация | Не начат | |
