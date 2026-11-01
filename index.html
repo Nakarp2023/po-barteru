@@ -3512,6 +3512,38 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media (prefers-reduced-motion: reduce) {
   .profile-info-search { transition: none !important; }
 }
+/* Desktop: use the same full-width five-column navigation rhythm as landscape mobile. */
+@media (min-width: 701px) {
+  .bottom {
+    left: 24px !important;
+    right: 24px !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    transform: none !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    box-sizing: border-box !important;
+  }
+  .bottom > .nav {
+    min-width: 0 !important;
+    width: 100% !important;
+    justify-self: stretch !important;
+  }
+}
+/* Remove the browser's rectangular input outline; the rounded search container owns focus feedback. */
+.profile-info-search input,
+.profile-info-search input:focus,
+.profile-info-search input:focus-visible {
+  outline: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+.profile-info-search:focus-within {
+  outline: none !important;
+}
 </style>
 
 </head><body>
