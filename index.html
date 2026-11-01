@@ -3544,6 +3544,37 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .profile-info-search:focus-within {
   outline: none !important;
 }
+
+/* Explicit return control for every nested profile subview. */
+#profileDashboard .profile-subview-back {
+  display: none;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: 42px;
+  margin: 0 0 12px;
+  padding: 8px 14px;
+  border: 1px solid rgba(49,93,80,.13);
+  border-radius: 999px;
+  background: #edf5e7;
+  color: #285b49;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#profileDashboard:is(.profile-show-account,.profile-show-exchanges,.profile-show-reputation,.profile-show-settings,.profile-show-history) .profile-subview-back {
+  display: inline-flex !important;
+}
+#profileDashboard .profile-subview-back:focus-visible {
+  outline: 2px solid #8eaf91;
+  outline-offset: 3px;
+}
+#profileDashboard .profile-subview-back:active { transform: scale(.985); }
+@media (prefers-reduced-motion: reduce) {
+  #profileDashboard .profile-subview-back { transition: none !important; }
+}
 </style>
 
 </head><body>
@@ -3568,6 +3599,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </div>
 <button class="pill" id="authOut" hidden>Выйти</button>
 <section id="profileDashboard" hidden>
+<button type="button" class="profile-subview-back" id="profileSubviewBack" aria-label="Вернуться к разделам профиля">‹ <span>Назад к профилю</span></button>
 <div class="profile-card"><div class="profile-avatar" id="profileAvatar">Б</div><div class="profile-main"><h2 id="profileName"></h2></div><button type="button" class="profile-logout-button" id="profileLogoutBtn" aria-label="Выйти из аккаунта"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg><span>Выйти</span></button></div>
 <div class="profile-hub" id="profileHub">
   <button type="button" class="profile-hub-row" data-profile-open="account"><span class="profile-hub-icon">👤</span><span class="profile-hub-copy"><b>Личные данные</b><small>Имя, город, уведомления и пароль</small></span><span class="profile-hub-arrow">›</span></button>
@@ -4860,6 +4892,16 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    requestAnimationFrame(()=>window.poAnimateSurface?.(hub));
   }
  }
+
+ document.getElementById("profileSubviewBack")?.addEventListener("click",()=>{
+  classes.forEach(c=>dashboard.classList.remove(c));
+  const helpPanel=document.getElementById("profileInfoHelpPanel");
+  if(helpPanel)helpPanel.hidden=true;
+  requestAnimationFrame(()=>{
+   window.poAnimateSurface?.(hub);
+   hub.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+ });
  document.getElementById("profileInfoHelpBack")?.addEventListener("click",()=>{const p=document.getElementById("profileInfoHelpPanel");if(p)p.hidden=true;document.getElementById("profileHub")?.scrollIntoView({behavior:"smooth",block:"start"});});
  hub.querySelectorAll("[data-profile-open]").forEach(btn=>btn.addEventListener("click",()=>{
   const key=btn.dataset.profileOpen;
