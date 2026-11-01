@@ -169,7 +169,7 @@ async function checkViewport(name, viewport, isMobile = false) {
       await panel.locator('#resetAdvancedSearch').click();
       await page.waitForTimeout(900);
       if (await page.locator('#catalogStatus.is-error').count()) failures.push(`${name}: catalog returned an error after resetting filters`);
-      await filterToggle.click();
+      await panel.locator('#closeFilters').click();
       await panel.waitFor({ state: 'hidden', timeout: 3000 });
     } catch (error) {
       failures.push(`${name}: catalog filters did not operate correctly: ${error.message}`);
