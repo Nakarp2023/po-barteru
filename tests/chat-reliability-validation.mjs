@@ -1,0 +1,12 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+const source = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const helper = source.slice(source.indexOf("async function markConversationReadAndNotifications"), source.indexOf("async function openConversation"));
+assert.match(helper, /db\.rpc\("mark_conversation_messages_read"/, "read RPC must be checked");
+assert.match(helper, /if\(readResult\.error\)/, "RPC errors must not be ignored");
+assert.match(helper, /if\(notificationResult\.error\)/, "notification update errors must not be ignored");
+assert.match(source, /const readState=await markConversationReadAndNotifications\(id\)/, "opening a conversation must use checked read helper");
+assert.match(source, /const readState=await markConversationReadAndNotifications\(cid\)/, "fallback sync must use checked read helper");
+assert.doesNotMatch(source, /await db\.rpc\("mark_conversation_messages_read",\{p_conversation_id:(?:id|cid)\}\);await db\.from\("notifications"\)/, "no unchecked duplicate read/update chain remains");
+assert.match(source, /if\(profilesResult\.error\|\|messagesResult\.error\|\|proposalsResult\.error\)[\s\S]{0,300}return\}/, "chat list must stop on batch failure");
+console.log("Chat reliability static checks passed (7 assertions).");
