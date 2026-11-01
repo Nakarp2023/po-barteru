@@ -51,6 +51,11 @@ jobs:
           echo "BASE_URL=http://127.0.0.1:4173/" >> "$GITHUB_ENV"
 
       # Use the live, non-inert app node; transition snapshots are inert siblings.
+      - name: Run static technical regression checks
+        run: |
+          node tests/chat-reliability-validation.mjs
+          node tests/staging-technical-readiness-validation.mjs
+
       - name: Run navigation motion browser tests
         run: |
           mkdir -p artifacts
