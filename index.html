@@ -3499,11 +3499,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   </label>
 
   <div class="profile-info-contact-grid" aria-label="Каналы поддержки">
-    <div class="profile-info-contact-card">
+    <a class="profile-info-contact-card profile-info-telegram-link" href="https://t.me/Jakc_vorobeiy" target="_blank" rel="noopener noreferrer" aria-label="Открыть Telegram поддержки @Jakc_vorobeiy">
       <span class="profile-info-contact-icon profile-info-telegram-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 3 3.8 9.7c-1.2.5-1.2 1.2-.2 1.5l4.4 1.4 1.7 5.1c.2.7.1 1 .8 1 .5 0 .8-.2 1.1-.5l2.5-2.4 4.5 3.3c.8.5 1.4.2 1.6-.8L23 4.4C23.3 3.2 22.5 2.5 21 3Z"></path><path d="m8.2 12.4 9.9-6.2-7.7 7.4-.3 3.2"></path></svg></span>
-      <b>Telegram</b><p>Для коротких вопросов и уточнений.</p>
-      <span class="profile-info-contact-state">Контакт настраивается</span>
-    </div>
+      <b>Telegram</b><p>Написать напрямую в поддержку.</p>
+      <span class="profile-info-contact-state profile-info-contact-state-ready">@Jakc_vorobeiy · Открыть чат ↗</span>
+    </a>
   </div>
   <p class="profile-info-contact-note">Напишите нам прямо здесь — обращение сохранится в вашем аккаунте. Не отправляйте пароли, коды входа и полные данные банковских карт.</p>
 
@@ -5142,6 +5142,9 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 .profile-info-search button{width:25px;height:25px;border:0;border-radius:50%;background:#eef1ed;color:#59665c;font-size:20px;line-height:1}
 .profile-info-contact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .profile-info-contact-card{min-width:0;padding:14px;border:1px solid rgba(29,50,36,.065);border-radius:20px;background:rgba(255,255,255,.92);box-shadow:0 3px 12px rgba(25,45,32,.025)}
+.profile-info-telegram-link{display:block;color:inherit;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,box-shadow .16s ease}
+.profile-info-telegram-link:active{transform:scale(.985)}
+.profile-info-contact-state-ready{background:#e8f3e8;color:#286345}
 .profile-info-contact-icon{display:grid;place-items:center;width:38px;height:38px;margin-bottom:10px;border-radius:13px;background:#edf3e9;color:#386746}
 .profile-info-contact-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .profile-info-telegram-icon{background:#e8f1f3;color:#347c91}
