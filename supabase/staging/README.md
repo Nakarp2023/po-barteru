@@ -39,5 +39,6 @@ The first two Staging-only bootstrap migrations (`20261101043229` and `202611010
 - The Vault-backed VAPID functions and the notification push-dispatch trigger are omitted to prevent external push side effects.
 - The unconfirmed-exchange expiry Cron job is installed and active in Staging (`* * * * *`). It calls `expire_unconfirmed_exchange_proposals()`; the worker function is executable only by `service_role`. This job is independent of Production and processes only Staging records.
 - Saved-search notifications are allowed by the `notifications_type_check` constraint via migration `20261101201440_allow_saved_search_match_notifications.sql`.
+- Production has not received this Staging migration. Its `notifications_type_check` still excludes `saved_search_match`; apply the migration to Production only during an explicitly approved release after the migration is present on `main`.
 
 Before adding a new Staging migration, create and review the SQL file here, then apply it to Staging only. Compare schema and security advisors after each change.
