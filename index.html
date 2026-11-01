@@ -381,7 +381,7 @@ button{min-height:42px}
 main.app:not(.show-auth) #authBox{display:none!important}
 main.app.show-auth #authBox{display:block!important}
 /* Liquid Glass navigation: one floating material{
-  --active-index:0;--drag-index:0;
+  --active-index:0;
   position:fixed;left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom));
   display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;gap:0;
   padding:6px 6px calc(6px + env(safe-area-inset-bottom));
@@ -1804,10 +1804,6 @@ button:active,.pill:active,.chip:active,.offer:active{
 .bottom .nav.active{color:#174f3e!important;font-weight:750!important}
 .bottom .nav.active .nav-symbol,.bottom .nav.active .nav-icon-wrap{transform:translate3d(0,-1.5px,0) scale(1.1);filter:drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 3px 5px rgba(21,63,53,.18))}
 .bottom .nav.active .nav-symbol svg,.bottom .nav.active .nav-icon-wrap svg{stroke-width:2}
-.bottom.nav-dragging::before{transition:transform .055s linear,background .15s ease,box-shadow .15s ease;border-color:rgba(255,255,255,.98);background:radial-gradient(ellipse at 24% 0%,rgba(255,255,255,.96),rgba(255,255,255,.42) 32%,transparent 70%),radial-gradient(ellipse at 78% 100%,rgba(193,226,194,.32),transparent 65%),linear-gradient(155deg,rgba(255,255,255,.56),rgba(255,255,255,.22) 44%,rgba(224,239,229,.18) 75%,rgba(255,255,255,.32));box-shadow:0 8px 24px rgba(20,45,35,.17),inset 0 1.5px 0 #fff,inset 0 -1.5px 0 rgba(255,255,255,.42),inset 1px 0 0 rgba(255,255,255,.5),inset -1px 0 0 rgba(255,255,255,.3)}
-.bottom.nav-dragging .nav{transition:color .1s ease!important}
-.bottom.nav-dragging .nav.active,.bottom.nav-dragging .nav.nav-following{background:transparent!important;border-color:transparent!important;box-shadow:none!important;color:#174f3e!important;text-shadow:none!important}
-.bottom.nav-dragging .nav .nav-symbol,.bottom.nav-dragging .nav .nav-icon-wrap{filter:none}
 .bottom .nav:active{transform:scale(.97)}
 @media(max-width:600px){
  .bottom{left:10px!important;right:10px!important;min-height:70px!important;padding:5px!important;border-radius:26px!important}
@@ -2553,13 +2549,6 @@ if (Capacitor.isNativePlatform()) {
 
 /* Desktop and mobile: ensure filtered cards stay hidden despite grid layout overrides. */
 #profileDashboard.listings-only #myListings>.my-listing[hidden]{display:none!important}
-
-
-/* Keep the green selected-tab tile attached to the moving glass lens while dragging. */
-.bottom.nav-dragging .nav.active{background:transparent!important;box-shadow:none!important}
-.bottom.nav-dragging .nav.nav-following{background:#e5f3d9!important;color:#175541!important;font-weight:800!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95)!important}
-.bottom.nav-dragging .nav.nav-following .nav-symbol,.bottom.nav-dragging .nav.nav-following .nav-icon-wrap{transform:translate3d(0,-2px,0) scale(1.12)!important}
-.bottom:not(.nav-dragging) .nav.nav-following{background:transparent!important}
 
 
 /* Use the Liquid Glass motion rules defined with the navigation component above. */
