@@ -11,6 +11,10 @@ const expiryIndexMigrationSource = await readFile(new URL('../supabase/migration
 if (!expiryIndexMigrationSource.includes('exchange_proposals_expiry_scan_idx') || !expiryIndexMigrationSource.includes('accepted_at')) {
   failures.push('exchange expiry migration must include the partial accepted_at scan index');
 }
+const profileVisibilityMigrationSource = await readFile(new URL('../supabase/migrations/20261101175918_respect_public_profile_name_visibility.sql', import.meta.url), 'utf8').catch(() => '');
+if (!profileVisibilityMigrationSource.includes('show_public_name is true') || !profileVisibilityMigrationSource.includes('auth.uid()')) {
+  failures.push('profile visibility migration must restrict public profile reads to visible names and preserve owner access');
+}
 const browser = await chromium.launch({ headless: true });
 
 async function checkViewport(name, viewport, isMobile = false) {
@@ -39,6 +43,9 @@ async function checkViewport(name, viewport, isMobile = false) {
   const appScripts = await page.locator('script').evaluateAll(nodes => nodes.map(node => node.textContent || '').join('\\n'));
   if (!appScripts.includes('expire_exchange_proposal_if_needed')) failures.push(`${name}: server-side exchange expiry recovery is not wired into the app`);
   if (!appScripts.includes('data?.expired')) failures.push(`${name}: exchange expiry response is not handled by the UI`);
+  if (!appScripts.includes('id="profileShowPublicName"')) failures.push(`${name}: public profile visibility control is missing`);
+  if (!appScripts.includes('show_public_name:p.showPublicName')) failures.push(`${name}: profile visibility setting is not persisted`);
+  if (!appScripts.includes('display_name,city,show_public_name')) failures.push(`${name}: saved profile visibility is not restored from the database`);
   const exchangesStart = appScripts.indexOf('async function loadMyExchanges');
   const profileSyncStart = appScripts.indexOf('async function syncProfile', exchangesStart);
   const exchangesSource = exchangesStart >= 0 && profileSyncStart > exchangesStart ? appScripts.slice(exchangesStart, profileSyncStart) : '';
