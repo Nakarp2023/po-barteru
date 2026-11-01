@@ -43,7 +43,7 @@ async function checkViewport(name, viewport, isMobile = false) {
   const appScripts = await page.locator('script').evaluateAll(nodes => nodes.map(node => node.textContent || '').join('\\n'));
   if (!appScripts.includes('expire_exchange_proposal_if_needed')) failures.push(`${name}: server-side exchange expiry recovery is not wired into the app`);
   if (!appScripts.includes('data?.expired')) failures.push(`${name}: exchange expiry response is not handled by the UI`);
-  if (!appScripts.includes('id="profileShowPublicName"')) failures.push(`${name}: public profile visibility control is missing`);
+  if (!(await page.locator('#profileShowPublicName').count())) failures.push(`${name}: public profile visibility control is missing`);
   if (!appScripts.includes('show_public_name:p.showPublicName')) failures.push(`${name}: profile visibility setting is not persisted`);
   if (!appScripts.includes('display_name,city,show_public_name')) failures.push(`${name}: saved profile visibility is not restored from the database`);
   const exchangesStart = appScripts.indexOf('async function loadMyExchanges');
