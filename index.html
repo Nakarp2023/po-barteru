@@ -5433,54 +5433,29 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
  window.poNavigateBack=back;
 
 
- // Pointer gestures are coordinated by poPrimaryTabSwipeNavigation.
+ // Nested navigation returns only through explicit back controls or browser history.
  window.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.defaultPrevented){if(back())e.preventDefault()}});
  window.addEventListener("popstate",()=>{back()});
 })();
 </script>
 
-<style id="poTabSwipeStyles">
+<style id="poNavigationMotionStyles">
 .app.po-nav-moving{will-change:transform}
-.po-nav-snapshot-viewport{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5;background:var(--bg,#f5f6f2)}
-.po-nav-snapshot-viewport>.app{position:absolute!important;margin:0!important;max-width:none!important;pointer-events:none!important;will-change:transform!important}
+.po-nav-transition-viewport{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5;background:var(--bg,#f5f6f2)}
+.po-nav-transition-viewport>.app{position:absolute!important;margin:0!important;max-width:none!important;pointer-events:none!important;will-change:transform!important}
 @media(prefers-reduced-motion:reduce){.app.po-nav-moving{will-change:auto}}
 </style>
-<script id="poPrimaryTabSwipeNavigation">
+<script id="poNavigationMotion">
 (function(){
- if(window.__poPrimaryTabSwipeNavigationInstalled)return;
- window.__poPrimaryTabSwipeNavigationInstalled=true;
- const app=document.querySelector(".app"),nav=document.querySelector(".bottom");
- if(!app||!nav||typeof window.setPage!=="function")return;
- const tabs=[...nav.querySelectorAll(".nav[data-page]")],pages=tabs.map(t=>t.dataset.page);
- if(pages.length<2)return;
+ if(window.__poNavigationMotionInstalled)return;
+ window.__poNavigationMotionInstalled=true;
+ const app=document.querySelector(".app");
+ if(!app||typeof window.setPage!=="function")return;
  const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
- const $=id=>document.getElementById(id);
- let gesture=null,transitioning=false,activeSnapshot=null;
- const nestedClasses=["profile-show-account","profile-show-exchanges","profile-show-reputation","profile-show-settings","profile-show-history"];
- function currentPage(){return typeof page!=="undefined"?page:(nav.querySelector(".nav.active")?.dataset.page||pages[0])}
- function nested(){
-  const d=$("profileDashboard"),thread=$("chatThread");
-  return !!(d&&(d.classList.contains("listings-only")||nestedClasses.some(c=>d.classList.contains(c))))||
-   !!($("profileInfoHelpPanel")&&!$("profileInfoHelpPanel").hidden)||
-   !!(thread&&!thread.hidden);
- }
- function overlay(){return !!document.querySelector(".modal.open,#cityPickerModal.open,#promotionPickerModal.open,#listingDetailModal.open")}
- function excluded(target){
-  if(!(target instanceof Element))return true;
-  if(target.closest('.top,.bottom,input,textarea,select,button,a,[contenteditable="true"],[data-no-page-swipe],[data-swipe-row],[data-view-detail],.chat-row,.swipe-row,.chat-composer,#chatMessages,.chat-message,.notification-swipe,.listing-detail-gallery,#advancedSearchPanel,#filtersBackdrop'))return true;
-  for(let n=target;n&&n!==app;n=n.parentElement){const s=getComputedStyle(n);if((s.overflowX==="auto"||s.overflowX==="scroll")&&n.scrollWidth>n.clientWidth+8)return true}
-  return false;
- }
- function setPageDirect(value){
-  const previous=window.__poNavTransitionMutating;
-  window.__poNavTransitionMutating=true;
-  try{window.setPage(value)}finally{window.__poNavTransitionMutating=previous||false}
- }
+ let transitioning=false,activeSnapshot=null;
  function snapshot(){
   const rect=app.getBoundingClientRect(),viewport=document.createElement("div"),clone=app.cloneNode(true);
   const sourceNodes=[app,...app.querySelectorAll("*")],cloneNodes=[clone,...clone.querySelectorAll("*")];
-  // cloneNode copies markup, not live form state or nested scroll positions.
-  // Mirror those properties so the outgoing screen is a faithful visual snapshot.
   for(let i=0;i<Math.min(sourceNodes.length,cloneNodes.length);i++){
    const source=sourceNodes[i],copy=cloneNodes[i];
    if(source instanceof HTMLInputElement){if(source.type!=="file")copy.value=source.value;copy.checked=source.checked;copy.indeterminate=source.indeterminate}
@@ -5490,7 +5465,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
    if(source.scrollTop||source.scrollLeft){copy.scrollTop=source.scrollTop;copy.scrollLeft=source.scrollLeft}
    if(source instanceof HTMLCanvasElement){try{copy.width=source.width;copy.height=source.height;copy.getContext("2d")?.drawImage(source,0,0)}catch(_){}}
   }
-  viewport.className="po-nav-snapshot-viewport";
+  viewport.className="po-nav-transition-viewport";
   viewport.setAttribute("aria-hidden","true");
   clone.inert=true;
   clone.style.setProperty("top",rect.top+"px","important");
@@ -5503,7 +5478,14 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
  }
  function clearSnapshot(s){if(s?.viewport?.isConnected)s.viewport.remove();if(activeSnapshot===s)activeSnapshot=null}
  function finishTransition(s,animationA,animationB){
-  const finish=()=>{try{animationA?.cancel()}catch(_){}try{animationB?.cancel()}catch(_){}app.style.transform="";app.classList.remove("po-nav-moving");if(s)clearSnapshot(s);transitioning=false};
+  const finish=()=>{
+   try{animationA?.cancel()}catch(_){}
+   try{animationB?.cancel()}catch(_){}
+   app.style.transform="";
+   app.classList.remove("po-nav-moving");
+   if(s)clearSnapshot(s);
+   transitioning=false;
+  };
   Promise.all([animationA?.finished?.catch(()=>{}),animationB?.finished?.catch(()=>{})].filter(Boolean)).then(finish);
  }
  function animatePair(s,oldFrom,oldTo,newFrom,newTo,duration=280){
@@ -5513,7 +5495,7 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
   const b=app.animate([{transform:"translate3d("+newFrom+"px,0,0)"},{transform:"translate3d("+newTo+"px,0,0)"}],{duration,easing,fill:"both"});
   finishTransition(s,a,b);
  }
- function animateMutation(mutator,direction){
+ window.poRunNavigationTransition=function(mutator,direction){
   if(transitioning)return false;
   if(reduced()){mutator();return true}
   transitioning=true;
@@ -5525,102 +5507,13 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
    app.style.transform="translate3d("+(-direction*width)+"px,0,0)";
    animatePair(s,0,direction*width,-direction*width,0,280);
   }catch(e){
-   app.style.transform="";if(s)clearSnapshot(s);transitioning=false;
+   app.style.transform="";
+   if(s)clearSnapshot(s);
+   transitioning=false;
    console.error("Navigation transition failed:",e);
   }
   return true;
- }
- function settleGesture(g,commit){
-  const s=g.snapshot;if(!s)return;
-  const width=Math.max(1,window.innerWidth),dx=g.dx,dir=g.direction;
-  if(commit){
-   const oldEnd=dir*width,newEnd=0;
-   const oldStart=dx,newStart=-dir*width+dx;
-   animatePair(s,oldStart,oldEnd,newStart,newEnd,Math.max(150,Math.min(280,280*(1-Math.min(.45,Math.abs(dx)/width)))));
-  }else{
-   // Restore the original route behind the outgoing snapshot, then return it
-   // to its exact origin. This makes a cancelled gesture reversible.
-   if(g.kind==="tabs")setPageDirect(g.page);
-   app.style.transform="";
-   app.classList.add("po-nav-moving");
-   const a=s.clone.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
-   finishTransition(s,a,null);
-  }
- }
- function onDown(e){
-  if(gesture||transitioning||(e.pointerType==="mouse"&&e.button!==0)||e.pointerType==="pen"||e.isPrimary===false||!app.contains(e.target)||overlay()||excluded(e.target))return;
-  const x=e.clientX,w=innerWidth,idx=pages.indexOf(currentPage());
-  if(idx<0||x>=w-24)return;
-  const isNested=nested(),isEdge=x>=24&&x<=58;
-  // Primary tabs are tap-only destinations. Keep edge-swipe exclusively for
-  // returning from nested screens (profile sections, help, and chat threads).
-  if(!isNested||!isEdge)return;
-  gesture={id:e.pointerId,x,y:e.clientY,dx:0,dy:0,claimed:false,kind:"back",page:currentPage(),index:idx,started:performance.now(),direction:0,snapshot:null};
- }
- function onMove(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;
-  const dx=e.clientX-g.x,dy=e.clientY-g.y;
-  if(!g.claimed){
-   if(Math.abs(dx)<7&&Math.abs(dy)<7)return;
-   if(Math.abs(dy)>Math.abs(dx)*1.08){gesture=null;return}
-   if(g.kind==="back"&&dx<=0){gesture=null;return}
-   const dir=dx<0?-1:1;
-   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))<0){gesture=null;return}
-   if(g.kind==="tabs"&&(g.index+(dir<0?1:-1))>=pages.length){gesture=null;return}
-   g.claimed=true;g.direction=dir;
-   if(!reduced()){
-    g.snapshot=snapshot();activeSnapshot=g.snapshot;
-    if(g.kind==="tabs"){
-     const target=pages[g.index+(dir<0?1:-1)];
-     setPageDirect(target);
-    }
-   }
-  }
-  if(e.cancelable)e.preventDefault();
-  g.dx=dx;g.dy=dy;
-  if(g.kind==="back"){
-   app.style.transform="translate3d("+dx+"px,0,0)";
-  }else if(g.snapshot){
-   g.snapshot.clone.style.transform="translate3d("+dx+"px,0,0)";
-   app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-  }
- }
- function onUp(e){
-  const g=gesture;if(!g||e.pointerId!==g.id)return;gesture=null;
-  if(!g.claimed)return;
-  const dx=e.clientX-g.x,elapsed=Math.max(1,performance.now()-g.started),v=Math.abs(dx)/elapsed;
-  const threshold=Math.max(64,innerWidth*.16);
-  g.dx=dx;
-  const commit=g.kind==="back"?(dx>Math.min(108,innerWidth*.27)||(dx>34&&v>.42)):(Math.abs(dx)>threshold||(Math.abs(dx)>34&&v>.42));
-  if(reduced()){
-   if(commit){if(g.kind==="back")window.poNavigateBack?.();else setPageDirect(pages[g.index+(g.direction<0?1:-1)])}
-   return;
-  }
-  if(g.kind==="back"){
-   if(commit){
-    // Capture the current screen only once the edge gesture is accepted.
-    app.style.transform="";
-    const s=snapshot();activeSnapshot=s;
-    s.clone.style.transform="translate3d("+dx+"px,0,0)";
-    window.poNavigateBack?.();
-    app.style.transform="translate3d("+(-g.direction*innerWidth+dx)+"px,0,0)";
-    animatePair(s,dx,g.direction*innerWidth,-g.direction*innerWidth+dx,0,250);
-   }else{
-    app.classList.add("po-nav-moving");
-    const a=app.animate([{transform:"translate3d("+dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});
-    finishTransition(null,a,null);
-   }
-   return;
-  }
-  if(!g.snapshot)return;
-  settleGesture(g,commit);
- }
- function onCancel(e){if(gesture&&e.pointerId===gesture.id){const g=gesture;gesture=null;if(!g.claimed)return;if(g.kind==="tabs"&&g.snapshot)settleGesture(g,false);else if(g.kind==="back"){app.classList.add("po-nav-moving");const a=app.animate([{transform:"translate3d("+g.dx+"px,0,0)"},{transform:"translate3d(0,0,0)"}],{duration:210,easing:"cubic-bezier(.2,.72,.22,1)",fill:"both"});finishTransition(null,a,null)}}}
- document.addEventListener("pointerdown",onDown,{passive:true});
- document.addEventListener("pointermove",onMove,{passive:false});
- document.addEventListener("pointerup",onUp,{passive:true});
- document.addEventListener("pointercancel",onCancel,{passive:true});
- window.poRunNavigationTransition=animateMutation;
+ };
 })();
 </script>
 
