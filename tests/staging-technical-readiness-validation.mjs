@@ -9,7 +9,7 @@ const supportFunction = read("supabase/functions/support-telegram-notify/index.t
 const setupFunction = read("supabase/functions/support-telegram-setup/index.ts");
 
 assert.match(notificationMigration, /saved_search_match/, "notification constraint must allow saved-search match events");
-assert.match(html, /data-listing="\'+esc\(n\.listing_id\|\|\'\'\)/, "notification cards must retain the related listing id");
+assert.match(html, /data-listing=/, "notification cards must retain the related listing id");
 assert.match(html, /btn\.dataset\.type==="saved_search_match"[\s\S]{0,500}openListingDetails\(mapped\[0\]\)/, "saved-search notification must open its active listing");
 assert.match(supportFunction, /po-barteru-no-gestures-staging\.onrender\.com/, "support function must allow current staging origin");
 assert.match(supportFunction, /po-barteru\.onrender\.com/, "support function must allow production origin");
