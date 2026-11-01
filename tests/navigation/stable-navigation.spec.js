@@ -2,12 +2,24 @@ import { test, expect } from '@playwright/test';
 
 const tab = pageName => `.bottom .nav[data-page="${pageName}"]`;
 
+async function openApp(page) {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() =>
+    typeof window.poCanNavigateBack === 'function' &&
+    typeof window.setPage === 'function' &&
+    !!document.querySelector('#poScreenStage')
+  );
+}
+
 test('navigation shell is stable and the bottom bar is the only primary tab control', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
+  await openApp(page);
   const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
   expect(response).not.toBeNull();
   expect(response.status()).toBeLessThan(400);
+  await page.waitForFunction(() => typeof window.poCanNavigateBack === 'function');
   await expect(page.locator('main.app > header.top')).toBeVisible();
   await expect(page.locator('main.app > #poScreenStage')).toBeVisible();
   await expect(page.locator('body > nav.bottom')).toBeVisible();
@@ -17,8 +29,7 @@ test('navigation shell is stable and the bottom bar is the only primary tab cont
 });
 
 test('primary tabs switch only by tapping and never slide the screen', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await openApp(page);
   const targets = ['favorites', 'my-listings', 'chats', 'profile', 'home'];
   for (const target of targets) {
     await page.locator(tab(target)).click();
@@ -44,26 +55,25 @@ test('primary tabs switch only by tapping and never slide the screen', async ({ 
 });
 
 test('browser Back restores the previous primary tab after a tab tap', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await openApp(page);
   await expect(page.locator(tab('home'))).toHaveClass(/active/);
   await page.locator(tab('favorites')).click();
   await expect(page.locator(tab('favorites'))).toHaveClass(/active/);
-  await page.goBack();
+  await page.evaluate(() => window.history.back());
   await expect(page.locator(tab('home'))).toHaveClass(/active/);
   await expect(page.locator('#homeHero')).toBeVisible();
 });
 
 test('reduced-motion preference does not block tab switching', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await openApp(page);
   await page.locator(tab('my-listings')).click();
   await expect(page.locator(tab('my-listings'))).toHaveClass(/active/);
   await expect(page.locator('#poScreenStage')).toBeVisible();
 });
 
 test('repeated tab taps do not leave a blank or displaced screen', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await openApp(page);
   for (const target of ['favorites', 'home', 'profile', 'chats', 'my-listings', 'favorites', 'home']) {
     await page.locator(tab(target)).click();
     await expect(page.locator(tab(target))).toHaveClass(/active/);
@@ -77,7 +87,7 @@ test('repeated tab taps do not leave a blank or displaced screen', async ({ page
 });
 
 test('primary navigation contains no swipe-to-switch or drag controller', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await openApp(page);
   const sourceState = await page.evaluate(() => ({
     dragClass: document.querySelector('.bottom')?.classList.contains('nav-dragging') || false,
     transformName: getComputedStyle(document.querySelector('#poScreenStage')).viewTransitionName,
