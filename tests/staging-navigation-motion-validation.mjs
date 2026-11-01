@@ -27,6 +27,14 @@ async function checkViewport(name, viewport, isMobile = false) {
   const title = await page.title();
   if (!title.includes('ПО БАРТЕРУ')) failures.push(`${name}: unexpected title "${title}"`);
 
+  const appScripts = await page.locator('script').evaluateAll(nodes => nodes.map(node => node.textContent || '').join('\\n'));
+  if (!appScripts.includes('expire_exchange_proposal_if_needed')) failures.push(`${name}: server-side exchange expiry recovery is not wired into the app`);
+  if (!appScripts.includes('data?.expired')) failures.push(`${name}: exchange expiry response is not handled by the UI`);
+  const exchangesStart = appScripts.indexOf('async function loadMyExchanges');
+  const profileSyncStart = appScripts.indexOf('async function syncProfile', exchangesStart);
+  const exchangesSource = exchangesStart >= 0 && profileSyncStart > exchangesStart ? appScripts.slice(exchangesStart, profileSyncStart) : '';
+  if (!exchangesSource.includes('expire_exchange_proposal_if_needed')) failures.push(`${name}: expired accepted offers are not recovered from the exchange list`);
+
   const metrics = await page.evaluate(() => ({
     width: document.documentElement.clientWidth,
     documentWidth: document.documentElement.scrollWidth,
