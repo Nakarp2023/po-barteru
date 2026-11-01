@@ -1,0 +1,64 @@
+name: Staging navigation motion validation
+
+on:
+  push:
+    branches:
+      - 'qa/**'
+  pull_request:
+    branches:
+      - 'work/integrated-staging-navigation-no-gestures'
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Staging URL to test
+        required: false
+        default: local
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Desktop and iPhone smoke checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BASE_URL: ${{ inputs.base_url || 'local' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        run: npm install --no-save --package-lock=false playwright
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start local static server
+        if: ${{ env.BASE_URL == 'local' }}
+        run: |
+          python3 -m http.server 4173 --directory . >/tmp/po-barteru-http.log 2>&1 &
+          echo "BASE_URL=http://127.0.0.1:4173/" >> "$GITHUB_ENV"
+
+      - name: Run browser smoke tests
+        run: |
+          mkdir -p artifacts
+          node tests/staging-smoke.mjs
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-smoke-screenshots
+          path: artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
