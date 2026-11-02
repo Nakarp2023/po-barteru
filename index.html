@@ -3657,7 +3657,20 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #poPhotoLightbox .next { right:16px; top:50%; }
 #poPhotoLightbox .count { position:absolute; bottom:max(18px,env(safe-area-inset-bottom)); color:#fff; background:#ffffff20; border-radius:99px; padding:8px 14px; font-size:14px; }
 </style>
-</head><body>
+<style>
+/* Staging regression fix: hidden always wins over display:grid/flex */
+[hidden]{display:none!important}
+/* Desktop cards: align content slots and bottom actions */
+@media(min-width:1200px){
+ .cardbody .category{min-height:2.5em;line-height:1.25}
+ .cardbody h3{height:2.7em;min-height:2.7em;max-height:2.7em;overflow:hidden}
+ .cardbody .want{height:94px;min-height:94px;box-sizing:border-box;overflow:hidden}
+ .cardbody .want-value{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .cardbody .card-meta{min-height:32px}
+ .cardbody .city{min-height:20px;display:flex;align-items:center}
+ .cardbody .offer{height:46px;min-height:46px;flex:0 0 46px}
+}
+</style></head><body>
 <main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>

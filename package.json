@@ -1,6 +1,0 @@
-{
-  "name": "po-barteru-static",
-  "private": true,
-  "version": "1.0.0",
-  "description": "Static HTML, CSS and JavaScript site served directly by Render. No npm runtime dependencies."
-}
