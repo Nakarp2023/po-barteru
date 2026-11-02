@@ -2510,6 +2510,22 @@ body:has(.modal.open) .bottom{z-index:1!important;pointer-events:none!important}
   .card-meta .price span{display:none!important}
   .card .want-box{margin-bottom:10px!important}
 }
+
+/* iOS-like lightweight listing action controls: isolate from global button rules */
+#list .listing-more,
+.listing-detail-actions > .listing-detail-more{
+  box-sizing:border-box!important;width:32px!important;height:32px!important;min-width:32px!important;max-width:32px!important;min-height:32px!important;max-height:32px!important;
+  flex:0 0 32px!important;padding:0!important;margin:0!important;border:0!important;border-radius:50%!important;
+  display:grid!important;place-items:center!important;line-height:1!important;font-size:0!important;text-align:center!important;
+  background:rgba(255,255,255,.72)!important;color:#718078!important;box-shadow:0 1px 2px rgba(30,45,35,.06)!important;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);opacity:.9!important;
+}
+#list .listing-more{top:8px!important;right:8px!important}
+.listing-detail-actions > .listing-detail-more{margin-right:-16px!important;background:rgba(245,248,243,.78)!important}
+#list .listing-more::before,.listing-detail-more::before{width:17px!important;height:17px!important}
+.listing-more-menu{padding:3px!important;border:1px solid rgba(220,228,219,.65)!important;border-radius:16px!important;background:rgba(250,252,249,.88)!important;box-shadow:0 4px 14px rgba(28,43,34,.10)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
+.listing-more-menu button{width:auto!important;min-width:0!important;max-width:none!important;min-height:0!important;height:auto!important;margin:0!important;padding:10px 11px!important;flex:none!important;display:flex!important;border:0!important;border-radius:12px!important;background:transparent!important;color:#d16a70!important;font-size:13px!important;font-weight:600!important;box-shadow:none!important}
+.listing-more-menu button::before{color:#d16a70!important}
 </style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script type="module">
 import { App } from "https://esm.sh/@capacitor/app@8";
 import { Capacitor } from "https://esm.sh/@capacitor/core@8";
