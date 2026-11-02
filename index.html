@@ -5767,6 +5767,23 @@ window.__poOpenPhotoGallery=open;
 #list .card .offer{margin-top:auto!important;min-height:48px!important;height:48px!important;max-height:48px!important;display:flex!important;align-items:center!important;justify-content:center!important}
 @media(max-width:600px){#list .card .photo{flex-basis:132px!important;height:132px!important;min-height:132px!important;max-height:132px!important}#list .card .offer{min-height:44px!important;height:44px!important;max-height:44px!important}}
 </style>
+
+<style id="staging-card-layout-final-20261103">
+/* Final deterministic card layout: category/title/want/city/action have their own rows. */
+#list .card{height:476px!important;min-height:476px!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+#list .card .photo{flex:0 0 160px!important;height:160px!important;min-height:160px!important;max-height:160px!important}
+#list .card .cardbody{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:18px 2.8em 82px 30px minmax(0,1fr)!important;align-content:start!important;gap:0!important;flex:1 1 auto!important;min-height:0!important;padding:14px!important;box-sizing:border-box!important}
+#list .card .category{grid-row:1!important;min-width:0!important;max-height:18px!important;overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;line-height:18px!important}
+#list .card .cardbody h3{grid-row:2!important;align-self:start!important;height:2.8em!important;min-height:2.8em!important;max-height:2.8em!important;margin:0 0 10px!important;line-height:1.4!important;overflow:hidden!important;display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;}
+#list .card .cardbody .want{grid-row:3!important;position:static!important;inset:auto!important;align-self:start!important;width:100%!important;height:82px!important;min-height:82px!important;max-height:82px!important;margin:0!important;padding:12px!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:5px!important;overflow:hidden!important}
+#list .card .cardbody .want-label{flex:0 0 auto!important;line-height:1.15!important}
+#list .card .cardbody .want-value{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;line-clamp:2!important;max-height:2.7em!important;line-height:1.35!important;overflow:hidden!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+#list .card .cardbody .card-meta{grid-row:4!important;position:static!important;display:flex!important;align-items:center!important;width:100%!important;height:30px!important;min-height:30px!important;max-height:30px!important;margin:8px 0 0!important;padding:0 2px!important;overflow:hidden!important;box-sizing:border-box!important}
+#list .card .cardbody .card-meta .city{position:static!important;display:block!important;width:100%!important;height:auto!important;min-height:0!important;max-height:24px!important;margin:0!important;padding:0!important;line-height:24px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#list .card .cardbody .card-meta .price{display:none!important}
+#list .card .cardbody .offer{grid-row:5!important;align-self:end!important;width:100%!important;height:48px!important;min-height:48px!important;max-height:48px!important;margin:0!important;box-sizing:border-box!important}
+@media(max-width:600px){#list .card{height:440px!important;min-height:440px!important}#list .card .photo{flex-basis:132px!important;height:132px!important;min-height:132px!important;max-height:132px!important}#list .card .cardbody{grid-template-rows:18px 2.8em 78px 30px minmax(0,1fr)!important;padding:12px!important}#list .card .cardbody .want{height:78px!important;min-height:78px!important;max-height:78px!important}#list .card .cardbody .offer{height:44px!important;min-height:44px!important;max-height:44px!important}}
+</style>
 </body></html>
 
 
