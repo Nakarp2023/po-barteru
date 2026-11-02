@@ -500,11 +500,21 @@ button:active{transform:scale(.985)}
 .promotion-choice{padding:14px;border-radius:18px}
 .promotion-choice.selected{border-color:var(--green);box-shadow:0 0 0 2px rgba(23,107,82,.13)}
 .ios-badge{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
-@media (min-width:700px){
- .grid{gap:18px}
- .cardbody{padding:17px}
- .photo{height:190px}
+/* Desktop cards: compact marketplace rhythm; mobile layout remains untouched. */
+@media (min-width:701px){
+ .grid{grid-template-columns:repeat(auto-fill,minmax(285px,320px));align-items:stretch;gap:18px}
+ .card{width:100%;max-width:320px;display:flex;flex-direction:column}
+ .card .photo{height:176px;flex:0 0 176px;position:relative}
+ .cardbody{padding:14px;display:flex;flex:1;flex-direction:column;gap:0}
+ .card h3{font-size:16px;min-height:2.5em;margin:7px 0 10px}
+ .want{min-height:0;height:auto;max-height:none;overflow:visible;display:flex;flex-direction:column;gap:5px;padding:10px 11px;background:#f4f6f1;border-radius:12px;color:#29483e;line-height:1.4}
+ .want-label{font-size:10px;letter-spacing:.7px;font-weight:800;color:#7c8b80}
+ .want-value{font-size:13px;font-weight:600;white-space:normal;overflow-wrap:anywhere}
+ .card-meta{margin-top:auto;padding-top:9px}
+ .city{margin-top:5px}
+ .offer{margin-top:10px;min-height:42px}
 }
+
 @media (prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
