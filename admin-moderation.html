@@ -11,7 +11,7 @@
 <div id="notice" role="status" aria-live="polite"></div></main>
 <script>
 const URL="https://noiryqvoohqrfmemfnne.supabase.co",KEY="sb_publishable_ZQysYhUfU2mNnM2Ce1jzIw_CWFj5AM_";
-const db=window.supabase?.createClient?window.supabase.createClient(URL,KEY):null;let reports=[],selected=null,user=null,page=0;const PAGE_SIZE=100;let searchTimer=null;
+const db=window.supabase?.createClient?window.supabase.createClient(URL,KEY):null;window.adminModerationDb=db;let reports=[],selected=null,user=null,page=0;const PAGE_SIZE=100;let searchTimer=null;
 const $=id=>document.getElementById(id);const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const label={new:"Новая",reviewed:"На рассмотрении",dismissed:"Отклонена",resolved:"Решена"};
 function msg(s,cls=""){ $("notice").className=cls;$("notice").textContent=s; }
@@ -61,12 +61,14 @@ db.auth.onAuthStateChange(async(event,session)=>{user=session?.user||null;if(eve
    if(!window.supabase||!window.supabase.createClient)throw Error("Supabase CDN недоступен");
    const email=byId("email").value.trim(),password=byId("password").value;
    if(!email||!password)throw Error("Заполните email и пароль");
-   const client=window.supabase.createClient("https://noiryqvoohqrfmemfnne.supabase.co","sb_publishable_ZQysYhUfU2mNnM2Ce1jzIw_CWFj5AM_",{auth:{persistSession:true,autoRefreshToken:true}});
+   const client=window.adminModerationDb;
+   if(!client)throw Error("Клиент панели не инициализирован. Обновите страницу.");
    const {data,error}=await client.auth.signInWithPassword({email,password});
    if(error)throw error;
-   out.textContent="Supabase вход успешен. Сессия сохранена; открываю панель…";
-/* Auth client persists the session in Supabase storage. Reload lets the app client read it and run guard(). */
-location.replace(location.pathname+"?auth=success");
+   out.textContent="Вход подтверждён. Проверяю роль администратора…";
+   const ok=await guard();
+   if(ok){msg("Вход выполнен, роль admin подтверждена.","success");await loadQueue();}
+   else if(user){out.textContent="Вход выполнен, но роль admin не назначена. Нажмите «Активировать администратора».";msg("Supabase авторизация успешна; требуется назначить роль admin.","success");}
   }catch(err){
    out.textContent="AUTH ERROR: "+(err&&err.message||String(err));
    if(notice){notice.textContent=out.textContent;notice.className="error"}
