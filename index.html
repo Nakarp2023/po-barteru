@@ -3448,6 +3448,29 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .notification-menu[hidden],.notification-menu-wrap[hidden]{display:none!important}
 @media(max-width:480px){.notification-head{display:flex;flex-wrap:nowrap;align-items:center}.notification-head-tools{flex:0 0 auto}.notification-head h2{font-size:clamp(20px,5vw,24px)}.notification-actions .chip{white-space:normal;max-width:150px}}
 </style>
+
+<style id="desktop-marketplace-refinement">
+/* Desktop only: mobile layout remains unchanged. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .app { width: min(calc(100% - 48px), 1180px); }
+  #list.grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+}
+@media (min-width: 1280px) {
+  .app { width: min(calc(100% - 72px), 1480px); max-width: 1480px; }
+  #list.grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  #list.grid > .card { min-width: 0; border-radius: 16px; }
+  #list.grid .photo { height: auto; aspect-ratio: 1 / 1; }
+  #list.grid .cardbody { padding: 12px 13px 14px; }
+  #list.grid .card h3 { font-size: 15px; line-height: 1.35; margin: 7px 0 9px; }
+  #list.grid .card .want { min-height: 0; padding: 10px 11px; font-size: 12px; }
+  #list.grid .card .city { font-size: 11px; margin-top: 9px; }
+  #list.grid .card .offer { margin-top: 10px; min-height: 38px; }
+}
+@media (hover:hover) and (pointer:fine) and (min-width:1024px) {
+  #list.grid > .card { transition: transform .18s ease, box-shadow .18s ease; }
+  #list.grid > .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(18,43,34,.09); }
+}
+</style>
 </head><body>
 <main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
@@ -5622,13 +5645,3 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 </body></html>
-<!-- Desktop listing density refinement: mobile styles intentionally untouched -->
-<style>
-@media (min-width: 1280px) {
-  .grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
-  .grid .card { border-radius: 16px; }
-  .grid .photo { height: auto; aspect-ratio: 1 / 1; }
-  .grid .cardbody { padding: 12px 13px 14px; }
-  .grid .card h3 { font-size: 15px; line-height: 1.35; }
-}
-</style>
