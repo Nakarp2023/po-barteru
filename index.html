@@ -5739,12 +5739,20 @@ window.__poOpenPhotoGallery=open;
 })();
 </script></body></html>
 
-<style id="staging-header-fix-20261103">
-/* Staging: profile and chats use the content itself as their heading */
-#other .sectionhead:has(#otherTitle){display:none!important}
-/* Prevent the add-ad control from collapsing on narrow header widths */
-.top{min-width:0!important;gap:10px!important}
-.top #addTop{flex:0 0 auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;width:auto!important;min-width:118px!important;min-height:44px!important;padding:0 12px!important;white-space:nowrap!important;font-size:12px!important}
-.top #addTop .add-top-plus{display:inline-grid!important;place-items:center!important;flex:0 0 26px!important;width:26px!important;height:26px!important}
-@media(max-width:420px){.top #addTop{min-width:108px!important;padding:0 9px!important;font-size:11px!important}.top #addTop .add-top-plus{flex-basis:24px!important;width:24px!important;height:24px!important}}
+
+
+<style id="staging-card-align-and-header-20261103">
+/* Card alignment: city and price share one stable baseline below the want block */
+#list .card-meta{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;min-height:24px!important;margin-top:12px!important}
+#list .card-meta .city{margin:0!important;line-height:24px!important;align-self:center!important}
+#list .card-meta .price{margin:0!important;line-height:24px!important;align-self:center!important;white-space:nowrap!important}
+#list .card .want{min-height:104px!important;box-sizing:border-box!important}
+#list .card .want-value{line-height:1.35!important}
+#list .card .cardbody{display:flex!important;flex-direction:column!important}
+#list .card .offer{margin-top:auto!important}
+/* Add-ad control: retain label on every internal page and viewport */
+.top #addTop{width:auto!important;min-width:132px!important;height:44px!important;padding:0 13px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;flex:0 0 auto!important;white-space:nowrap!important}
+.top #addTop .add-top-plus{display:inline-grid!important;place-items:center!important;width:26px!important;height:26px!important;flex:0 0 26px!important;font-size:20px!important;line-height:1!important}
+.top #addTop>span:last-child{display:inline!important;visibility:visible!important;opacity:1!important}
+@media(max-width:420px){.top #addTop{min-width:124px!important;padding:0 10px!important;font-size:12px!important}.top #addTop .add-top-plus{width:24px!important;height:24px!important;flex-basis:24px!important}}
 </style>
