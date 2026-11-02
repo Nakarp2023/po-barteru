@@ -31,7 +31,7 @@ async function loadQueue(){
  $("queue").innerHTML='<p class="muted">Загружаю…</p>'; $("queueInfo").textContent=""; 
  let query=client.from("reports").select("*",{count:"exact"}).order("created_at",{ascending:false});
  if(q!=="all")query=query.eq("status",q);
- if(term){if(/^[0-9a-f-]{20,}$/i.test(term))query=query.eq("id",term);else query=query.ilike("reason","%"+term.replace(/[\\%_]/g,"\\</script></body></html>")+"%");}
+ if(term){if(/^[0-9a-f-]{20,}$/i.test(term))query=query.eq("id",term);else query=query.ilike("reason","%"+term.replace(/[%_\\]/g,ch=> "\\"+ch)+"%");}
  const from=page*PAGE_SIZE,to=from+PAGE_SIZE-1;const {data,error,count}=await query.range(from,to);
  if(error)throw error;reports=data||[];$("queueInfo").textContent=(count??reports.length)+" записей";
  $("pageInfo").textContent="Страница "+(page+1);$("prevPage").disabled=page===0;$("nextPage").disabled=reports.length<PAGE_SIZE;
