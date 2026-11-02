@@ -3949,7 +3949,7 @@ async function loadActiveSubscription(){
  if(error){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Статус тарифа</b><div class="category" style="margin-top:6px">Не удалось загрузить данные тарифа. Обнови профиль позже.</div></article>'}return}
  const rank={business:3,pro_plus:2,pro:1,free:0};
  const data=(rows||[]).sort((a,b)=>(rank[b.plan_code]||0)-(rank[a.plan_code]||0)||new Date(b.ends_at)-new Date(a.ends_at))[0]||null;
- if(!data){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<article class="card" style="padding:14px"><b>Ваш тариф: Free</b><div class="category" style="margin-top:6px">До 3 активных объявлений. Платный тариф можно подключить ниже.</div></article>'}return}
+ if(!data){activePlanCode="free";if(el){el.hidden=false;el.innerHTML='<div class="category" style="padding:8px 0;font-weight:600">Free · до 3 активных объявлений</div>'}return}
  activePlanCode=data.plan_code||"free";
  const names={pro:"PRO",pro_plus:"PRO+",business:"Business"};
  const until=new Date(data.ends_at).toLocaleDateString("ru-RU");
