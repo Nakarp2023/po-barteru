@@ -5643,4 +5643,28 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 })();
 </script>
 
+
+<!-- Desktop catalog refinement (mobile styles intentionally untouched) -->
+<style>
+@media (min-width: 1200px) {
+  .grid { grid-template-columns: repeat(5, minmax(0,1fr)); gap: 16px; }
+}
+@media (min-width: 760px) {
+  .grid { align-items: stretch; }
+  .grid .card { display:flex; flex-direction:column; min-width:0; }
+  .grid .card .photo { aspect-ratio: 1 / 1; height:auto; flex:0 0 auto; }
+  .grid .cardbody { display:flex; flex:1; flex-direction:column; padding:12px; min-width:0; }
+  .grid .card h3 { font-size:15px; line-height:1.28; margin:6px 0 8px; min-height:2.56em; }
+  .grid .card .want { font-size:12px; line-height:1.35; min-height:0; overflow-wrap:anywhere; }
+  .grid .card .city { margin-top:8px; }
+  .grid .card .offer { margin-top:auto; padding:10px 6px; min-height:38px; font-size:12px; }
+}
+@media (min-width: 760px) and (max-width: 959px) {
+  .grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap:14px; }
+}
+@media (min-width: 960px) and (max-width: 1199px) {
+  .grid { grid-template-columns: repeat(4,minmax(0,1fr)); gap:16px; }
+}
+</style>
+
 </body></html>
