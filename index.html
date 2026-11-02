@@ -3841,6 +3841,7 @@ function setListingDetailImage(index,item){
  const urls=Array.isArray(item.image_urls)?item.image_urls.filter(Boolean):[];
  if(!urls.length)return;
  listingDetailImageIndex=(index+urls.length)%urls.length;
+ window.__listingPhotoUrls=urls;window.__listingPhotoIndex=listingDetailImageIndex;
  const img=$("listingDetailImage"),count=$("listingGalleryCount"),dots=$("listingGalleryDots");
  if(img){img.src=urls[listingDetailImageIndex];img.alt=(item.title||"Фото объявления")+" — фото "+(listingDetailImageIndex+1)}
  if(count)count.textContent=(listingDetailImageIndex+1)+" / "+urls.length;
@@ -3850,7 +3851,7 @@ async function openListingDetails(item){
  const modal=$("listingDetailModal"),content=$("listingDetailContent");if(!modal||!content)return;
  const requestId=++listingDetailRequestId;
  const imageUrls=Array.isArray(item.image_urls)?item.image_urls.filter(Boolean):[];
- listingDetailImageIndex=0;
+ listingDetailImageIndex=0;window.__listingPhotoUrls=imageUrls;window.__listingPhotoIndex=0;
  const image=imageUrls.length?'<div class="listing-detail-gallery" id="listingDetailGallery"><img class="listing-detail-image" id="listingDetailImage" src="'+esc(imageUrls[0])+'" alt="'+esc(item.title)+' — фото 1">'+(imageUrls.length>1?'<button type="button" class="listing-gallery-arrow prev" id="listingGalleryPrev" aria-label="Предыдущее фото">‹</button><button type="button" class="listing-gallery-arrow next" id="listingGalleryNext" aria-label="Следующее фото">›</button><span class="listing-gallery-count" id="listingGalleryCount">1 / '+imageUrls.length+'</span>':"")+'</div>'+(imageUrls.length>1?'<div class="listing-gallery-dots" id="listingGalleryDots">'+imageUrls.map((_,i)=>'<button type="button" class="'+(i===0?"active":"")+'" data-gallery-index="'+i+'" aria-label="Фото '+(i+1)+'" aria-current="'+(i===0?"true":"false")+'"></button>').join("")+'</div>':""):categoryPlaceholder(item.category,"listing-detail-emoji",item.title,item.subcategory||"");
  content.innerHTML=image+'<div class="listing-detail-top"><div><div class="category">'+esc(item.category||"Без категории")+'</div><h2 class="listing-detail-title" id="listingDetailTitle">'+esc(item.title||"Объявление")+'</h2></div></div><div class="listing-detail-meta"><span>⌖ '+esc(item.city||"Город не указан")+'</span>'+(item.price?'<span>~'+Number(item.price).toLocaleString("ru-RU")+' ₽</span>':"")+'</div><div id="publicSellerReputation" class="listing-detail-value" style="margin:12px 0">Загружаем репутацию автора…</div><div class="listing-detail-label">Что ищет владелец</div><div class="listing-detail-value">'+esc(item.want||"Не указано")+'</div><div class="listing-detail-label">Описание</div><div class="listing-detail-value">'+esc(item.desc||"Владелец не добавил описание.")+'</div><div id="publicSellerReviews"></div>'+(item.remote&&currentUser&&String(item.user_id)!==String(currentUser.id)?'<button type="button" class="listing-detail-offer" id="listingDetailOffer">Предложить обмен</button>':"");
  $("listingDetailClose").onclick=closeListingDetails;
