@@ -4613,7 +4613,7 @@ $("loadMoreListings").onclick=loadMoreRemoteListings;
 async function saveListing(item){
  if(!db||!currentUser)return false;
  const {error}=await db.from("listings").insert({user_id:currentUser.id,title:item.title,description:item.desc||"",category:item.category,subcategory:item.subcategory||null,city:item.city,region:item.region||null,want:item.want,estimated_value:item.price||null,image_urls:item.image_urls||[],status:"active"});
- if(error){const limit=String(error.message||"").match(/ACTIVE_LISTING_LIMIT_REACHED:(\d+)/);toast(limit?"Достигнут лимит активных объявлений ("+limit[1]+"). Сними с публикации другое объявление или подключи тариф выше.":"Не удалось опубликовать на сервере: "+error.message);$("backendNote").textContent=error.message;return false}
+ if(error){const limit=String(error.message||"").match(/ACTIVE_LISTING_LIMIT_REACHED:(\d+)/);if(limit){closeForm();setPage("profile");requestAnimationFrame(()=>{const hub=document.getElementById("profileHub");hub?.querySelector("[data-profile-open=\"settings\"]")?.click();requestAnimationFrame(()=>document.getElementById("monetizationSection")?.scrollIntoView({behavior:"smooth",block:"start"}))});toast("Лимит Free достигнут. Выбери тариф или продвижение ниже.");}else{toast("Не удалось опубликовать на сервере: "+error.message);$("backendNote").textContent=error.message;}return false}
  await loadRemoteListings();
  return true;
 }
