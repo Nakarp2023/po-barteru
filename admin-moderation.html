@@ -11,7 +11,7 @@
 <div id="notice" role="status" aria-live="polite"></div></main>
 <script>
 const URL="https://noiryqvoohqrfmemfnne.supabase.co",KEY="sb_publishable_ZQysYhUfU2mNnM2Ce1jzIw_CWFj5AM_";
-const db=window.supabase?.createClient?window.supabase.createClient(URL,KEY):null;window.adminModerationDb=db;let reports=[],selected=null,user=null,page=0;const PAGE_SIZE=100;let searchTimer=null;
+const db=(window.supabase&&typeof window.supabase.createClient==="function")?window.supabase.createClient(URL,KEY):null;window.adminModerationDb=db;window.addEventListener("load",()=>{if(!window.adminModerationDb&&window.supabase?.createClient){window.adminModerationDb=window.supabase.createClient(URL,KEY);}});let reports=[],selected=null,user=null,page=0;const PAGE_SIZE=100;let searchTimer=null;
 const $=id=>document.getElementById(id);const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const label={new:"Новая",reviewed:"На рассмотрении",dismissed:"Отклонена",resolved:"Решена"};
 function msg(s,cls=""){ $("notice").className=cls;$("notice").textContent=s; }
