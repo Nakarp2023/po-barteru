@@ -20,8 +20,14 @@ async function guard(){const {data:{session}}=await db.auth.getSession();user=se
 if(user.app_metadata?.role!=="admin"){$("login").classList.remove("hidden");$("app").classList.add("hidden");$("logout").classList.remove("hidden");$("who").textContent=user.email+" · ожидает роль";$("bootstrap").classList.remove("hidden");$("loginMsg").textContent="Вход выполнен. Можно активировать роль администратора Staging.";return false}
 $("login").classList.add("hidden");$("app").classList.remove("hidden");$("logout").classList.remove("hidden");$("who").textContent=user.email+" · admin";return true}
 async function handleAdminLogin(event){if(event)event.preventDefault();try{setBusy(true);$("signin").textContent="Входим…";$("loginMsg").textContent="Подключение к Staging Supabase…";msg("Запрос авторизации отправлен.");if(!db)throw new Error("Библиотека Supabase не загрузилась (CDN).");const email=$("email").value.trim(),password=$("password").value;if(!email||!password)throw new Error("Заполните email и пароль.");const result=await db.auth.signInWithPassword({email,password});if(result.error)throw result.error;$("loginMsg").textContent="Вход успешен. Проверяем права…";if(await guard()){msg("Авторизация успешна.","success");await loadQueue()}}catch(e){const text=e?.message||String(e);$("loginMsg").textContent="Ошибка входа: "+text;msg("Ошибка входа: "+text,"error")}finally{setBusy(false);$("signin").textContent="Войти"}}
-$("loginForm").addEventListener("submit",handleAdminLogin);
-$("signin").addEventListener("click",event=>{event.preventDefault();$("loginMsg").textContent="Нажатие зарегистрировано — запускаю вход…";msg("Кнопка нажата. Обработчик работает.");handleAdminLogin(event)});
+// Isolated sign-in handler, independent of form submission.
+$("signin").type="button";
+$("signin").onclick=async function(event){
+ event.preventDefault();const b=$("signin"),m=$("loginMsg");b.disabled=true;b.textContent="Входим…";m.textContent="Обработчик запущен: подключение к Supabase";msg("Обработчик входа запущен.");
+ try{if(!window.supabase?.createClient)throw new Error("Supabase JS CDN не загрузился.");const email=$("email").value.trim(),password=$("password").value;if(!email||!password)throw new Error("Введите email и пароль.");const authClient=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true}});const {data,error}=await authClient.auth.signInWithPassword({email,password});if(error)throw error;m.textContent="Вход успешен. Проверяем права…";await db.auth.setSession(data.session);location.href=location.pathname+"?auth="+Date.now();}
+ catch(e){m.textContent="Ошибка входа: "+(e.message||String(e));msg(m.textContent,"error")}
+ finally{b.disabled=false;b.textContent="Войти"}
+};
 window.addEventListener("error",event=>{const text="Ошибка JS: "+(event.message||"неизвестная");const n=$("loginMsg");if(n)n.textContent=text;const notice=$("notice");if(notice){notice.textContent=text;notice.className="error"}});
 window.addEventListener("unhandledrejection",event=>{const text="Ошибка запроса: "+(event.reason?.message||String(event.reason));$("loginMsg").textContent=text;msg(text,"error")});
 $("logout").onclick=async()=>{await db.auth.signOut();selected=null;await guard()};
