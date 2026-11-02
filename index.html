@@ -384,7 +384,7 @@ button{min-height:42px}
 /* Auth panel belongs only to the unauthenticated Profile screen. */
 main.app:not(.show-auth) #authBox{display:none!important}
 main.app.show-auth #authBox{display:block!important}
-/* Liquid Glass navigation: one floating material{
+/* Liquid Glass navigation: one floating material */
   --active-index:0;
   position:fixed;left:12px;right:12px;bottom:calc(8px + env(safe-area-inset-bottom));
   display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;gap:0;
@@ -5784,7 +5784,38 @@ window.__poOpenPhotoGallery=open;
 #list .card .cardbody .offer{grid-row:5!important;align-self:end!important;width:100%!important;height:48px!important;min-height:48px!important;max-height:48px!important;margin:0!important;box-sizing:border-box!important}
 @media(max-width:600px){#list .card{height:440px!important;min-height:440px!important}#list .card .photo{flex-basis:132px!important;height:132px!important;min-height:132px!important;max-height:132px!important}#list .card .cardbody{grid-template-rows:18px 2.8em 78px 30px minmax(0,1fr)!important;padding:12px!important}#list .card .cardbody .want{height:78px!important;min-height:78px!important;max-height:78px!important}#list .card .cardbody .offer{height:44px!important;min-height:44px!important;max-height:44px!important}}
 </style>
-</body></html>
+<style id="chrome-mobile-overflow-fix-20261103">
+/* Chrome Android/iOS viewport overflow guard — staging regression fix */
+html,body{width:100%;max-width:100%;min-width:0;margin:0;overflow-x:hidden}
+body{position:relative}
+main.app,.app{width:100%;max-width:1000px;min-width:0;margin-left:auto;margin-right:auto;box-sizing:border-box}
+.app>*{min-width:0;max-width:100%}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap;width:100%;min-width:0}
+.brand{flex:1 1 auto;min-width:0;max-width:100%;overflow:hidden}
+.brand>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top .pill{flex:0 1 auto;min-width:0;max-width:100%;white-space:nowrap}
+.search{display:flex;width:100%;min-width:0;max-width:100%}
+.search input{min-width:0;max-width:100%;flex:1 1 0}
+.sectionhead{min-width:0;max-width:100%;gap:8px}
+.sectionhead>*{min-width:0;max-width:100%}
+.grid{width:100%;min-width:0;max-width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}
+.card,.cardbody,.want,.offer{min-width:0;max-width:100%;box-sizing:border-box}
+.nav-glass,.bottom-nav,#bottomNav,.tabbar{box-sizing:border-box;max-width:calc(100vw - 24px);width:auto;left:12px;right:12px}
+.nav-glass{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));}
+.nav-glass .nav,.bottom-nav .nav,#bottomNav .nav,.tabbar .nav{min-width:0;width:100%;max-width:100%;flex:1 1 0;box-sizing:border-box;overflow:hidden}
+@media(max-width:600px){
+ .app{padding-left:14px;padding-right:14px}
+ .top{gap:7px}
+ .brand{font-size:clamp(13px,3.7vw,17px);gap:6px}
+ .top .pill{font-size:clamp(11px,3.3vw,13px);padding:9px 10px}
+ .search{gap:7px}
+ .search button{flex:0 0 auto;max-width:30%;padding-left:12px;padding-right:12px}
+ .sectionhead h2{font-size:clamp(17px,5vw,22px)}
+ .nav-glass,.bottom-nav,#bottomNav,.tabbar{left:10px;right:10px;max-width:calc(100vw - 20px)}
+ .nav-glass{padding:5px;grid-template-columns:repeat(5,minmax(0,1fr))}
+ .nav-glass .nav,.bottom-nav .nav,#bottomNav .nav,.tabbar .nav{font-size:clamp(9px,2.7vw,11px);padding:4px 1px;gap:3px}
+}
+</style></body></html>
 
 
 
