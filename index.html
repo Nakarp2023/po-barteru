@@ -3609,18 +3609,21 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media (min-width: 1400px) { .grid { grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); } }
 </style>
 <style id="desktop-catalog-single-source">
-/* Canonical desktop marketplace grid. Mobile <=759px is intentionally untouched. */
+/* Desktop marketplace: consistent card rhythm; mobile styles are untouched. */
 @media (min-width:760px) {
  .app{width:calc(100% - 48px)!important;max-width:1600px!important}
  #list.grid{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:16px!important;align-items:stretch!important;justify-content:stretch!important}
  #list.grid>.card{width:auto!important;max-width:none!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;border-radius:16px!important}
  #list.grid .photo{width:100%!important;height:auto!important;aspect-ratio:1/1!important;max-height:none!important}
- #list.grid .cardbody{padding:11px!important}
- #list.grid .category{font-size:10px!important;letter-spacing:.45px!important}
- #list.grid .card h3{font-size:14px!important;line-height:1.3!important;margin:6px 0 8px!important;min-height:2.6em!important;max-height:2.6em!important}
- #list.grid .card .want{font-size:11px!important;line-height:1.35!important;padding:8px!important;min-height:0!important}
- #list.grid .card .city{font-size:10px!important;line-height:1.3!important;margin-top:8px!important;min-height:2.6em!important}
- #list.grid .card .offer{font-size:10px!important;min-height:38px!important;flex-basis:38px!important;margin-top:8px!important;padding:8px 5px!important}
+ #list.grid .cardbody{padding:11px!important;display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:275px!important}
+ #list.grid .category{font-size:10px!important;letter-spacing:.45px!important;min-height:1.3em!important}
+ #list.grid .card h3{font-size:14px!important;line-height:1.3!important;margin:6px 0 8px!important;min-height:2.6em!important;max-height:2.6em!important;overflow:hidden!important}
+ #list.grid .card .want{font-size:11px!important;line-height:1.35!important;padding:8px!important;min-height:54px!important;box-sizing:border-box!important}
+ #list.grid .card .card-meta{margin-top:10px!important;min-height:72px!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important}
+ #list.grid .card .city{font-size:10px!important;line-height:1.3!important;margin:0!important;min-height:2.6em!important;display:flex!important;align-items:flex-start!important}
+ #list.grid .card .price{min-height:20px!important;margin-top:5px!important;box-sizing:border-box!important}
+ #list.grid .card .card-meta:not(:has(.price))::after{content:"";display:block;height:20px;min-height:20px;margin-top:5px}
+ #list.grid .card .offer{font-size:10px!important;line-height:1.2!important;min-height:40px!important;height:40px!important;flex:0 0 40px!important;margin-top:auto!important;padding:8px 5px!important;box-sizing:border-box!important}
  #list.grid .card .heart{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}
 }
 </style></head><body>
