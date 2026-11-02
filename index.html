@@ -5645,6 +5645,11 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 
+<!-- Navigation visibility regression fix: CSS grid must respect the hidden state. -->
+<style>
+#list[hidden],#filters[hidden],#listHeader[hidden],#empty[hidden],#loadMoreListings[hidden]{display:none!important}
+</style>
+
 <!-- Desktop catalog refinement (mobile styles intentionally untouched) -->
 <style>
 @media (min-width: 1200px) {
