@@ -64,12 +64,9 @@ db.auth.onAuthStateChange(async(event,session)=>{user=session?.user||null;if(eve
    const client=window.supabase.createClient("https://noiryqvoohqrfmemfnne.supabase.co","sb_publishable_ZQysYhUfU2mNnM2Ce1jzIw_CWFj5AM_",{auth:{persistSession:true,autoRefreshToken:true}});
    const {data,error}=await client.auth.signInWithPassword({email,password});
    if(error)throw error;
-   out.textContent="Supabase вход успешен. Проверяю роль…";
-const {error:setError}=await db.auth.setSession(data.session);if(setError)throw setError;
-user=data.user;const isAdmin=await guard();
-if(isAdmin){msg("Вход выполнен: роль admin подтверждена.","success");await loadQueue()}
-else if(user){$("loginMsg").textContent="Вход подтверждён Supabase, но роль admin отсутствует. Нажмите «Активировать администратора».";msg("Сессия сохранена; ожидается назначение роли.","success")}
-else throw Error("Supabase подтвердил вход, но сессия не сохранилась в панели.");
+   out.textContent="Supabase вход успешен. Сессия сохранена; открываю панель…";
+/* Auth client persists the session in Supabase storage. Reload lets the app client read it and run guard(). */
+location.replace(location.pathname+"?auth=success");
   }catch(err){
    out.textContent="AUTH ERROR: "+(err&&err.message||String(err));
    if(notice){notice.textContent=out.textContent;notice.className="error"}
