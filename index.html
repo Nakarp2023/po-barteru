@@ -5843,7 +5843,28 @@ main.app,.app{width:100%;max-width:1000px;min-width:0;margin-left:auto;margin-ri
  form.addEventListener("submit",async e=>{e.preventDefault();if(!currentUser||!target){status.textContent="Войдите в аккаунт и выберите объявление.";status.classList.add("is-error");return}const reasonValue=reason.value,body=details.value.trim();if(!reasonValue||body.length<10){status.textContent="Выберите причину и опишите нарушение (не менее 10 символов).";status.classList.add("is-error");return}submit.disabled=true;submit.textContent="Отправляем…";status.textContent="";status.classList.remove("is-error");try{const subject="Жалоба на объявление: "+String(target.title||"Объявление").slice(0,90)+" (#"+String(target.id).slice(0,8)+")";const message="Причина: "+labels[reasonValue]+"\nОбъявление: "+target.title+"\nID: "+target.id+"\nСсылка: "+location.origin+"/?listing="+encodeURIComponent(target.id)+"\n\nПодробности: "+body;const {data:report,error}=await db.from("reports").insert({reporter_id:currentUser.id,listing_id:target.id,reported_user_id:target.user_id,reason:labels[reasonValue]+" — "+body}).select("id").single();if(error)throw error;close();toast("Жалоба отправлена модераторам. Спасибо!");}catch(err){console.error("Listing report failed",err);status.textContent="Не удалось отправить жалобу. Проверьте соединение и попробуйте снова.";status.classList.add("is-error")}finally{submit.disabled=false;submit.textContent="Отправить жалобу"}});
  window.__openListingReport=showReport;
 })();
-</script></body></html>
+</script><style id="listing-report-menu-20261103">
+.listing-detail-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.listing-detail-actions{position:relative;flex:0 0 auto}
+.listing-detail-more{width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--ink);font-size:23px;line-height:1;display:grid;place-items:center}
+.listing-detail-more-menu{top:42px;right:0}
+
+#list .photo{position:relative}
+.listing-more{position:absolute;z-index:4;top:9px;right:9px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.94);color:#17231e;font-size:23px;line-height:1;display:grid;place-items:center;box-shadow:0 2px 9px #17231e18;backdrop-filter:blur(8px)}
+.listing-more-menu{position:absolute;z-index:6;top:47px;right:9px;min-width:160px;padding:5px;border:1px solid #e1e6df;border-radius:13px;background:#fff;box-shadow:0 12px 30px #17231e24}
+.listing-more-menu[hidden]{display:none!important}
+.listing-more-menu button{display:block;width:100%;border:0;border-radius:9px;background:#fff;padding:10px 12px;text-align:left;color:#b4232c;font-weight:700;font-size:13px}
+.listing-more-menu button:active{background:#f7f7f4}
+.listing-report-sheet{position:relative;padding-top:28px!important}
+.listing-report-close{position:absolute;top:12px;right:14px}
+.listing-report-form{display:grid;gap:13px}
+.listing-report-form .field{display:grid;gap:7px;font-size:13px;font-weight:700}
+.listing-report-form select,.listing-report-form textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:#fff;color:var(--ink);font-weight:400;outline-color:var(--green)}
+.listing-report-form textarea{resize:vertical;min-height:100px}
+.listing-report-status{margin:0;font-size:12px;line-height:1.4;color:var(--muted)}
+.listing-report-status.is-error{color:#b4232c}
+.listing-report-submit{width:100%;border:0;background:var(--green);color:#fff;padding:13px;font-weight:800}
+</style></body></html>
 
 
 
