@@ -5654,4 +5654,26 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;lo
 }
 </style>
 
-</body></html>
+<style id="desktopPhotoLightbox">
+@media(min-width:701px){
+#poPhotoLightbox{position:fixed;inset:0;z-index:10000;background:rgba(9,16,13,.94);display:none;align-items:center;justify-content:center;padding:56px 90px}
+#poPhotoLightbox.open{display:flex}
+#poPhotoLightbox img{max-width: min(90vw,1400px);max-height:84vh;object-fit:contain;transition:transform .18s ease;cursor:zoom-in}
+#poPhotoLightbox img.zoomed{transform:scale(1.7);cursor:zoom-out}
+#poPhotoLightbox button{position:absolute;border:0;border-radius:50%;background:#ffffff20;color:white;width:48px;height:48px;font-size:28px;display:grid;place-items:center}
+#poPhotoLightbox .close{right:24px;top:20px}#poPhotoLightbox .prev{left:24px}#poPhotoLightbox .next{right:24px}
+#poPhotoLightbox .count{position:absolute;bottom:24px;color:#fff;background:#ffffff20;border-radius:99px;padding:8px 14px;font-size:14px}
+}
+</style>
+<div id="poPhotoLightbox" aria-hidden="true"><button class="close" aria-label="Закрыть">×</button><button class="prev" aria-label="Предыдущее фото">‹</button><img alt="Фото объявления в увеличенном просмотре"><button class="next" aria-label="Следующее фото">›</button><span class="count"></span></div>
+<script>
+(()=>{const box=document.getElementById('poPhotoLightbox');if(!box)return;const img=box.querySelector('img'),count=box.querySelector('.count');let urls=[],idx=0;
+function paint(){img.src=urls[idx];img.classList.remove('zoomed');count.textContent=(idx+1)+' / '+urls.length;box.querySelector('.prev').style.visibility=urls.length>1?'visible':'hidden';box.querySelector('.next').style.visibility=urls.length>1?'visible':'hidden'}
+function open(list,n){urls=list||[];if(!urls.length)return;idx=Math.max(0,Math.min(n||0,urls.length-1));paint();box.classList.add('open');box.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+function close(){box.classList.remove('open');box.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+box.querySelector('.close').onclick=close;box.querySelector('.prev').onclick=()=>{idx=(idx+urls.length-1)%urls.length;paint()};box.querySelector('.next').onclick=()=>{idx=(idx+1)%urls.length;paint()};img.onclick=()=>img.classList.toggle('zoomed');box.onclick=e=>{if(e.target===box)close()};
+document.addEventListener('keydown',e=>{if(!box.classList.contains('open'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft'){idx=(idx+urls.length-1)%urls.length;paint()}if(e.key==='ArrowRight'){idx=(idx+1)%urls.length;paint()}});
+document.addEventListener('click',e=>{if(!matchMedia('(min-width:701px)').matches)return;const im=e.target.closest('#listingDetailImage');if(!im)return;const item=window.__poCurrentDetail;if(item&&Array.isArray(item.image_urls))open(item.image_urls,window.__poCurrentDetailIndex||0)});
+window.__poOpenPhotoGallery=open;
+})();
+</script></body></html>
