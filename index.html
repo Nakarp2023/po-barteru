@@ -4056,6 +4056,22 @@ async function openListingDetails(item){
  const image=imageUrls.length?'<div class="listing-detail-gallery" id="listingDetailGallery"><img class="listing-detail-image" id="listingDetailImage" src="'+esc(imageUrls[0])+'" alt="'+esc(item.title)+' — фото 1">'+(imageUrls.length>1?'<button type="button" class="listing-gallery-arrow prev" id="listingGalleryPrev" aria-label="Предыдущее фото">‹</button><button type="button" class="listing-gallery-arrow next" id="listingGalleryNext" aria-label="Следующее фото">›</button><span class="listing-gallery-count" id="listingGalleryCount">1 / '+imageUrls.length+'</span>':"")+'</div>'+(imageUrls.length>1?'<div class="listing-gallery-dots" id="listingGalleryDots">'+imageUrls.map((_,i)=>'<button type="button" class="'+(i===0?"active":"")+'" data-gallery-index="'+i+'" aria-label="Фото '+(i+1)+'" aria-current="'+(i===0?"true":"false")+'"></button>').join("")+'</div>':""):categoryPlaceholder(item.category,"listing-detail-emoji",item.title,item.subcategory||"")+(imageUrls.length?"":'<p class="category" style="margin:6px 0 12px;text-align:center">Иллюстрация категории · фото товара не добавлено</p>');
  content.innerHTML=image+'<div class="listing-detail-top"><div><div class="category">'+esc(item.category||"Без категории")+(item.subcategory?' · '+esc(item.subcategory):"")+'</div><h2 class="listing-detail-title" id="listingDetailTitle">'+esc(item.title||"Объявление")+'</h2></div></div><div class="listing-detail-meta"><span>⌖ '+esc(item.city||"Город не указан")+'</span>'+(item.price?'<span>~'+Number(item.price).toLocaleString("ru-RU")+' ₽</span>':"")+'</div><div id="publicSellerReputation" class="listing-detail-value" style="margin:12px 0">Загружаем репутацию автора…</div><div class="listing-detail-label">Что ищет владелец</div><div class="listing-detail-value">'+esc(item.want||"Не указано")+'</div><div class="listing-detail-label">Описание</div><div class="listing-detail-value">'+esc(item.desc||"Владелец не добавил описание.")+'</div><div id="publicSellerReviews"></div>'+(item.remote&&currentUser&&String(item.user_id)!==String(currentUser.id)?'<button type="button" class="listing-detail-offer" id="listingDetailOffer">Предложить обмен</button>':"");
  $("listingDetailClose").onclick=closeListingDetails;
+ const reportButton=$("listingDetailReport");
+ if(reportButton)reportButton.onclick=async()=>{
+  if(!currentUser){toast("Войдите, чтобы пожаловаться на объявление");return}
+  const reason=window.prompt("Укажи причину жалобы (мошенничество, запрещённый товар, спам или неверная информация):","");
+  if(reason===null)return;
+  const cleanReason=String(reason).trim();
+  if(cleanReason.length<3){toast("Опиши причину подробнее (минимум 3 символа)");return}
+  if(cleanReason.length>1000){toast("Причина жалобы не должна превышать 1000 символов");return}
+  reportButton.disabled=true;reportButton.textContent="Отправляем…";
+  try{
+   const {error}=await db.from("reports").insert({reporter_id:currentUser.id,listing_id:item.id,reported_user_id:item.user_id,reason:cleanReason});
+   if(error){if(error.code==="23505")toast("Ты уже отправлял жалобу на это объявление");else{console.error("Report submission failed",error);toast("Не удалось отправить жалобу. Попробуй позже")}return}
+   toast("Жалоба отправлена администрации");
+  }catch(error){console.error("Report submission failed",error);toast("Не удалось отправить жалобу. Попробуй позже")}
+  finally{reportButton.disabled=false;reportButton.textContent="⚑ Пожаловаться на объявление"}
+ };
  if(imageUrls.length>1){
   $("listingGalleryPrev").onclick=()=>setListingDetailImage(listingDetailImageIndex-1,item);
   $("listingGalleryNext").onclick=()=>setListingDetailImage(listingDetailImageIndex+1,item);
