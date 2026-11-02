@@ -5622,3 +5622,13 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 </body></html>
+<!-- Desktop listing density refinement: mobile styles intentionally untouched -->
+<style>
+@media (min-width: 1280px) {
+  .grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+  .grid .card { border-radius: 16px; }
+  .grid .photo { height: auto; aspect-ratio: 1 / 1; }
+  .grid .cardbody { padding: 12px 13px 14px; }
+  .grid .card h3 { font-size: 15px; line-height: 1.35; }
+}
+</style>
