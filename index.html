@@ -5667,4 +5667,49 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 }
 </style>
 
+
+<style>
+/* Full-screen photo viewer for listing gallery; desktop/mobile behavior is additive. */
+#listingPhotoZoom{position:fixed;inset:0;z-index:1000;background:rgba(8,15,12,.96);display:none;align-items:center;justify-content:center;touch-action:pan-y}
+#listingPhotoZoom.open{display:flex}
+#listingPhotoZoom img{max-width:94vw;max-height:88dvh;object-fit:contain;user-select:none}
+#listingPhotoZoom .zoom-close,#listingPhotoZoom .zoom-arrow{position:absolute;border:1px solid #ffffff35;background:#ffffff18;color:#fff;backdrop-filter:blur(12px);border-radius:50%;display:grid;place-items:center}
+#listingPhotoZoom .zoom-close{top:calc(16px + env(safe-area-inset-top));right:18px;width:46px;height:46px;font-size:28px}
+#listingPhotoZoom .zoom-arrow{top:50%;transform:translateY(-50%);width:48px;height:48px;font-size:30px}
+#listingPhotoZoom .zoom-prev{left:18px}#listingPhotoZoom .zoom-next{right:18px}
+#listingPhotoZoom .zoom-count{position:absolute;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);color:#fff;background:#ffffff18;border:1px solid #ffffff25;border-radius:99px;padding:8px 14px;font-size:14px}
+@media(max-width:600px){#listingPhotoZoom .zoom-prev{left:8px}#listingPhotoZoom .zoom-next{right:8px}}
+</style>
+<div id="listingPhotoZoom" aria-hidden="true" role="dialog" aria-label="Фото объявления в увеличенном просмотре">
+<button class="zoom-close" type="button" aria-label="Закрыть просмотр">×</button>
+<button class="zoom-arrow zoom-prev" type="button" aria-label="Предыдущее фото">‹</button>
+<img id="listingPhotoZoomImage" alt="">
+<button class="zoom-arrow zoom-next" type="button" aria-label="Следующее фото">›</button>
+<div class="zoom-count" id="listingPhotoZoomCount">1 / 1</div>
+</div>
+<script>
+(function(){
+ const overlay=document.getElementById('listingPhotoZoom'),img=document.getElementById('listingPhotoZoomImage'),count=document.getElementById('listingPhotoZoomCount');
+ if(!overlay||!img)return;
+ let urls=[],index=0,touchX=0;
+ function paint(){if(!urls.length)return;img.src=urls[index];img.alt='Фото объявления '+(index+1);count.textContent=(index+1)+' / '+urls.length}
+ function step(n){if(!urls.length)return;index=(index+n+urls.length)%urls.length;paint()}
+ function close(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+ overlay.querySelector('.zoom-close').onclick=close;
+ overlay.querySelector('.zoom-prev').onclick=()=>step(-1);
+ overlay.querySelector('.zoom-next').onclick=()=>step(1);
+ overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
+ document.addEventListener('keydown',e=>{if(!overlay.classList.contains('open'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
+ overlay.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].clientX},{passive:true});
+ overlay.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-touchX;if(Math.abs(dx)>45)step(dx<0?1:-1)},{passive:true});
+ document.addEventListener('click',e=>{
+  const target=e.target.closest('#listingDetailImage');if(!target)return;
+  const current=window.__listingPhotoUrls||[];if(!current.length)return;
+  urls=current;index=Number(window.__listingPhotoIndex||0);paint();
+  overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+ });
+ window.__openListingPhotoZoom=(arr,i)=>{urls=arr||[];index=i||0;paint();overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'};
+})();
+</script>
+
 </body></html>
