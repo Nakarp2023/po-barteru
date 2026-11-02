@@ -5644,3 +5644,6 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 </script>
 
 </body></html>
+
+/* Navigation isolation: the HTML hidden attribute must win over component display rules (e.g. #list.grid { display:grid!important }). */
+[hidden]{display:none!important;}
