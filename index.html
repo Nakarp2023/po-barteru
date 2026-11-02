@@ -3626,7 +3626,21 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
  #list.grid .card .offer{font-size:10px!important;line-height:1.2!important;min-height:40px!important;height:40px!important;flex:0 0 40px!important;margin-top:auto!important;padding:8px 5px!important;box-sizing:border-box!important}
  #list.grid .card .heart{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}
 }
-</style></head><body>
+</style><style id="staging-page-isolation-fix">
+/* Authoritative hidden state: hidden sections must never leak between tabs */
+[hidden], [hidden] * { display:none !important; }
+/* Photo gallery: keep controls completely out of layout until explicitly opened */
+#poPhotoLightbox { display:none !important; position:fixed; inset:0; z-index:10000; background:rgba(9,16,13,.94); align-items:center; justify-content:center; padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom)); box-sizing:border-box; }
+#poPhotoLightbox.open { display:flex !important; }
+#poPhotoLightbox img { display:block; max-width:90vw; max-height:82vh; object-fit:contain; cursor:zoom-in; }
+#poPhotoLightbox img.zoomed { transform:scale(1.5); cursor:zoom-out; }
+#poPhotoLightbox button { position:absolute; border:0; border-radius:50%; background:#ffffff20; color:#fff; width:48px; height:48px; font-size:28px; display:grid; place-items:center; }
+#poPhotoLightbox .close { right:20px; top:max(16px,env(safe-area-inset-top)); }
+#poPhotoLightbox .prev { left:16px; top:50%; }
+#poPhotoLightbox .next { right:16px; top:50%; }
+#poPhotoLightbox .count { position:absolute; bottom:max(18px,env(safe-area-inset-bottom)); color:#fff; background:#ffffff20; border-radius:99px; padding:8px 14px; font-size:14px; }
+</style>
+</head><body>
 <main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
