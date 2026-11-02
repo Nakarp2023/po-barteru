@@ -43,4 +43,34 @@ $("copyReportId").onclick=async()=>{try{await navigator.clipboard.writeText(r.id
 async function processAction(action,button){if(!user||user.app_metadata?.role!=="admin")return;const r=reports.find(x=>x.id===selected);if(!r)return;const note=$("actionNote")?.value.trim()||null;button.disabled=true;try{const {error}=await db.rpc("admin_process_report",{p_report_id:r.id,p_action:action,p_note:note});if(error)throw error;msg("Решение и запись журнала сохранены атомарно.","success");await loadQueue();if(reports.some(x=>x.id===r.id))await openReport(r.id)}catch(e){msg("Ошибка: "+e.message,"error")}finally{button.disabled=false}}
 db.auth.onAuthStateChange(async(event,session)=>{user=session?.user||null;if(event==="SIGNED_OUT"){await guard()}});
 (async()=>{if(await guard())await loadQueue()})();
+</script>
+<script>
+/* Emergency isolated auth layer: executes separately from the moderation app script. */
+(function(){
+ const byId=id=>document.getElementById(id);
+ const btn=byId("signin"),form=byId("loginForm"),out=byId("loginMsg"),notice=byId("notice");
+ if(!btn||!out)return;
+ btn.type="button";
+ if(form)form.addEventListener("submit",e=>e.preventDefault(),true);
+ btn.onclick=async function(e){
+  if(e)e.preventDefault();
+  btn.disabled=true;btn.textContent="Входим…";
+  out.textContent="Диагностика: обработчик нажатия сработал.";
+  if(notice){notice.textContent="Запущен отдельный вход Supabase";notice.className=""}
+  try{
+   if(!window.supabase||!window.supabase.createClient)throw Error("Supabase CDN недоступен");
+   const email=byId("email").value.trim(),password=byId("password").value;
+   if(!email||!password)throw Error("Заполните email и пароль");
+   const client=window.supabase.createClient("https://noiryqvoohqrfmemfnne.supabase.co","sb_publishable_ZQysYhUfU2mNnM2Ce1jzIw_CWFj5AM_",{auth:{persistSession:true,autoRefreshToken:true}});
+   const {data,error}=await client.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   out.textContent="Supabase вход успешен. Перезагружаю панель…";
+   location.replace(location.pathname+"?login="+Date.now());
+  }catch(err){
+   out.textContent="AUTH ERROR: "+(err&&err.message||String(err));
+   if(notice){notice.textContent=out.textContent;notice.className="error"}
+  }finally{btn.disabled=false;btn.textContent="Войти"}
+ };
+ window.addEventListener("error",e=>{out.textContent="JS ERROR: "+e.message});
+})();
 </script></body></html>
