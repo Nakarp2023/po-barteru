@@ -4837,7 +4837,7 @@ async function saveListing(item){
  if(error){
   const limit=String(error.message||"").match(/ACTIVE_LISTING_LIMIT_REACHED:(\d+)/);
   if(limit){
-   const choice=await appChoiceDialog({title:"Лимит бесплатных объявлений",message:"В бесплатном тарифе можно держать "+limit[1]+" активных объявления. Чтобы опубликовать новое, архивируй одно из текущих или выбери тариф с большим лимитом.",options:[{value:"archive",label:"Перейти к моим объявлениям"},{value:"plans",label:"Посмотреть тарифы"}],defaultValue:"archive",actionLabel:"Открыть"});
+   const choice=await appChoiceDialog({title:"Лимит бесплатных объявлений",message:"В бесплатном тарифе можно держать "+limit[1]+" активных объявления. Увеличь лимит с помощью тарифа или освободи место, архивировав одно из объявлений.",options:[{value:"plans",label:"Увеличить лимит — посмотреть тарифы"},{value:"archive",label:"Архивировать объявление и освободить место"}],defaultValue:"plans",actionLabel:"Перейти к тарифам"});
    if(choice==="archive"){setPage("profile");const dash=$("profileDashboard");if(dash)dash.classList.add("listings-only");}
    if(choice==="plans"){setPage("profile");setTimeout(()=>{$("subscriptionStatus")?.scrollIntoView({behavior:"smooth",block:"center"});},250);}
    return false;
