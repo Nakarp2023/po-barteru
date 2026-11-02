@@ -3471,6 +3471,28 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   #list.grid > .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(18,43,34,.09); }
 }
 </style>
+
+<style id="desktop-home-catalog-final">
+/* Desktop catalog: one consistent grid; no changes below 760px. */
+@media (min-width: 760px) and (max-width: 1023px) {
+  #list.grid { display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important; gap:16px!important; justify-content:stretch!important; }
+  #list.grid > .card { width:auto!important; max-width:none!important; }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  #list.grid { display:grid!important; grid-template-columns:repeat(4,minmax(0,1fr))!important; gap:16px!important; justify-content:stretch!important; }
+  #list.grid > .card { width:auto!important; max-width:none!important; }
+}
+@media (min-width: 1280px) {
+  #list.grid { display:grid!important; grid-template-columns:repeat(5,minmax(0,1fr))!important; gap:18px!important; justify-content:stretch!important; align-items:stretch!important; }
+  #list.grid > .card { width:auto!important; max-width:none!important; min-width:0!important; margin:0!important; }
+  #list.grid .photo { aspect-ratio:1/1!important; height:auto!important; max-height:none!important; }
+  #list.grid .cardbody { padding:13px!important; }
+  #list.grid .card h3 { font-size:15px!important; line-height:1.35!important; margin:7px 0 9px!important; }
+  #list.grid .card .offer { min-height:42px!important; flex-basis:42px!important; padding:9px 11px!important; }
+  #list.grid .card .city { font-size:11px!important; line-height:1.35!important; }
+  #list.grid .card .heart { width:40px!important; height:40px!important; min-width:40px!important; min-height:40px!important; }
+}
+</style>
 </head><body>
 <main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
