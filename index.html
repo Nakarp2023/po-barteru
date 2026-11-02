@@ -5737,6 +5737,24 @@ $("applyFilters")?.addEventListener("click",()=>{advancedSearchExpanded=false;re
 })();
 </script>
 
+
+<style id="final-card-profile-polish-20261103">
+/* Profile has its own user card: never duplicate the page title in any viewport */
+body[data-page="profile"] #otherTitle,
+body.page-profile #otherTitle,
+#otherTitle[data-page="profile"]{display:none!important}
+/* Tight, consistent listing-card layout */
+#list .card .want{min-height:0!important;height:auto!important;padding:9px 11px!important;margin:7px 0!important;gap:3px!important;line-height:1.25!important}
+#list .card .want-label{font-size:10px!important;line-height:1.15!important}
+#list .card .want-value{font-size:13px!important;line-height:1.3!important;overflow-wrap:anywhere!important}
+#list .card .card-meta{display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:nowrap!important;gap:6px!important;margin:7px 0 0!important;min-width:0!important}
+#list .card .city{margin:0!important;flex:1 1 auto!important;min-width:0!important;font-size:11px!important;line-height:1.25!important}
+#list .card .price{margin:0!important;flex:0 0 auto!important;display:flex!important;align-items:baseline!important;gap:4px!important;white-space:nowrap!important;font-size:11px!important}
+#list .card .price span{font-size:9px!important}
+#list .card .price b{font-size:12px!important;font-weight:750!important}
+@media(min-width:601px){#list .card .want{padding:10px 12px!important}#list .card .want-value{font-size:13px!important}}
+@media(max-width:600px){#list .card .want{padding:8px 9px!important;margin:6px 0!important}#list .card .city{font-size:10px!important}#list .card .price span{display:none!important}#list .card .price b{font-size:11px!important}}
+</style>
 </body></html>
 
 /* 2026-11-03: final card metadata alignment + honor hidden sections */
