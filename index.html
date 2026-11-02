@@ -5737,7 +5737,24 @@ document.addEventListener('keydown',e=>{if(!box.classList.contains('open'))retur
 document.addEventListener('click',e=>{if(!matchMedia('(min-width:701px)').matches)return;const im=e.target.closest('#listingDetailImage');if(!im)return;const item=window.__poCurrentDetail;if(item&&Array.isArray(item.image_urls))open(item.image_urls,window.__poCurrentDetailIndex||0)});
 window.__poOpenPhotoGallery=open;
 })();
-</script></body></html>
+</script>
+<style id="po-uniform-layout-20261103">
+/* Test-only visual alignment */
+#filters{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:8px!important;overflow-x:auto!important;overflow-y:hidden!important;max-width:100%!important;white-space:nowrap!important;scrollbar-width:none!important;padding:4px 1px 10px!important}
+#filters::-webkit-scrollbar{display:none!important}
+#filters .chip{flex:0 0 auto!important;white-space:nowrap!important;min-height:38px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+#list .card{height:100%!important;display:flex!important;flex-direction:column!important;min-width:0!important}
+#list .card .photo{flex:0 0 160px!important;height:160px!important;min-height:160px!important;max-height:160px!important}
+#list .card .cardbody{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important}
+#list .card .cardbody h3{height:2.5em!important;min-height:2.5em!important;max-height:2.5em!important;overflow:hidden!important;display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important}
+#list .card .want{height:60px!important;min-height:60px!important;max-height:60px!important;overflow:hidden!important}
+#list .card .want-value{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;overflow:hidden!important;word-break:break-word!important}
+#list .card .card-meta{min-height:25px!important;height:25px!important;overflow:hidden!important}
+#list .card .city{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#list .card .offer{margin-top:auto!important;min-height:48px!important;height:48px!important;max-height:48px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+@media(max-width:600px){#list .card .photo{flex-basis:132px!important;height:132px!important;min-height:132px!important;max-height:132px!important}#list .card .offer{min-height:44px!important;height:44px!important;max-height:44px!important}}
+</style>
+</body></html>
 
 
 
