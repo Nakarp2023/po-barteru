@@ -6137,3 +6137,17 @@ body>*{min-width:0;max-width:100%}
 }
 @supports (overflow:clip){html,body{overflow-x:clip!important}}
 </style>
+
+<style id="chat-more-button-fix-20261103">
+.chat-message-more{box-sizing:border-box!important;appearance:none!important;-webkit-appearance:none!important;width:32px!important;height:32px!important;min-height:32px!important;flex:0 0 32px!important;padding:0!important;border:1px solid #e7ebe5!important;border-radius:50%!important;background:#f7f9f6!important;color:#66756a!important;box-shadow:0 2px 7px rgba(25,45,32,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:0!important;line-height:0!important;letter-spacing:0!important;cursor:pointer!important;touch-action:manipulation!important;overflow:hidden!important}
+.chat-message-more::before{content:""!important;display:block!important;width:3px!important;height:3px!important;border-radius:50%!important;background:currentColor!important;box-shadow:0 -5px currentColor,0 5px currentColor!important}
+.chat-message-more:active{background:#eaf2e6!important;transform:scale(.96)}
+.chat-message-row{align-items:center!important;overflow:visible!important}
+</style>
+<script id="chat-more-button-functional-fix-20261103">
+(()=>{const root=document.getElementById('chatMessages');if(!root||root.dataset.moreFix==='1')return;root.dataset.moreFix='1';
+const close=()=>root.querySelectorAll('.chat-message-row.message-actions-open').forEach(r=>r.classList.remove('message-actions-open'));
+root.addEventListener('click',e=>{const b=e.target.closest('.chat-message-more');if(!b)return;e.preventDefault();e.stopPropagation();const row=b.closest('.chat-message-row');if(!row)return;const open=!row.classList.contains('message-actions-open');close();if(open){row.classList.add('message-actions-open');const menu=row.querySelector('.chat-message-actions');if(menu){menu.style.display='grid';menu.style.visibility='visible';menu.style.opacity='1';menu.style.pointerEvents='auto';menu.style.zIndex='9999';}}});
+document.addEventListener('click',e=>{if(!e.target.closest('#chatMessages .chat-message-row'))close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+})();
+</script>
