@@ -4112,7 +4112,7 @@ async function openListingDetails(item){
   gallery.addEventListener("touchstart",e=>{touchX=e.changedTouches[0].clientX;touchY=e.changedTouches[0].clientY},{passive:true});
   gallery.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.25)setListingDetailImage(listingDetailImageIndex+(dx<0?1:-1),item)},{passive:true});
  }
- const offer=$("listingDetailOffer");if(offer)offer.onclick=()=>{closeListingDetails();const existing=document.querySelector('[data-offer="'+CSS.escape(String(item.id))+'"]');if(existing)existing.click()};
+ const offer=$("listingDetailOffer");if(offer)offer.onclick=async()=>{if(!currentUser){toast("Войди, чтобы предложить обмен");return}try{const {data,error}=await db.rpc("user_my_active_sanctions");if(error)throw error;const ban=(Array.isArray(data)?data:[]).find(s=>["temporary_ban","permanent_ban"].includes(s.sanction_type));if(ban){const until=ban.ends_at?" До "+new Date(ban.ends_at).toLocaleString("ru-RU"):"";toast("Нельзя предложить обмен: аккаунт заблокирован."+(ban.reason?" Причина: "+ban.reason:"")+until+".");return}}catch(e){console.error("Exchange sanction check failed",e);toast("Не удалось проверить ограничения аккаунта. Попробуй позже.");return}closeListingDetails();const existing=document.querySelector('[data-offer="'+CSS.escape(String(item.id))+'"]');if(existing)existing.click()};
  modal.onclick=e=>{if(e.target===modal)closeListingDetails()};
  modal.classList.add("open");modal.setAttribute("aria-hidden","false");recordListingView(item);
  const reputation=$("publicSellerReputation"),reviewList=$("publicSellerReviews");
