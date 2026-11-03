@@ -63,7 +63,7 @@ async function searchUsers(){let {data,error}=await sb.rpc("admin_search_users",
 async function userDetails(id){
  const box=$("userProfileContent");box.innerHTML='<div class="profile-body">Загружаем карточку пользователя…</div>';userProfileDialog.showModal();
  try{
- const [{data:u,error:e}, {data:reports,reportsError}, {data:sanctions,sanctionsError}, {data:violations,violationsError}, {data:ownedListings,ownedListingsError}] = await Promise.all([
+  '<div class="profile-section"><h3>Объявления пользователя ('+(ownedListings||[]).length+')</h3>'+((ownedListings||[]).length?ownedListings.map(l=>'<div class="profile-item"><b>'+esc(l.title)+'</b> <span class="status">'+esc(ruStatus(l.status))+'</span><div class="meta">'+date(l.created_at)+' · '+esc(l.id)+'</div><button onclick="viewListing(\''+l.id+'\')">Открыть объявление</button></div>').join(""):'<div class="empty">Объявлений нет</div>')+'</div>'+
  sb.rpc("admin_user_overview",{p_user_id:id}),
  sb.from("reports").select("id,report_type,reason,status,created_at,listing_id,reported_user_id,message_id,conversation_id,details,reporter_id").or("reported_user_id.eq."+id+",reporter_id.eq."+id).order("created_at",{ascending:false}).limit(30),
  sb.from("user_sanctions").select("id,sanction_type,reason,created_at,ends_at,revoked_at").eq("user_id",id).order("created_at",{ascending:false}).limit(20),
