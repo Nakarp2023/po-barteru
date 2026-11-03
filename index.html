@@ -6119,3 +6119,21 @@ svg{max-width:100%}
  .grid{min-width:0}
 }
 </style>
+
+<style id="staging-layout-root-correction-20261103">
+/* Correct root sizing: avoid 100vw + padding and intrinsic flex/grid overflow in Safari. */
+html{width:auto!important;min-width:0!important;max-width:100%!important}
+body{width:auto!important;min-width:0!important;max-width:100%!important}
+body>*{min-width:0;max-width:100%}
+.app{width:min(100%,1240px)!important;max-width:100%!important;min-width:0!important;margin-inline:auto!important}
+.top,.brand,.search,.sectionhead,.grid,.card,.cardbody,.chat-row,#chatThread,#chatMessages,.profile-card,.profile-grid{min-width:0}
+.grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+.card-photo-img,.photo img,.listing-detail-image,.image-preview-item img{display:block;width:100%;height:100%;max-width:100%;object-fit:cover}
+@media(min-width:601px){
+ .app{padding-inline:clamp(16px,3vw,32px)!important}
+ .top{max-width:100%;flex-wrap:wrap}
+ .brand{flex:1 1 220px}
+ .top .pill{max-width:100%;white-space:normal}
+}
+@supports (overflow:clip){html,body{overflow-x:clip!important}}
+</style>
