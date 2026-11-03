@@ -6093,3 +6093,29 @@ body[data-page="my-listings"] #list,body[data-page="my-listings"] #listHeader,bo
 .notification-swipe:not(.swiped) .notification-delete{visibility:hidden!important;}
 .notification-swipe.swiped .notification-delete{visibility:visible!important;}
 </style>
+
+<style id="staging-responsive-overflow-guard-20261103">
+/* Responsive viewport guard: Safari/iOS and Chromium must not let media or flex children widen the page. */
+html,body{max-width:100%;min-width:0;overflow-x:clip!important}
+*,*::before,*::after{box-sizing:border-box}
+img,video,canvas,iframe{max-width:100%}
+svg{max-width:100%}
+.app,.top,.hero,.grid,.card,.cardbody,.photo,.listing-detail-gallery,#listingDetailModal,#chatThread,#chatMessages,#profileView,#notificationsList{min-width:0;max-width:100%}
+.card-photo-img,.photo img,.listing-detail-image,.image-preview-item img{max-width:100%;object-position:center}
+@media(max-width:600px){
+ .app{width:100%;max-width:100%;padding-left:12px!important;padding-right:12px!important}
+ .top{width:100%;max-width:100%;gap:8px;flex-wrap:wrap}
+ .top .brand{min-width:0;flex:0 1 auto}
+ .top .brand>span:last-child{white-space:normal;overflow-wrap:anywhere}
+ .hero,.searchbar,.filters,.section-heading{max-width:100%;min-width:0}
+ .grid{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid>.card{min-width:0;width:100%;max-width:100%}
+ .photo,.photo img,.card-photo-img{max-width:100%;}
+ #listingDetailModal .listing-detail-gallery{width:100%;max-width:100%;margin-left:0!important;margin-right:0!important}
+ #listingDetailModal .listing-detail-image{width:100%;max-width:100%;object-fit:contain!important}
+}
+@media(min-width:601px){
+ .app{width:100%;max-width:1000px}
+ .grid{min-width:0}
+}
+</style>
