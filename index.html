@@ -5896,7 +5896,15 @@ main.app,.app{width:100%;max-width:1000px;min-width:0;margin-left:auto;margin-ri
 .listing-report-status{margin:0;font-size:12px;line-height:1.4;color:var(--muted)}
 .listing-report-status.is-error{color:#b4232c}
 .listing-report-submit{width:100%;border:0;background:var(--green);color:#fff;padding:13px;font-weight:800}
-</style></body></html>
+</style></body><script id="user-sanction-notice-20261103">
+(()=>{const db=window.db;if(!db)return;
+const labels={message_restriction:"Ограничение отправки сообщений",listing_restriction:"Ограничение публикации объявлений",temporary_ban:"Временная блокировка аккаунта",permanent_ban:"Постоянная блокировка аккаунта"};
+function ensureStyle(){if(document.getElementById("sanction-notice-css"))return;let st=document.createElement("style");st.id="sanction-notice-css";st.textContent=".user-sanction-notice{position:relative;z-index:30;margin:12px auto;max-width:1200px;padding:14px 18px;border:1px solid #e7b56b;background:#fff7e8;color:#633d08;border-radius:14px;font:600 14px/1.5 system-ui}.user-sanction-notice strong{display:block;font-size:15px;margin-bottom:4px}.user-sanction-notice small{display:block;font-weight:500;margin-top:5px}.user-sanction-notice .sanction-close{float:right;border:0;background:transparent;color:inherit;font-size:20px;cursor:pointer}";document.head.appendChild(st)}
+function mount(items){document.querySelectorAll(".user-sanction-notice").forEach(x=>x.remove());if(!items?.length)return;ensureStyle();let box=document.createElement("section");box.className="user-sanction-notice";box.setAttribute("role","alert");box.innerHTML='<button class="sanction-close" aria-label="Скрыть уведомление">×</button><strong>⚠️ К вашему аккаунту применены ограничения</strong>'+items.map(x=>'<div>'+((labels[x.sanction_type]||"Модерационное ограничение"))+(x.reason?' — '+String(x.reason).replace(/[<>]/g,''):'')+'</div><small>'+ (x.ends_at?'Действует до '+new Date(x.ends_at).toLocaleString('ru-RU'):'Срок не ограничен')+'</small>').join("");box.querySelector(".sanction-close").onclick=()=>box.remove();let target=document.querySelector("main")||document.querySelector("#app")||document.body;target.prepend(box)}
+async function load(){try{let {data:{session}}=await db.auth.getSession();if(!session){mount([]);return}let {data,error}=await db.rpc("user_my_active_sanctions");if(error){console.warn("sanction notice:",error.message);return}mount(Array.isArray(data)?data:[])}catch(e){console.warn("sanction notice failed",e)}}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",load,{once:true});else load();db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_IN"||event==="SIGNED_OUT"||event==="TOKEN_REFRESHED")setTimeout(load,0)});
+})();
+</script></html>
 
 
 
