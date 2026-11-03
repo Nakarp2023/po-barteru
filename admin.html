@@ -17,7 +17,28 @@ const sb=supabase.createClient("https://noiryqvoohqrfmemfnne.supabase.co","sb_pu
 const $=id=>document.getElementById(id),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const statuses={new:"Новая",reviewing:"На рассмотрении",resolved:"Решена",rejected:"Отклонена",reviewed:"Проверена",dismissed:"Отклонена",reopened:"Возобновлена",active:"Активно",moderation:"Скрыто модерацией",archived:"В архиве",warning:"Предупреждение",messages_restricted:"Ограничение сообщений",listings_restricted:"Ограничение публикаций",temporary_ban:"Временная блокировка",permanent_ban:"Постоянная блокировка"};
 const ruStatus=s=>statuses[s]||s||"—";const date=s=>s?new Date(s).toLocaleString("ru-RU"):"—";const err=e=>alert(e?.message||"Не удалось выполнить действие");
-async function init(){try{$("gate").textContent="Проверяем права администратора…";const result=await Promise.race([sb.auth.getSession(),new Promise((_,reject)=>setTimeout(()=>reject(new Error("timeout")),10000))]);if(result.error)throw result.error;const session=result.data?.session;if(!session){$("gate").textContent="Сессия не найдена. Войдите на сайт в этой вкладке и откройте админку снова.";return}const role=session.user.app_metadata?.role;if(role!=="admin"){$("gate").textContent="Доступ закрыт: у аккаунта нет роли администратора.";return}$("gate").textContent="Администратор подтверждён · "+esc(session.user.email);$("app").classList.remove("hidden");await loadSupport();await loadReports()}catch(e){$("gate").innerHTML='Не удалось проверить сессию: '+esc(e?.message||e)+' <button onclick="init()">Повторить</button>';console.error("admin init",e)}}
+let adminInitRunning=false;
+async function init(){
+ if(adminInitRunning)return;adminInitRunning=true;
+ const gate=$("gate");gate.className="panel";gate.textContent="Проверяем права администратора…";
+ try{
+  const result=await Promise.race([
+   sb.auth.getSession(),
+   new Promise((_,reject)=>setTimeout(()=>reject(new Error("Проверка сессии заняла более 12 секунд. Проверьте соединение и повторите.")),12000))
+  ]);
+  if(result.error)throw result.error;
+  const session=result.data?.session;
+  if(!session){gate.innerHTML='Сессия не найдена. <a href="/">Вернитесь на сайт</a>, войдите в аккаунт и откройте админку снова.';return}
+  if(session.user.app_metadata?.role!=="admin"){gate.textContent="Доступ закрыт: у аккаунта нет роли администратора.";return}
+  gate.textContent="Администратор подтверждён · "+session.user.email;
+  $("app").classList.remove("hidden");
+  // Секции загружаются независимо: сбой одного запроса не блокирует всю панель.
+  await Promise.allSettled([loadSupport(),loadReports()]);
+ }catch(e){
+  console.error("admin init",e);
+  gate.innerHTML='Не удалось проверить сессию: '+esc(e?.message||e)+'<div class="actions"><button class="primary" onclick="init()">Повторить проверку</button><a href="/">Вернуться на сайт</a></div>';
+ }finally{adminInitRunning=false}
+}
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));["support","reports","users","listings","sanctions","logs"].forEach(x=>$(x).classList.toggle("hidden",x!==b.dataset.tab));});
 async function loadSupport(){try{const f=$("supportFilter").value;const {data,error}=await sb.rpc("admin_support_tickets",{p_status:f||null});if(error)throw error;const rows=data||[];$("supportList").innerHTML=rows.length?rows.map(t=>`<article class="item"><h3>${esc(t.subject||"Без темы")} <span class="status">${esc(({open:"Открыто",answered:"Ответили",closed:"Закрыто"}[t.status]||t.status))}</span></h3><div class="meta">Категория: ${esc(t.category)} · ${esc(t.user_email||t.user_id)} · ${date(t.created_at)} · ID ${esc(t.id)}</div><p style="white-space:pre-wrap">${esc(t.message)}</p>${t.support_reply?`<div class="panel" style="background:#f5f8f3"><b>Текущий ответ</b><p style="white-space:pre-wrap">${esc(t.support_reply)}</p></div>`:""}<div class="actions"><button class="primary" onclick="replySupport('${t.id}','${t.status}')">Ответить / изменить статус</button></div></article>`).join(""):'<div class="empty">Обращений нет</div>'}catch(e){$("supportList").innerHTML='<div class="empty">Ошибка загрузки: '+esc(e.message)+' <button onclick="loadSupport()">Повторить</button></div>';console.error(e)}}
 async function replySupport(id,status){let reply=prompt("Ответ пользователю:");if(reply===null)return;let next=prompt("Статус: open / answered / closed",status==="closed"?"closed":"answered");if(!next)return;if(!["open","answered","closed"].includes(next)){alert("Неверный статус");return}let {error}=await sb.rpc("admin_reply_support_ticket",{p_ticket_id:id,p_reply:reply,p_status:next});if(error)return err(error);await loadSupport();await loadLogs()}
