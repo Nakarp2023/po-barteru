@@ -3489,7 +3489,30 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
  #list.grid .card .heart{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}
 }
 </style>
-</head><body>
+<style>
+/* Safari/iOS viewport and chat message action controls — Nov 2026 */
+@supports (height: 100dvh){html{min-height:100dvh}}
+@media(max-width:759px){
+ .top{gap:10px;max-width:100%;overflow:clip}
+ .brand{min-width:0;flex:1 1 auto}
+ .brand>span:last-child{overflow:hidden;text-overflow:ellipsis}
+ .top .pill{flex:0 0 auto;max-width:46vw}
+ .bottom{bottom:calc(10px + env(safe-area-inset-bottom,0px))!important}
+ .app{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
+ #chatThread{min-width:0;max-width:100%;overflow-x:clip}
+ #chatMessages{overflow-x:clip!important}
+}
+.chat-message-row{position:relative!important;overflow:visible!important;padding-inline:2px}
+.chat-message-more{appearance:none;-webkit-appearance:none;align-self:center;flex:0 0 38px;width:38px;height:54px;min-height:54px;padding:0;border:1px solid rgba(120,130,120,.08);border-radius:22px;background:rgba(255,255,255,.92);color:#8b928c;box-shadow:0 5px 16px rgba(25,45,32,.055);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;touch-action:manipulation;cursor:pointer}
+.chat-message-more i{display:block;width:4px;height:4px;border-radius:50%;background:currentColor}
+.chat-message-more:active{background:#edf5e6;color:#315b45;transform:scale(.97)}
+.chat-message-actions{position:absolute;z-index:30;top:50%;transform:translateY(-50%);display:none;min-width:150px;padding:6px;border:1px solid #e5e9e2;border-radius:15px;background:rgba(255,255,255,.97);box-shadow:0 12px 32px rgba(20,35,26,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.chat-message-row.mine .chat-message-actions{right:44px}.chat-message-row.theirs .chat-message-actions{left:44px}
+.chat-message-row.message-actions-open .chat-message-actions{display:grid;gap:3px}
+.chat-message-actions button{border:0;background:transparent;color:#263d31;text-align:left;padding:10px 11px;border-radius:9px;font-size:13px;font-weight:650;white-space:nowrap}
+.chat-message-actions button:active{background:#edf4e8}.chat-message-actions button.danger{color:#b44740}
+@media(max-width:480px){.chat-message-more{flex-basis:34px;width:34px;height:48px;min-height:48px}.chat-message-row.mine .chat-message-actions{right:40px}.chat-message-row.theirs .chat-message-actions{left:40px}}
+</style></head><body>
 <main class="app"><header class="top"><div class="brand"><button type="button" class="brand-logo-link" id="brandHomeLink" aria-label="На главную"><span class="mark" aria-hidden="true"><img src="/logo.webp?v=3" alt="" /></span></button><span class="brand-wordmark">ПО БАРТЕРУ</span></div><button class="pill notification-top" id="notificationTop" aria-label="Уведомления" title="Уведомления"><svg class="notification-top-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="notificationCount" class="ios-badge" hidden>0</span></button><button class="pill" id="addTop"><span class="add-top-plus" aria-hidden="true">+</span><span>Объявление</span></button></header><section class="hero" id="homeHero"><div class="eyebrow">Обмен без границ</div><h1>То, что нужно тебе.<br>То, что есть у тебя.</h1><p>Обменивай вещи и услуги напрямую. Находи взаимную выгоду рядом с собой — с доплатой или без неё.</p><button class="pill" id="heroAdd">Предложить обмен&nbsp; ↗</button><div class="hero-showcase" aria-label="Преимущества сервиса и примеры товаров">
   <div class="hero-products" aria-hidden="true">
     <div class="hero-product hero-product-backpack"><img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=85" alt=""></div>
@@ -5755,6 +5778,23 @@ body.page-profile #otherTitle,
 @media(min-width:601px){#list .card .want{padding:10px 12px!important}#list .card .want-value{font-size:13px!important}}
 @media(max-width:600px){#list .card .want{padding:8px 9px!important;margin:6px 0!important}#list .card .city{font-size:10px!important}#list .card .price span{display:none!important}#list .card .price b{font-size:11px!important}}
 </style>
+
+<script>
+(()=>{
+ const list=document.getElementById('chatMessages');if(!list||list.dataset.messageActionsBound==='1')return;list.dataset.messageActionsBound='1';
+ const closeMenus=(except)=>list.querySelectorAll('.message-actions-open').forEach(r=>{if(r!==except)r.classList.remove('message-actions-open')});
+ function enhance(row){if(row.querySelector('.chat-message-more'))return;const own=row.dataset.own==='1',bubble=row.querySelector('.chat-message-bubble');if(!bubble)return;
+ const btn=document.createElement('button');btn.type='button';btn.className='chat-message-more';btn.setAttribute('aria-label','Действия с сообщением');btn.setAttribute('aria-expanded','false');btn.innerHTML='<i></i><i></i><i></i>';
+ const menu=document.createElement('div');menu.className='chat-message-actions';menu.setAttribute('role','menu');
+ const copy=document.createElement('button');copy.type='button';copy.textContent='Копировать текст';copy.setAttribute('role','menuitem');copy.onclick=async()=>{try{await navigator.clipboard.writeText(bubble.querySelector('div')?.textContent||'');toast('Текст сообщения скопирован')}catch(e){toast('Не удалось скопировать текст')};row.classList.remove('message-actions-open')};menu.append(copy);
+ if(own){const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='Удалить сообщение';del.setAttribute('role','menuitem');del.onclick=()=>{row.classList.remove('message-actions-open');row.classList.add('reveal-delete');row.querySelector('[data-message-delete]')?.click()};menu.append(del)}
+ btn.onclick=e=>{e.stopPropagation();const open=!row.classList.contains('message-actions-open');closeMenus(row);row.classList.toggle('message-actions-open',open);btn.setAttribute('aria-expanded',String(open))};row.append(btn,menu);
+ }
+ const observer=new MutationObserver(()=>list.querySelectorAll('[data-message-row]').forEach(enhance));observer.observe(list,{childList:true,subtree:true});list.querySelectorAll('[data-message-row]').forEach(enhance);
+ document.addEventListener('click',e=>{if(!e.target.closest('.chat-message-row'))closeMenus()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenus()});
+})();
+</script>
 </body></html>
 
 /* 2026-11-03: final card metadata alignment + honor hidden sections */
