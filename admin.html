@@ -67,7 +67,8 @@ async function userDetails(id){
  sb.rpc("admin_user_overview",{p_user_id:id}),
  sb.from("reports").select("id,report_type,reason,status,created_at,listing_id,reported_user_id,message_id,conversation_id,details,reporter_id").or("reported_user_id.eq."+id+",reporter_id.eq."+id).order("created_at",{ascending:false}).limit(30),
  sb.from("user_sanctions").select("id,sanction_type,reason,created_at,ends_at,revoked_at").eq("user_id",id).order("created_at",{ascending:false}).limit(20),
- sb.from("user_violations").select("*").eq("user_id",id).order("created_at",{ascending:false}).limit(30),\n sb.from("listings").select("id,title,status,created_at").eq("user_id",id).order("created_at",{ascending:false}).limit(50)
+ sb.from("user_violations").select("*").eq("user_id",id).order("created_at",{ascending:false}).limit(30),
+ sb.from("listings").select("id,title,status,created_at").eq("user_id",id).order("created_at",{ascending:false}).limit(50)
  ]);
  if(e)throw e;
  const profile=u.profile||{},email=u.email||"—",name=profile.display_name||"Без имени";
