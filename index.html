@@ -5817,3 +5817,28 @@ body.page-profile #otherTitle,
  .grid .card .price span{display:none}
  .grid .card .price b{font-size:12px}
 }
+
+
+/* Desktop Safari viewport guard — keep the desktop layout inside the viewport. */
+@media (min-width: 760px) {
+  html, body { max-width: 100%; overflow-x: clip; }
+  body { width: 100%; }
+  .app { width: 100%; max-width: 1440px; margin-inline: auto; box-sizing: border-box; }
+  .top, .hero, #homeSearch, #list, #profileDashboard, #chatThread {
+    min-width: 0; max-width: 100%; box-sizing: border-box;
+  }
+  .grid { min-width: 0; max-width: 100%; }
+  .bottom { max-width: calc(100vw - 32px); }
+}
+/* Message action menu: compact iOS-like ellipsis and reliable stacking. */
+.chat-message-more {
+  flex: 0 0 34px; width: 34px; height: 42px; min-height: 42px;
+  border-radius: 16px; box-shadow: 0 3px 10px rgba(25,45,32,.08);
+}
+.chat-message-more i { width: 3.5px; height: 3.5px; }
+.chat-message-actions { z-index: 100; max-width: min(240px, calc(100vw - 24px)); }
+.chat-message-row.message-actions-open { z-index: 101; }
+.chat-message-actions button { min-height: 40px; }
+@media (max-width: 759px) {
+  .chat-message-more { flex-basis: 32px; width: 32px; height: 40px; min-height: 40px; }
+}
