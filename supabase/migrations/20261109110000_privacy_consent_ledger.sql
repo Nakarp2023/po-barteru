@@ -46,7 +46,7 @@ begin
       new.id,
       'personal_data_processing',
       consent_version,
-      'DRAFT_TEXT_HASH_TO_BE_REPLACED_BEFORE_PRODUCTION',
+      'fb67414b1d29400db3cf24d3ba27a1666323da8492f878517468382d96347163',
       case when source_value in ('email_password','email_magic_link','phone_otp')
            then source_value else 'unknown' end
     );
