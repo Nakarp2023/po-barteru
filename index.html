@@ -6479,4 +6479,16 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
 #profileDashboard .profile-online-dot{display:none!important}
 #profileDashboard .profile-avatar:after{content:none!important;display:none!important}
 @media(max-width:600px){#profileDashboard .profile-avatar-wrap:after{width:22px!important;height:22px!important;right:2px!important;bottom:2px!important}}
+
+/* Align avatar wrapper to actual rendered avatar box; status badge no longer floats below */
+#profileDashboard .profile-avatar-wrap{width:112px!important;height:112px!important;flex:0 0 112px!important;min-width:112px!important;max-width:112px!important}
+#profileDashboard .profile-card #profileAvatar,
+#profileDashboard .profile-showcase #profileAvatar{width:112px!important;height:112px!important;min-width:112px!important;min-height:112px!important;max-width:112px!important;max-height:112px!important;flex:0 0 112px!important}
+#profileDashboard .profile-avatar-wrap:after{right:0!important;bottom:0!important;width:23px!important;height:23px!important}
+@media(max-width:600px){
+ #profileDashboard .profile-avatar-wrap{width:104px!important;height:104px!important;flex:0 0 104px!important;min-width:104px!important;max-width:104px!important}
+ #profileDashboard .profile-card #profileAvatar,
+ #profileDashboard .profile-showcase #profileAvatar{width:104px!important;height:104px!important;min-width:104px!important;min-height:104px!important;max-width:104px!important;max-height:104px!important;flex:0 0 104px!important}
+ #profileDashboard .profile-avatar-wrap:after{right:0!important;bottom:0!important;width:22px!important;height:22px!important}
+}
 </style>
