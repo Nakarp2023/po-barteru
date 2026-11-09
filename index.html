@@ -5973,6 +5973,22 @@ wrap.querySelector("[data-gallery]").onclick=e=>{e.preventDefault();gal.click()}
 wrap.querySelector("[data-camera]").onclick=e=>{e.preventDefault();cam.click()};
 })();
 </script>
+
+<style id="apple-system-fonts-final">
+:root{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif}
+html,body,button,input,select,textarea{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif!important}
+h1,h2,h3,.brand,.profile-main h2,.profile-hub-copy b,.sectionhead h1,.sectionhead h2{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",system-ui,sans-serif!important;letter-spacing:-.025em}
+#profileDashboard .profile-avatar{overflow:visible;position:relative;border:0;box-shadow:0 4px 12px #173e2d20}
+#profileDashboard .profile-avatar:after{content:"✎";position:absolute;right:-3px;bottom:-2px;width:22px;height:22px;border-radius:50%;border:2px solid #fff;background:#dff3bd;color:#205b43;font:700 11px -apple-system,BlinkMacSystemFont,sans-serif;display:grid;place-items:center;box-shadow:0 2px 5px #163d2a20}
+#profileDashboard input.avatar-file-picker{position:fixed!important;left:0!important;top:0!important;width:1px!important;height:1px!important;opacity:.001!important;overflow:hidden!important;clip-path:inset(50%)!important;pointer-events:none!important}
+</style>
+<script id="avatar-ios-activation-fix">
+(()=>{const $=id=>document.getElementById(id);const cam=$("avatarCameraInput"),gal=$("avatarGalleryInput"),menu=document.getElementById("profileAvatarAction");if(!cam||!gal||!menu)return;
+[cam,gal].forEach(i=>{i.removeAttribute("hidden");i.classList.add("avatar-file-picker");i.setAttribute("tabindex","-1")});
+menu.querySelector("[data-gallery]").onclick=e=>{e.preventDefault();gal.click();menu.remove()};
+menu.querySelector("[data-camera]").onclick=e=>{e.preventDefault();cam.click();menu.remove()};
+})();
+</script>
 </body><script id="user-sanction-notice-20261103">
 (()=>{const db=window.db;if(!db)return;const labels={message_restriction:"Ограничение сообщений",listing_restriction:"Ограничение публикации объявлений",temporary_ban:"Временная блокировка аккаунта",permanent_ban:"Постоянная блокировка аккаунта"};
 function style(){if(document.getElementById("sanction-notice-css"))return;let st=document.createElement("style");st.id="sanction-notice-css";st.textContent=".user-sanction-notice{position:relative;margin:10px auto 16px;max-width:1200px;padding:13px 16px;border:1px solid #e7b56b;background:#fff7e8;color:#633d08;border-radius:14px;font:500 14px/1.45 system-ui}.user-sanction-notice .notice-head{display:flex;align-items:center;gap:8px;font-weight:750;font-size:14px;padding-right:30px}.user-sanction-notice .sanction-close{position:absolute;right:10px;top:9px;border:0;background:#fff1d5;color:#633d08;border-radius:50%;width:28px;height:28px;font-size:18px;cursor:pointer}.user-sanction-notice .sanction-item{margin-top:8px;padding-top:8px;border-top:1px solid #efd9b4}.user-sanction-notice small{display:block;font-weight:500;margin-top:3px}.user-sanction-notice .sanction-refresh{margin-top:9px;border:1px solid #d8b878;border-radius:9px;padding:6px 10px;background:#fff;color:#633d08;font-weight:650;font-size:12px}.user-sanction-notice.is-collapsed .notice-content{display:none}.user-sanction-notice.is-collapsed{padding:10px 14px}";document.head.appendChild(st)}
