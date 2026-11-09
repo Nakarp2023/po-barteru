@@ -3680,6 +3680,15 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     </details>
   </div>
 
+  <section class="profile-data-rights" aria-labelledby="profileDataRightsTitle">
+    <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">ВАШИ ДАННЫЕ</p><h4 id="profileDataRightsTitle">Управление данными и согласиями</h4></div></div>
+    <div class="profile-data-rights-card">
+      <p>Вы можете изменить выбор по необязательным cookie, а также обратиться с запросом об обработке или удалении персональных данных.</p>
+      <button type="button" class="profile-data-rights-button" id="manageCookiePreferences">Настройки cookie <span>›</span></button>
+      <button type="button" class="profile-data-rights-button" id="requestPersonalDataDeletion">Запросить удаление аккаунта и данных <span>›</span></button>
+      <small>Удаление не выполняется автоматически этой кнопкой. Запрос должен быть подтверждён и обработан с учётом обязательных сроков хранения и связанных сделок.</small>
+    </div>
+  </section>
   <div class="profile-info-about"><span class="profile-info-about-icon" aria-hidden="true">P</span><div><b>О проекте ПО БАРТЕРУ</b><p>Помогаем людям находить предложения и договариваться об обмене вещами и услугами напрямую.</p><small>Оператор: [указать ФИО или наименование и статус]. Реквизиты и официальный контакт поддержки будут добавлены после подтверждения.</small></div></div>
   <div class="profile-info-security-note"><span aria-hidden="true">🛡</span><p><b>Берегите свой аккаунт</b><br>Никому не сообщайте пароль и коды подтверждения. Не отправляйте полные данные банковской карты.</p></div>
   <p class="profile-info-help-foot">Документы представлены как проекты для предварительного ознакомления. Заглушки необходимо заполнить, а тексты сверить с реальной работой Сервиса и обстоятельствами оператора до публикации как действующих юридических документов.</p>
@@ -5823,6 +5832,22 @@ body.page-profile #otherTitle,
  toggle.addEventListener('click',()=>{settings.classList.toggle('open');toggle.textContent=settings.classList.contains('open')?'Скрыть настройки':'Настройки'});
  const privacyLink=document.getElementById('authPrivacyLink');
  if(privacyLink)privacyLink.addEventListener('click',e=>{e.preventDefault();document.querySelector('[data-help-search*="документы"]')?.scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.profile-info-doc').forEach(d=>{if(d.querySelector('summary b')?.textContent.includes('Политика обработки'))d.open=true});});
+})();
+</script><style id="profile-data-rights-ui">
+.profile-data-rights{margin:22px 0}.profile-data-rights-card{padding:15px;border:1px solid var(--line);border-radius:18px;background:#fff}.profile-data-rights-card>p{font-size:13px;line-height:1.5;color:var(--muted);margin:0 0 10px}.profile-data-rights-button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:13px 0;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;color:var(--green);font-weight:750;font-size:14px}.profile-data-rights-button span{font-size:20px;color:var(--muted)}.profile-data-rights-card small{display:block;margin-top:8px;color:var(--muted);font-size:11px;line-height:1.45}
+</style>
+<script id="profile-data-rights-actions">
+(()=>{
+ const cookie=document.getElementById('manageCookiePreferences');
+ cookie?.addEventListener('click',()=>{const box=document.getElementById('cookieConsent');if(!box)return;box.classList.add('show');document.getElementById('cookieConsentSettings')?.classList.add('open');document.getElementById('cookieSettingsToggle').textContent='Скрыть настройки';});
+ const deletion=document.getElementById('requestPersonalDataDeletion');
+ deletion?.addEventListener('click',()=>{
+  const ok=confirm('Открыть форму обращения в поддержку для запроса удаления аккаунта и персональных данных? Сам аккаунт сейчас не будет удалён.');
+  if(!ok)return;
+  const support=document.getElementById('profileSupportForm');
+  if(support){support.scrollIntoView({behavior:'smooth',block:'center'});support.querySelector('textarea,input:not([type="hidden"])')?.focus({preventScroll:true});}
+  else{alert('Перейдите в раздел поддержки профиля и отправьте запрос «Удаление аккаунта и персональных данных».');}
+ });
 })();
 </script></body></html>
 
