@@ -5881,6 +5881,41 @@ body.page-profile #otherTitle,
  #profileDashboard .profile-showcase-stats .profile-stat-icon{width:22px;height:22px}
  #profileDashboard .profile-showcase-stats b{font-size:17px}
 }
+
+/* iPhone viewport guard + reference profile compact metrics */
+@media(max-width:759px){
+ html{width:100%;max-width:100%;overflow-x:hidden}
+ body{width:100%;max-width:100%;overflow-x:hidden;margin:0}
+ .app{width:100%;max-width:100%;min-width:0;margin:0;padding-left:16px;padding-right:16px;box-sizing:border-box}
+ .top{width:100%;max-width:100%;min-width:0;box-sizing:border-box;gap:10px}
+ .brand{min-width:0;flex:1;gap:8px}
+ .brand span,.brand strong{min-width:0;white-space:nowrap}
+ .top .pill{flex:0 0 auto;max-width:45vw;white-space:nowrap}
+ #profileDashboard{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+ #profileDashboard .profile-showcase{width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow:hidden;gap:12px;padding:16px 12px}
+ #profileDashboard .profile-showcase-content{min-width:0;flex:1}
+ #profileDashboard .profile-showcase-content h2{max-width:100%;font-size:clamp(17px,5vw,23px)}
+ #profileDashboard .profile-rating-pill{max-width:100%;min-width:0;gap:6px;padding:7px 9px}
+ #profileDashboard .profile-rating-pill>span:not(.profile-rating-star){min-width:0}
+ #profileDashboard .profile-showcase-stats{width:100%;max-width:100%;min-width:0;grid-template-columns:repeat(3,minmax(0,1fr));}
+ #profileDashboard .profile-showcase-stats>div{min-width:0;gap:5px;padding:0 3px}
+ #profileDashboard .profile-showcase-stats .profile-stat-icon{width:21px;height:21px;flex:0 0 21px}
+ #profileDashboard .profile-showcase-stats b{font-size:17px}
+ .bottom{left:16px;right:16px;width:auto;max-width:none;box-sizing:border-box}
+}
+@media(max-width:390px){
+ .app{padding-left:12px;padding-right:12px}
+ .top{gap:7px}
+ .mark{width:42px;height:42px;flex-basis:42px}
+ .brand{font-size:16px}
+ .top .pill{padding:9px 10px;font-size:12px}
+ #profileDashboard .profile-showcase{gap:9px;padding:13px 9px}
+ #profileDashboard .profile-avatar-wrap{width:76px;height:76px;flex-basis:76px}
+ #profileDashboard .profile-showcase-content h2{font-size:16px}
+ #profileDashboard .profile-rating-pill>span:not(.profile-rating-star){font-size:9px}
+ #profileDashboard .profile-showcase-stats .profile-stat-icon{width:18px;height:18px;flex-basis:18px}
+ #profileDashboard .profile-showcase-stats b{font-size:15px}
+}
 </style>
 
 <script>
