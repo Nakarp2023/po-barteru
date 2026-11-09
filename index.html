@@ -6290,3 +6290,9 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
 #profileDashboard .profile-rating-link{margin-top:0;justify-content:flex-start}
 @media(max-width:430px){#profileDashboard .profile-card{gap:16px;padding:16px 18px}#profileDashboard #profileAvatar{width:100px!important;height:100px!important;min-width:100px!important;max-width:100px!important;flex-basis:100px!important}}
 </style>
+
+<style id="profile-avatar-hard-square-fix">
+#profileDashboard .profile-card #profileAvatar{box-sizing:border-box!important;width:104px!important;height:104px!important;min-width:104px!important;min-height:104px!important;max-width:104px!important;max-height:104px!important;flex:0 0 104px!important;aspect-ratio:1/1!important;border-radius:50%!important;overflow:hidden!important;display:block!important;position:relative!important;padding:0!important;line-height:normal!important}
+#profileDashboard .profile-card #profileAvatar>img{position:absolute!important;inset:0!important;box-sizing:border-box!important;width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:cover!important;object-position:50% 50%!important;border-radius:50%!important}
+@media(max-width:430px){#profileDashboard .profile-card #profileAvatar{width:104px!important;height:104px!important;flex-basis:104px!important}}
+</style>
