@@ -5960,6 +5960,19 @@ avatar?.addEventListener("click",openMenu);avatar?.addEventListener("keydown",e=
 const privacy=$("profileShowPublicName");if(privacy)privacy.checked=true;
 })();
 </script>
+
+<style id="avatar-ios-filepicker-fix">
+#profileDashboard .profile-avatar:after{content:"+";right:1px;bottom:1px;width:21px;height:21px;border:2px solid #fff;background:#246b50;color:#fff;font-size:16px;line-height:1;box-shadow:0 2px 6px #153d2c30}
+#profileDashboard input.avatar-file-picker{position:fixed!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;opacity:0!important;display:block!important;visibility:visible!important;pointer-events:none!important}
+</style>
+<script id="avatar-ios-filepicker-fix-js">
+(()=>{const $=id=>document.getElementById(id);const cam=$("avatarCameraInput"),gal=$("avatarGalleryInput");if(!cam||!gal)return;
+[cam,gal].forEach(input=>{input.removeAttribute("hidden");input.classList.add("avatar-file-picker");input.setAttribute("tabindex","-1")});
+const wrap=document.getElementById("profileAvatarAction");if(!wrap)return;
+wrap.querySelector("[data-gallery]").onclick=e=>{e.preventDefault();gal.click()};
+wrap.querySelector("[data-camera]").onclick=e=>{e.preventDefault();cam.click()};
+})();
+</script>
 </body><script id="user-sanction-notice-20261103">
 (()=>{const db=window.db;if(!db)return;const labels={message_restriction:"Ограничение сообщений",listing_restriction:"Ограничение публикации объявлений",temporary_ban:"Временная блокировка аккаунта",permanent_ban:"Постоянная блокировка аккаунта"};
 function style(){if(document.getElementById("sanction-notice-css"))return;let st=document.createElement("style");st.id="sanction-notice-css";st.textContent=".user-sanction-notice{position:relative;margin:10px auto 16px;max-width:1200px;padding:13px 16px;border:1px solid #e7b56b;background:#fff7e8;color:#633d08;border-radius:14px;font:500 14px/1.45 system-ui}.user-sanction-notice .notice-head{display:flex;align-items:center;gap:8px;font-weight:750;font-size:14px;padding-right:30px}.user-sanction-notice .sanction-close{position:absolute;right:10px;top:9px;border:0;background:#fff1d5;color:#633d08;border-radius:50%;width:28px;height:28px;font-size:18px;cursor:pointer}.user-sanction-notice .sanction-item{margin-top:8px;padding-top:8px;border-top:1px solid #efd9b4}.user-sanction-notice small{display:block;font-weight:500;margin-top:3px}.user-sanction-notice .sanction-refresh{margin-top:9px;border:1px solid #d8b878;border-radius:9px;padding:6px 10px;background:#fff;color:#633d08;font-weight:650;font-size:12px}.user-sanction-notice.is-collapsed .notice-content{display:none}.user-sanction-notice.is-collapsed{padding:10px 14px}";document.head.appendChild(st)}
