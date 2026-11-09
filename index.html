@@ -3534,7 +3534,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </div>
 <button class="pill" id="authOut" hidden>Выйти</button>
 <section id="profileDashboard" hidden>
-<div class="profile-card profile-showcase"><div class="profile-avatar-wrap"><div class="profile-avatar" id="profileAvatar">Б</div><span class="profile-online-dot" aria-label="В сети"></span></div><div class="profile-showcase-content"><h2 id="profileName"></h2><button class="profile-rating-pill" type="button" data-profile-open="reputation"><span class="profile-rating-star">★</span><b id="profileRatingValue">5,0</b><i></i><span id="profileRatingReviews">(нет отзывов)</span><span class="profile-rating-chevron">›</span></button><div class="profile-showcase-stats"><div><span class="profile-stat-icon">▤</span><b id="profileListingsCount">0</b><small>объявлений</small></div><div><span class="profile-stat-icon">⇄</span><b id="profileExchangesCount">0</b><small>обменов</small></div><div><span class="profile-stat-icon">♡</span><b id="profileFavoritesCount">0</b><small>в избранном</small></div></div></div><button type="button" class="profile-logout-button profile-logout-compact" id="profileLogoutBtn" aria-label="Выйти из аккаунта"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button></div>
+<div class="profile-card profile-showcase"><div class="profile-avatar-wrap"><div class="profile-avatar" id="profileAvatar">Б</div><span class="profile-online-dot" aria-label="В сети"></span></div><div class="profile-showcase-content"><h2 id="profileName"></h2><button class="profile-rating-pill" type="button" data-profile-open="reputation"><span class="profile-rating-star">★</span><b id="profileRatingValue">5,0</b><i></i><span id="profileRatingReviews">(нет отзывов)</span><span class="profile-rating-chevron">›</span></button><div class="profile-showcase-stats" aria-label="Статистика профиля"><div title="Объявления" aria-label="Объявления"><svg class="profile-stat-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="14" height="16" rx="2"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M8 2h12a2 2 0 0 1 2 2v14"/></svg><b id="profileListingsCount">0</b></div><div title="Обмены" aria-label="Обмены"><svg class="profile-stat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h17l-4-4M21 17H4l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg><b id="profileExchangesCount">0</b></div><div title="Избранное" aria-label="Избранное"><svg class="profile-stat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z" stroke-linejoin="round"/></svg><b id="profileFavoritesCount">0</b></div></div></div><button type="button" class="profile-logout-button profile-logout-compact" id="profileLogoutBtn" aria-label="Выйти из аккаунта"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button></div>
 <div class="profile-hub" id="profileHub">
   <button type="button" class="profile-hub-row" data-profile-open="account"><span class="profile-hub-icon">👤</span><span class="profile-hub-copy"><b>Личные данные</b><small>Имя, город, уведомления и пароль</small></span><span class="profile-hub-arrow">›</span></button>
   <button type="button" class="profile-hub-row" data-profile-open="my-listings"><span class="profile-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="14" rx="2"/><path d="M8 7h4M8 10h4M8 13h4"/><path d="M8 20h12V8"/></svg></span><span class="profile-hub-copy"><b>Мои объявления</b><small>Публикации, статусы и архив</small></span><span class="profile-hub-arrow">›</span></button>
@@ -5871,6 +5871,16 @@ body.page-profile #otherTitle,
  #profileDashboard .profile-showcase-stats small{font-size:9px}
 }
 @media(min-width:900px){#profileDashboard .profile-showcase{max-width:100%}}
+
+/* Profile metrics: existing site-style SVG icons, numbers only */
+#profileDashboard .profile-showcase-stats>div{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;padding:0 10px}
+#profileDashboard .profile-showcase-stats .profile-stat-icon{display:block;width:clamp(24px,2.5vw,34px);height:clamp(24px,2.5vw,34px);flex:0 0 auto;fill:none;stroke:#17664e;stroke-width:1.8}
+#profileDashboard .profile-showcase-stats b{font-size:clamp(20px,2.4vw,30px);font-weight:650;line-height:1.1}
+@media(max-width:600px){
+ #profileDashboard .profile-showcase-stats>div{gap:6px;padding:0 4px}
+ #profileDashboard .profile-showcase-stats .profile-stat-icon{width:22px;height:22px}
+ #profileDashboard .profile-showcase-stats b{font-size:17px}
+}
 </style>
 
 <script>
