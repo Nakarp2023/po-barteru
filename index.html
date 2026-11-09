@@ -6352,3 +6352,10 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
 <style id="profile-card-gradient-reference-staging">
 #profileDashboard .profile-card{background:radial-gradient(ellipse at 88% 12%,rgba(211,239,195,.58) 0%,rgba(211,239,195,0) 48%),radial-gradient(ellipse at 8% 100%,rgba(244,249,239,.96) 0%,rgba(244,249,239,0) 52%),linear-gradient(132deg,#ffffff 0%,#fbfdf9 34%,#f2f8ed 68%,#eaf5e4 100%)!important;border:1px solid rgba(255,255,255,.98)!important;box-shadow:0 14px 30px rgba(24,63,45,.10),inset 0 1px 0 rgba(255,255,255,.98)!important}
 </style>
+
+<style id="profile-card-elegant-arc-staging">
+#profileDashboard .profile-card{position:relative!important;isolation:isolate!important;overflow:hidden!important}
+#profileDashboard .profile-card::after{content:""!important;display:block!important;position:absolute!important;z-index:0!important;pointer-events:none!important;width:290px!important;height:290px!important;right:-118px!important;top:-108px!important;border:1px solid rgba(112,157,125,.20)!important;border-radius:50%!important;background:transparent!important;box-shadow:0 0 0 1px rgba(255,255,255,.24),inset 0 0 0 1px rgba(255,255,255,.12)!important}
+#profileDashboard .profile-card>*{position:relative;z-index:1}
+#profileDashboard .profile-card #profilePresenceDot{z-index:5!important}
+</style>
