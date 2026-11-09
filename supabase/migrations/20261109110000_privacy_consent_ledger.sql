@@ -3,7 +3,7 @@
 
 create table if not exists public.privacy_consent_log (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id uuid not null, -- stable subject reference retained for audit even if Auth account is removed
   consent_type text not null check (consent_type = 'personal_data_processing'),
   consent_version text not null,
   consent_text_sha256 text not null,
