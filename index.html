@@ -6348,3 +6348,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
 <script id="profile-presence-init-fix">
 (()=>{const init=()=>{if(window.__poProfilePresenceReady)return;window.__poProfilePresenceReady=true;const avatar=document.getElementById("profileAvatar"),card=avatar?.closest(".profile-card");if(!card)return;let dot=document.getElementById("profilePresenceDot");if(!dot){dot=document.createElement("span");dot.id="profilePresenceDot";dot.setAttribute("aria-label","Онлайн");card.appendChild(dot)};if(window.db){db.auth.getUser().then(({data})=>{dot.classList.toggle("offline",!data?.user);dot.title=data?.user?"Онлайн":"Офлайн"});db.auth.onAuthStateChange((event,session)=>{dot.classList.toggle("offline",!session?.user);dot.title=session?.user?"Онлайн":"Офлайн"})}};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init()})();
 </script>
+
+<style id="profile-card-gradient-reference-staging">
+#profileDashboard .profile-card{background:radial-gradient(ellipse at 88% 12%,rgba(211,239,195,.58) 0%,rgba(211,239,195,0) 48%),radial-gradient(ellipse at 8% 100%,rgba(244,249,239,.96) 0%,rgba(244,249,239,0) 52%),linear-gradient(132deg,#ffffff 0%,#fbfdf9 34%,#f2f8ed 68%,#eaf5e4 100%)!important;border:1px solid rgba(255,255,255,.98)!important;box-shadow:0 14px 30px rgba(24,63,45,.10),inset 0 1px 0 rgba(255,255,255,.98)!important}
+</style>
