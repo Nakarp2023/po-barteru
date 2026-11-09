@@ -4451,7 +4451,7 @@ async function loadProfileDashboard(){
  const city=typeof storedProfile?.city==="string"&&storedProfile.city.trim()?storedProfile.city.trim():(p.city||"");
  const showPublicName=typeof storedProfile?.show_public_name==="boolean"?storedProfile.show_public_name:p.showPublicName!==false;
  const mergedProfile={...p,name:dbName||String(p.name||"").trim(),city,showPublicName};
- $("profileShowPublicName").checked=showPublicName;
+ const privacyCheckbox=$("profileShowPublicName");if(privacyCheckbox)privacyCheckbox.checked=showPublicName;
  if(dbName||city||storedProfile)localStorage.setItem("po_barteru_profile_"+currentUser.id,JSON.stringify(mergedProfile));
  $("profileName").textContent=name;$("profileLoginMethod").textContent=currentUser.email?("E-mail · "+currentUser.email):(currentUser.phone?("Телефон · "+currentUser.phone):"Аккаунт подтверждён");$("profileNameInput").value=name==="Участник"?"":name;$("profileCityInput").value=city;
  
