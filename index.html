@@ -3534,7 +3534,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 </div>
 <button class="pill" id="authOut" hidden>Выйти</button>
 <section id="profileDashboard" hidden>
-<div class="profile-card"><div class="profile-avatar" id="profileAvatar">Б</div><div class="profile-main"><h2 id="profileName"></h2></div><button type="button" class="profile-logout-button" id="profileLogoutBtn" aria-label="Выйти из аккаунта"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg><span>Выйти</span></button></div>
+<div class="profile-card profile-showcase"><div class="profile-avatar-wrap"><div class="profile-avatar" id="profileAvatar">Б</div><span class="profile-online-dot" aria-label="В сети"></span></div><div class="profile-showcase-content"><h2 id="profileName"></h2><button class="profile-rating-pill" type="button" data-profile-open="reputation"><span class="profile-rating-star">★</span><b id="profileRatingValue">5,0</b><i></i><span id="profileRatingReviews">(нет отзывов)</span><span class="profile-rating-chevron">›</span></button><div class="profile-showcase-stats"><div><span class="profile-stat-icon">▤</span><b id="profileListingsCount">0</b><small>объявлений</small></div><div><span class="profile-stat-icon">⇄</span><b id="profileExchangesCount">0</b><small>обменов</small></div><div><span class="profile-stat-icon">♡</span><b id="profileFavoritesCount">0</b><small>в избранном</small></div></div></div><button type="button" class="profile-logout-button profile-logout-compact" id="profileLogoutBtn" aria-label="Выйти из аккаунта"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button></div>
 <div class="profile-hub" id="profileHub">
   <button type="button" class="profile-hub-row" data-profile-open="account"><span class="profile-hub-icon">👤</span><span class="profile-hub-copy"><b>Личные данные</b><small>Имя, город, уведомления и пароль</small></span><span class="profile-hub-arrow">›</span></button>
   <button type="button" class="profile-hub-row" data-profile-open="my-listings"><span class="profile-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="14" rx="2"/><path d="M8 7h4M8 10h4M8 13h4"/><path d="M8 20h12V8"/></svg></span><span class="profile-hub-copy"><b>Мои объявления</b><small>Публикации, статусы и архив</small></span><span class="profile-hub-arrow">›</span></button>
@@ -5821,6 +5821,56 @@ body.page-profile #otherTitle,
 @media(min-width:900px){
  #profileDashboard .profile-hub{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Profile showcase card: visual reference alignment */
+#profileDashboard .profile-showcase{position:relative;display:flex;align-items:center;gap:clamp(18px,3vw,34px);padding:clamp(20px,3vw,34px);min-height:260px;border:1px solid rgba(255,255,255,.9);border-radius:32px;background:radial-gradient(ellipse at 88% 12%,#b7e9a4 0%,#d9f2ce 28%,transparent 56%),linear-gradient(135deg,#f2f8ed 0%,#e5f3df 52%,#f5f9ef 100%);box-shadow:inset 0 1px 0 #fff,0 12px 35px rgba(33,72,49,.08);overflow:hidden}
+#profileDashboard .profile-showcase:before{content:"";position:absolute;right:-8%;top:-55%;width:60%;height:160%;border:1px solid rgba(77,143,105,.18);border-radius:50%;transform:rotate(-25deg);pointer-events:none}
+#profileDashboard .profile-avatar-wrap{position:relative;flex:0 0 clamp(130px,21vw,230px);width:clamp(130px,21vw,230px);height:clamp(130px,21vw,230px);z-index:1}
+#profileDashboard .profile-avatar{width:100%;height:100%;flex:none;border-radius:50%;border:7px solid #fff;box-shadow:0 5px 18px #244c3526;background:linear-gradient(145deg,#205647,#001d17);font-size:48px}
+#profileDashboard .profile-online-dot{position:absolute;right:5px;bottom:8px;width:34px;height:34px;border-radius:50%;background:#20c56b;border:5px solid white;box-shadow:0 2px 8px #173c2725}
+#profileDashboard .profile-showcase-content{flex:1;min-width:0;z-index:1}
+#profileDashboard .profile-showcase-content h2{font-size:clamp(25px,4vw,48px);font-weight:800;line-height:1.15;margin:0 0 20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#profileDashboard .profile-rating-pill{display:flex;align-items:center;gap:clamp(10px,1.6vw,22px);max-width:100%;min-height:58px;padding:10px 18px;border:1px solid #fff;border-radius:999px;background:rgba(255,255,255,.82);box-shadow:0 5px 16px #244c3510;color:#303630;font:inherit;white-space:nowrap}
+#profileDashboard .profile-rating-star{color:#f4ad20;font-size:32px;line-height:1}
+#profileDashboard .profile-rating-pill b{font-size:clamp(18px,2.2vw,28px)}
+#profileDashboard .profile-rating-pill i{height:28px;width:1px;background:#d8ded7;flex:0 0 1px}
+#profileDashboard .profile-rating-pill>span:not(.profile-rating-star){font-size:clamp(13px,1.8vw,22px);overflow:hidden;text-overflow:ellipsis}
+#profileDashboard .profile-rating-chevron{font-size:32px;color:#456b5b;line-height:1}
+#profileDashboard .profile-showcase-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:28px;max-width:780px}
+#profileDashboard .profile-showcase-stats>div{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;align-items:center;justify-content:center;column-gap:10px;min-width:0;padding:0 12px;border-right:1px solid #cbd9ce}
+#profileDashboard .profile-showcase-stats>div:last-child{border-right:0}
+#profileDashboard .profile-stat-icon{grid-row:1/3;color:#17664e;font-size:clamp(25px,3vw,42px);line-height:1}
+#profileDashboard .profile-showcase-stats b{font-size:clamp(19px,2.3vw,30px);line-height:1.1}
+#profileDashboard .profile-showcase-stats small{font-size:clamp(11px,1.5vw,18px);color:#65736b;white-space:nowrap}
+#profileDashboard .profile-logout-compact{position:absolute;right:12px;top:12px;z-index:2;width:34px;height:34px;padding:7px;opacity:.45}
+@media(max-width:600px){
+ #profileDashboard .profile-showcase{gap:16px;padding:18px 14px;min-height:0;border-radius:26px}
+ #profileDashboard .profile-avatar-wrap{width:clamp(92px,27vw,132px);height:clamp(92px,27vw,132px);flex-basis:clamp(92px,27vw,132px)}
+ #profileDashboard .profile-avatar{border-width:5px;font-size:32px}
+ #profileDashboard .profile-online-dot{width:27px;height:27px;border-width:4px;right:0;bottom:4px}
+ #profileDashboard .profile-showcase-content h2{font-size:clamp(18px,5.2vw,28px);margin-bottom:12px}
+ #profileDashboard .profile-rating-pill{min-height:44px;padding:7px 10px;gap:8px}
+ #profileDashboard .profile-rating-star{font-size:23px}
+ #profileDashboard .profile-rating-pill b{font-size:16px}
+ #profileDashboard .profile-rating-pill i{height:20px}
+ #profileDashboard .profile-rating-pill>span:not(.profile-rating-star){font-size:11px}
+ #profileDashboard .profile-rating-chevron{font-size:22px}
+ #profileDashboard .profile-showcase-stats{margin-top:18px;grid-column:1/-1;width:100%}
+ #profileDashboard .profile-showcase-stats>div{padding:0 4px;column-gap:5px}
+ #profileDashboard .profile-stat-icon{font-size:22px}
+ #profileDashboard .profile-showcase-stats b{font-size:17px}
+ #profileDashboard .profile-showcase-stats small{font-size:10px}
+ #profileDashboard .profile-logout-compact{display:none}
+}
+@media(max-width:380px){
+ #profileDashboard .profile-showcase{gap:10px;padding:14px 10px}
+ #profileDashboard .profile-avatar-wrap{width:82px;height:82px;flex-basis:82px}
+ #profileDashboard .profile-showcase-content h2{font-size:17px}
+ #profileDashboard .profile-rating-pill{gap:5px;padding:6px 8px}
+ #profileDashboard .profile-rating-pill>span:not(.profile-rating-star){font-size:10px}
+ #profileDashboard .profile-showcase-stats small{font-size:9px}
+}
+@media(min-width:900px){#profileDashboard .profile-showcase{max-width:100%}}
 </style>
 
 <script>
