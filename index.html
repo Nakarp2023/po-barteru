@@ -5843,11 +5843,19 @@ body.page-profile #otherTitle,
  cookie?.addEventListener('click',()=>{const box=document.getElementById('cookieConsent');if(!box)return;box.classList.add('show');document.getElementById('cookieConsentSettings')?.classList.add('open');document.getElementById('cookieSettingsToggle').textContent='Скрыть настройки';});
  const deletion=document.getElementById('requestPersonalDataDeletion');
  deletion?.addEventListener('click',()=>{
-  const ok=confirm('Открыть форму обращения в поддержку для запроса удаления аккаунта и персональных данных? Сам аккаунт сейчас не будет удалён.');
+  const ok=confirm('Подготовить обращение на удаление аккаунта и персональных данных? Запрос будет отправлен в поддержку после вашей проверки и нажатия «Отправить обращение». Аккаунт не удаляется автоматически.');
   if(!ok)return;
   const support=document.getElementById('profileSupportForm');
-  if(support){support.scrollIntoView({behavior:'smooth',block:'center'});support.querySelector('textarea,input:not([type="hidden"])')?.focus({preventScroll:true});}
-  else{alert('Перейдите в раздел поддержки профиля и отправьте запрос «Удаление аккаунта и персональных данных».');}
+  if(support){
+    const category=document.getElementById('profileSupportCategory');
+    const subject=document.getElementById('profileSupportSubject');
+    const message=document.getElementById('profileSupportMessage');
+    if(category)category.value='account';
+    if(subject)subject.value='Запрос на удаление аккаунта и персональных данных';
+    if(message)message.value='Прошу рассмотреть запрос на удаление моего аккаунта и персональных данных.\n\nПонимаю, что отдельные сведения о сделках, платежах, обращениях и безопасности могут сохраняться или обезличиваться в течение обязательных/обоснованных сроков. Прошу сообщить, какие данные будут удалены, какие сохранены и на каком основании.';
+    support.scrollIntoView({behavior:'smooth',block:'center'});
+    message?.focus({preventScroll:true});
+  }else{alert('Перейдите в раздел поддержки профиля и отправьте запрос «Удаление аккаунта и персональных данных».');}
  });
 })();
 </script></body></html>
