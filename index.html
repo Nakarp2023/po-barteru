@@ -3530,6 +3530,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div id="authBox">
 <div style="display:flex;gap:8px;margin:12px 0"><button type="button" class="pill" id="authEmailMode">По email</button><button type="button" class="pill" id="authPhoneMode" style="background:#e7eae5">По телефону</button></div>
 <div id="emailAuthPane"><label class="field">Email<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label class="field">Пароль<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Не менее 8 символов"></label><button class="pill" id="authPasswordLogin">Войти по паролю</button><button class="pill" id="authPasswordSignup" style="margin-top:8px;background:#e7eae5">Создать аккаунт с паролем</button><button class="chip" id="authPasswordReset" style="margin-top:8px">Забыли пароль?</button><div style="height:1px;background:var(--line);margin:14px 0"></div><button class="pill" id="authSend">Войти по ссылке из письма</button><p class="category">Можно войти по паролю или по одноразовой ссылке из письма. При создании аккаунта с паролем Supabase может попросить подтвердить email.</p></div>
+<label class="auth-consent-row" for="authPersonalDataConsent"><input id="authPersonalDataConsent" type="checkbox"><span>Я даю <a href="#privacy" id="authPrivacyLink">согласие на обработку персональных данных</a> и ознакомился(ась) с политикой обработки персональных данных.</span></label>
 <div id="phoneAuthPane" hidden><label class="field">Номер телефона в международном формате<input id="authPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+79991234567"></label><button class="pill" id="phoneSend">Отправить SMS-код</button><label class="field" id="phoneCodeField" hidden>Код из SMS<input id="phoneCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Введите код"></label><button class="pill" id="phoneVerify" hidden>Подтвердить код</button><p class="category">Для SMS-входа администратор должен включить SMS-провайдера в Supabase.</p></div>
 </div>
 <button class="pill" id="authOut" hidden>Выйти</button>
@@ -3680,6 +3681,15 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     </details>
   </div>
 
+  <section class="profile-data-rights" aria-labelledby="profileDataRightsTitle">
+    <div class="profile-info-section-heading"><div><p class="profile-info-eyebrow">ВАШИ ДАННЫЕ</p><h4 id="profileDataRightsTitle">Управление данными и согласиями</h4></div></div>
+    <div class="profile-data-rights-card">
+      <p>Вы можете изменить выбор по необязательным cookie, а также обратиться с запросом об обработке или удалении персональных данных.</p>
+      <button type="button" class="profile-data-rights-button" id="manageCookiePreferences">Настройки cookie <span>›</span></button>
+      <button type="button" class="profile-data-rights-button" id="requestPersonalDataDeletion">Запросить удаление аккаунта и данных <span>›</span></button>
+      <small>Удаление не выполняется автоматически этой кнопкой. Запрос должен быть подтверждён и обработан с учётом обязательных сроков хранения и связанных сделок.</small>
+    </div>
+  </section>
   <div class="profile-info-about"><span class="profile-info-about-icon" aria-hidden="true">P</span><div><b>О проекте ПО БАРТЕРУ</b><p>Помогаем людям находить предложения и договариваться об обмене вещами и услугами напрямую.</p><small>Оператор: [указать ФИО или наименование и статус]. Реквизиты и официальный контакт поддержки будут добавлены после подтверждения.</small></div></div>
   <div class="profile-info-security-note"><span aria-hidden="true">🛡</span><p><b>Берегите свой аккаунт</b><br>Никому не сообщайте пароль и коды подтверждения. Не отправляйте полные данные банковской карты.</p></div>
   <p class="profile-info-help-foot">Документы представлены как проекты для предварительного ознакомления. Заглушки необходимо заполнить, а тексты сверить с реальной работой Сервиса и обстоятельствами оператора до публикации как действующих юридических документов.</p>
@@ -4663,12 +4673,12 @@ async function saveListing(item){
 let authMode="email",pendingPhone="";
 function setAuthMode(mode){authMode=mode;$("emailAuthPane").hidden=mode!=="email";$("phoneAuthPane").hidden=mode!=="phone";$("authEmailMode").style.background=mode==="email"?"var(--lime)":"#e7eae5";$("authPhoneMode").style.background=mode==="phone"?"var(--lime)":"#e7eae5";}
 $("authEmailMode").onclick=()=>setAuthMode("email");$("authPhoneMode").onclick=()=>setAuthMode("phone");
-$("authSend").onclick=async()=>{const email=$("authEmail").value.trim();if(!email){toast("Введи email");return}const nativeApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());const redirect=nativeApp?"com.pobarteru.app://auth/callback":"https://po-barteru.onrender.com";const {error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:redirect,shouldCreateUser:true}});toast(error?"Ошибка отправки ссылки: "+error.message:"Ссылка для входа отправлена на почту.");};
+$("authSend").onclick=async()=>{const consent=$("authPersonalDataConsent");if(!consent?.checked){toast("Для создания аккаунта необходимо дать согласие на обработку персональных данных");consent?.focus();return}const email=$("authEmail").value.trim();if(!email){toast("Введи email");return}const nativeApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());const redirect=nativeApp?"com.pobarteru.app://auth/callback":"https://po-barteru.onrender.com";const {error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:redirect,shouldCreateUser:true,data:{personal_data_consent:true,personal_data_consent_version:"draft-2026-11-09",personal_data_consent_source:"email_magic_link"}}});toast(error?"Ошибка отправки ссылки: "+error.message:"Ссылка для входа отправлена на почту.");};
 $("authPasswordLogin").onclick=async()=>{const email=$("authEmail").value.trim(),password=$("authPassword").value;if(!email||!password){toast("Введи email и пароль");return}const {error}=await db.auth.signInWithPassword({email,password});if(error){toast("Не удалось войти: "+(error.message.includes("Invalid login credentials")?"неверная почта или пароль":error.message));return}toast("Вход выполнен.");};
-$("authPasswordSignup").onclick=async()=>{const email=$("authEmail").value.trim(),password=$("authPassword").value;if(!email||!password){toast("Введи email и пароль");return}if(password.length<8){toast("Пароль должен содержать минимум 8 символов");return}const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:"https://po-barteru.onrender.com"}});if(error){toast("Не удалось создать аккаунт: "+error.message);return}toast(data.session?"Аккаунт создан, вход выполнен.":"Аккаунт создан. Если подтверждение email включено, проверь почту.");};
+$("authPasswordSignup").onclick=async()=>{const consent=$("authPersonalDataConsent");if(!consent?.checked){toast("Для создания аккаунта необходимо дать согласие на обработку персональных данных");consent?.focus();return}const email=$("authEmail").value.trim(),password=$("authPassword").value;if(!email||!password){toast("Введи email и пароль");return}if(password.length<8){toast("Пароль должен содержать минимум 8 символов");return}const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:"https://po-barteru.onrender.com",data:{personal_data_consent:true,personal_data_consent_version:"draft-2026-11-09",personal_data_consent_source:"email_password",personal_data_consent_at:new Date().toISOString()}}});if(error){toast("Не удалось создать аккаунт: "+error.message);return}toast(data.session?"Аккаунт создан, вход выполнен.":"Аккаунт создан. Если подтверждение email включено, проверь почту.");};
 $("authPasswordReset").onclick=async()=>{const email=$("authEmail").value.trim();if(!email){toast("Сначала введи email");return}const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:"https://po-barteru.onrender.com"});if(error){const wait=error.message.match(/after\s+(\d+)\s+seconds?/i);if(wait){toast("Подожди ещё "+wait[1]+" сек. и попробуй восстановить пароль снова.");return}toast("Не удалось отправить восстановление: "+error.message);return}toast("Если для этой почты есть аккаунт, инструкция по восстановлению отправлена.");};
 $("savePasswordBtn").onclick=async()=>{if(!currentUser||!db)return toast("Сначала войди в аккаунт");const password=$("profileNewPassword").value,confirm=$("profileConfirmPassword").value;if(password.length<8){toast("Пароль должен содержать минимум 8 символов");return}if(password!==confirm){toast("Пароли не совпадают");return}const {error}=await db.auth.updateUser({password});if(error){toast("Не удалось сохранить пароль: "+error.message);return}$("profileNewPassword").value="";$("profileConfirmPassword").value="";toast("Пароль сохранён. Теперь можно входить по email и паролю.");};
-$("phoneSend").onclick=async()=>{const phone=$("authPhone").value.trim();if(!/^\+[1-9]\d{7,14}$/.test(phone)){toast("Введи номер в формате +79991234567");return}const {error}=await db.auth.signInWithOtp({phone,options:{channel:"sms"}});if(error){toast("Не удалось отправить SMS: "+error.message);return}pendingPhone=phone;$("phoneCodeField").hidden=false;$("phoneVerify").hidden=false;toast("SMS-код отправлен. Введи его ниже.");};
+$("phoneSend").onclick=async()=>{const consent=$("authPersonalDataConsent");if(!consent?.checked){toast("Для создания аккаунта или входа по телефону отметь согласие на обработку персональных данных");consent?.focus();return}const phone=$("authPhone").value.trim();if(!/^\+[1-9]\d{7,14}$/.test(phone)){toast("Введи номер в формате +79991234567");return}const {error}=await db.auth.signInWithOtp({phone,options:{channel:"sms",data:{personal_data_consent:true,personal_data_consent_version:"draft-2026-11-09",personal_data_consent_source:"phone_otp"}}});if(error){toast("Не удалось отправить SMS: "+error.message);return}pendingPhone=phone;$("phoneCodeField").hidden=false;$("phoneVerify").hidden=false;toast("SMS-код отправлен. Введи его ниже.");};
 $("phoneVerify").onclick=async()=>{const token=$("phoneCode").value.trim();if(!pendingPhone||!token){toast("Введи код из SMS");return}const {error}=await db.auth.verifyOtp({phone:pendingPhone,token,type:"sms"});if(error){toast("Не удалось подтвердить код: "+error.message);return}await syncProfile();await loadRemoteListings();toast("Номер подтверждён, вход выполнен.");};
 $("authOut").onclick=async()=>{await db.auth.signOut();await syncProfile();toast("Вы вышли из аккаунта")};
 if(db){db.auth.onAuthStateChange(()=>{setTimeout(async()=>{await syncProfile();await loadActiveSubscription();await loadRemoteListings();await syncRemoteFavorites();await refreshNotificationCount();await refreshPushUi();render()},0)});syncProfile().then(async()=>{await loadActiveSubscription();await loadRemoteListings();await syncRemoteFavorites();await refreshNotificationCount();await refreshPushUi();render()})}else{$("profileStatus").textContent="Клиент базы данных не загрузился. Проверь интернет-соединение."}
@@ -5795,7 +5805,60 @@ body.page-profile #otherTitle,
  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenus()});
 })();
 </script>
-</body></html>
+<style id="privacy-consent-ui-20261109">
+.auth-consent-row{display:flex;align-items:flex-start;gap:10px;margin:12px 0 14px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#f8faf6;font-size:13px;line-height:1.45;color:var(--muted)}
+.auth-consent-row input{flex:0 0 18px;width:18px;height:18px;margin:1px 0 0;accent-color:var(--green)}
+.auth-consent-row a{color:var(--green);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.cookie-consent{position:fixed;z-index:250;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));max-width:760px;margin:auto;padding:16px;border:1px solid #e1e8dc;border-radius:22px;background:rgba(255,255,255,.96);box-shadow:0 18px 50px rgba(20,40,28,.18);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:none}
+.cookie-consent.show{display:block}.cookie-consent h3{margin:0 0 7px;font-size:16px}.cookie-consent p{margin:0;color:#68756e;font-size:13px;line-height:1.45}.cookie-consent-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}.cookie-consent-actions button{border:1px solid #dfe6dc;border-radius:12px;padding:10px 13px;background:#fff;color:#244235;font-size:13px;font-weight:750}.cookie-consent-actions .cookie-primary{background:#153f35;color:white;border-color:#153f35}.cookie-consent-settings{display:none;margin-top:12px;padding-top:12px;border-top:1px solid #e8ece5}.cookie-consent-settings.open{display:block}.cookie-consent-settings label{display:flex;align-items:center;gap:9px;font-size:13px;color:#405248}.cookie-consent-settings input{accent-color:#153f35}.cookie-consent small{display:block;margin-top:8px;color:#8a938c;font-size:11px;line-height:1.4}
+@media(min-width:760px){.cookie-consent{left:24px;right:auto;bottom:24px}}
+</style>
+<div class="cookie-consent" id="cookieConsent" role="dialog" aria-modal="false" aria-labelledby="cookieConsentTitle">
+<h3 id="cookieConsentTitle">Настройки cookie и хранения данных</h3>
+<p>Для работы сайта и авторизации используются необходимые технологии. Аналитические и рекламные cookie сейчас не подключены. Вы можете сохранить только необходимые технологии; если необязательные инструменты появятся, мы запросим отдельный выбор до их включения.</p>
+<div class="cookie-consent-settings" id="cookieConsentSettings"><label><input type="checkbox" checked disabled> Необходимые технологии — всегда активны</label><label style="margin-top:9px"><input type="checkbox" id="cookieAnalytics" disabled> Аналитические cookie (пока не используются)</label><small>Если подключим аналитику или рекламные инструменты, запросим выбор до их активации.</small></div>
+<div class="cookie-consent-actions"><button type="button" class="cookie-primary" id="cookieAccept">Принять только необходимые</button><button type="button" id="cookieSettingsToggle">Настройки</button><button type="button" id="cookieReject">Отклонить необязательные</button></div>
+</div>
+<script id="privacy-consent-ui-script-20261109">
+(()=>{
+ const box=document.getElementById('cookieConsent');if(!box)return;
+ const key='po_barter_cookie_preferences_v1';
+ let saved=null;try{saved=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
+ if(!saved||saved.version!==1){box.classList.add('show')}
+ const settings=document.getElementById('cookieConsentSettings');
+ const toggle=document.getElementById('cookieSettingsToggle');
+ function save(){try{localStorage.setItem(key,JSON.stringify({version:1,essential:true,analytics:false,marketing:false,choice:'necessary-only',updatedAt:new Date().toISOString()}))}catch(e){}box.classList.remove('show');}
+ document.getElementById('cookieAccept').addEventListener('click',save);
+ document.getElementById('cookieReject').addEventListener('click',save);
+ toggle.addEventListener('click',()=>{settings.classList.toggle('open');toggle.textContent=settings.classList.contains('open')?'Скрыть настройки':'Настройки'});
+ const privacyLink=document.getElementById('authPrivacyLink');
+ if(privacyLink)privacyLink.addEventListener('click',e=>{e.preventDefault();document.querySelector('[data-help-search*="документы"]')?.scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.profile-info-doc').forEach(d=>{if(d.querySelector('summary b')?.textContent.includes('Политика обработки'))d.open=true});});
+})();
+</script><style id="profile-data-rights-ui">
+.profile-data-rights{margin:22px 0}.profile-data-rights-card{padding:15px;border:1px solid var(--line);border-radius:18px;background:#fff}.profile-data-rights-card>p{font-size:13px;line-height:1.5;color:var(--muted);margin:0 0 10px}.profile-data-rights-button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:13px 0;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;color:var(--green);font-weight:750;font-size:14px}.profile-data-rights-button span{font-size:20px;color:var(--muted)}.profile-data-rights-card small{display:block;margin-top:8px;color:var(--muted);font-size:11px;line-height:1.45}
+</style>
+<script id="profile-data-rights-actions">
+(()=>{
+ const cookie=document.getElementById('manageCookiePreferences');
+ cookie?.addEventListener('click',()=>{const box=document.getElementById('cookieConsent');if(!box)return;box.classList.add('show');document.getElementById('cookieConsentSettings')?.classList.add('open');document.getElementById('cookieSettingsToggle').textContent='Скрыть настройки';});
+ const deletion=document.getElementById('requestPersonalDataDeletion');
+ deletion?.addEventListener('click',()=>{
+  const ok=confirm('Подготовить обращение на удаление аккаунта и персональных данных? Запрос будет отправлен в поддержку после вашей проверки и нажатия «Отправить обращение». Аккаунт не удаляется автоматически.');
+  if(!ok)return;
+  const support=document.getElementById('profileSupportForm');
+  if(support){
+    const category=document.getElementById('profileSupportCategory');
+    const subject=document.getElementById('profileSupportSubject');
+    const message=document.getElementById('profileSupportMessage');
+    if(category)category.value='account';
+    if(subject)subject.value='Запрос на удаление аккаунта и персональных данных';
+    if(message)message.value='Прошу рассмотреть запрос на удаление моего аккаунта и персональных данных.\n\nПонимаю, что отдельные сведения о сделках, платежах, обращениях и безопасности могут сохраняться или обезличиваться в течение обязательных/обоснованных сроков. Прошу сообщить, какие данные будут удалены, какие сохранены и на каком основании.';
+    support.scrollIntoView({behavior:'smooth',block:'center'});
+    message?.focus({preventScroll:true});
+  }else{alert('Перейдите в раздел поддержки профиля и отправьте запрос «Удаление аккаунта и персональных данных».');}
+ });
+})();
+</script></body></html>
 
 /* 2026-11-03: final card metadata alignment + honor hidden sections */
 [hidden]{display:none!important}
